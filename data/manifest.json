@@ -1,0 +1,3564 @@
+{
+  "fetched_at": "2026-08-11T21:47:22.333237+00:00",
+  "companies": [
+    {
+      "ticker": "COLB",
+      "name": "Columbia Banking System",
+      "cik": "0000887343",
+      "filings": [
+        {
+          "accession_number": "0000887343-24-000275",
+          "filing_type": "8-K",
+          "filing_date": "2024-12-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000275/colb-20241231.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000275_colb-20241231.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000265",
+          "filing_type": "8-K",
+          "filing_date": "2024-11-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000265/colb-20241115.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000265_colb-20241115.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000262",
+          "filing_type": "10-Q",
+          "filing_date": "2024-11-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000262/colb-20240930.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000262_colb-20240930.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000256",
+          "filing_type": "8-K",
+          "filing_date": "2024-10-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000256/colb-20241024.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000256_colb-20241024.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000252",
+          "filing_type": "8-K",
+          "filing_date": "2024-09-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000252/colb-20240930.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000252_colb-20240930.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000247",
+          "filing_type": "8-K",
+          "filing_date": "2024-08-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000247/colb-20240812.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000247_colb-20240812.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000245",
+          "filing_type": "10-Q",
+          "filing_date": "2024-08-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000245/colb-20240630.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000245_colb-20240630.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000242",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000242/colb-20240725.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000242_colb-20240725.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000235",
+          "filing_type": "8-K",
+          "filing_date": "2024-06-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000235/colb-20240628.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000235_colb-20240628.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000201",
+          "filing_type": "8-K",
+          "filing_date": "2024-05-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000201/colb-20240513.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000201_colb-20240513.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000187",
+          "filing_type": "8-K",
+          "filing_date": "2024-05-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000187/colb-20240508.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000187_colb-20240508.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000183",
+          "filing_type": "10-Q",
+          "filing_date": "2024-05-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000183/colb-20240331.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000183_colb-20240331.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000178",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000178/colb-20240425.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000178_colb-20240425.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000168",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000168/colb-20240401.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000168_colb-20240401.htm"
+        },
+        {
+          "accession_number": "0001193125-24-078782",
+          "filing_type": "DEF 14A",
+          "filing_date": "2024-03-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312524078782/d784795ddef14a.htm",
+          "local_path": "data/filings/COLB/0001193125-24-078782_d784795ddef14a.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000112",
+          "filing_type": "8-K",
+          "filing_date": "2024-03-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000112/colb-20240304.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000112_colb-20240304.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000111",
+          "filing_type": "8-K",
+          "filing_date": "2024-03-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000111/colb-20240304.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000111_colb-20240304.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000089",
+          "filing_type": "10-K",
+          "filing_date": "2024-02-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000089/colb-20231231.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000089_colb-20231231.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000052",
+          "filing_type": "8-K",
+          "filing_date": "2024-02-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000052/colb-20240209.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000052_colb-20240209.htm"
+        },
+        {
+          "accession_number": "0000887343-24-000024",
+          "filing_type": "8-K",
+          "filing_date": "2024-01-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734324000024/colb-20240124.htm",
+          "local_path": "data/filings/COLB/0000887343-24-000024_colb-20240124.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000313",
+          "filing_type": "8-K",
+          "filing_date": "2023-12-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000313/colb-20231229.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000313_colb-20231229.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000310",
+          "filing_type": "8-K",
+          "filing_date": "2023-11-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000310/colb-20231113.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000310_colb-20231113.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000307",
+          "filing_type": "10-Q",
+          "filing_date": "2023-11-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000307/colb-20230930.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000307_colb-20230930.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000304",
+          "filing_type": "8-K",
+          "filing_date": "2023-10-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000304/colb-20231018.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000304_colb-20231018.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000301",
+          "filing_type": "8-K",
+          "filing_date": "2023-09-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000301/colb-20230929.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000301_colb-20230929.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000298",
+          "filing_type": "8-K",
+          "filing_date": "2023-08-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000298/colb-20230814.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000298_colb-20230814.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000295",
+          "filing_type": "10-Q",
+          "filing_date": "2023-08-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000295/colb-20230630.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000295_colb-20230630.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000291",
+          "filing_type": "8-K",
+          "filing_date": "2023-07-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000291/colb-20230719.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000291_colb-20230719.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000279",
+          "filing_type": "8-K",
+          "filing_date": "2023-06-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000279/colb-20230630.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000279_colb-20230630.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000274",
+          "filing_type": "8-K",
+          "filing_date": "2023-06-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000274/colb-20230627.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000274_colb-20230627.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000253",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000253/colb-20230518.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000253_colb-20230518.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000227",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000227/colb-20230515.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000227_colb-20230515.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000220",
+          "filing_type": "10-Q",
+          "filing_date": "2023-05-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000220/colb-20230331.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000220_colb-20230331.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000214",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000214/colb-20230426.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000214_colb-20230426.htm"
+        },
+        {
+          "accession_number": "0001140361-23-017022",
+          "filing_type": "DEF 14A",
+          "filing_date": "2023-04-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000114036123017022/ny20006886_def14a.htm",
+          "local_path": "data/filings/COLB/0001140361-23-017022_ny20006886_def14a.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000208",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000208/colb-20230331.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000208_colb-20230331.htm"
+        },
+        {
+          "accession_number": "0001193125-23-056342",
+          "filing_type": "8-K",
+          "filing_date": "2023-03-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312523056342/d413616d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-23-056342_d413616d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-23-049828",
+          "filing_type": "8-K",
+          "filing_date": "2023-02-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312523049828/d464604d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-23-049828_d464604d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000072",
+          "filing_type": "10-K",
+          "filing_date": "2023-02-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000072/colb-20221231.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000072_colb-20221231.htm"
+        },
+        {
+          "accession_number": "0000887343-23-000007",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734323000007/colb-20230124.htm",
+          "local_path": "data/filings/COLB/0000887343-23-000007_colb-20230124.htm"
+        },
+        {
+          "accession_number": "0001193125-23-005000",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312523005000/d124899d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-23-005000_d124899d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-23-002636",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312523002636/d417030d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-23-002636_d417030d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-22-278607",
+          "filing_type": "8-K",
+          "filing_date": "2022-11-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312522278607/d415720d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-22-278607_d415720d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000134",
+          "filing_type": "10-Q",
+          "filing_date": "2022-10-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000134/colb-20220930.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000134_colb-20220930.htm"
+        },
+        {
+          "accession_number": "0001193125-22-269119",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312522269119/d405105d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-22-269119_d405105d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000131",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000131/colb-20221020.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000131_colb-20221020.htm"
+        },
+        {
+          "accession_number": "0001193125-22-258408",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312522258408/d351766d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-22-258408_d351766d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-22-247701",
+          "filing_type": "8-K",
+          "filing_date": "2022-09-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312522247701/d393391d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-22-247701_d393391d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000127",
+          "filing_type": "8-K",
+          "filing_date": "2022-09-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000127/colb-20220902.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000127_colb-20220902.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000125",
+          "filing_type": "10-Q",
+          "filing_date": "2022-08-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000125/colb-20220630.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000125_colb-20220630.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000120",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000120/colb-20220721.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000120_colb-20220721.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000110",
+          "filing_type": "8-K",
+          "filing_date": "2022-05-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000110/colb-20220526.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000110_colb-20220526.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000108",
+          "filing_type": "10-Q",
+          "filing_date": "2022-05-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000108/colb-20220331.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000108_colb-20220331.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000102",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000102/colb-20220427.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000102_colb-20220427.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000098",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000098/colb-20220421.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000098_colb-20220421.htm"
+        },
+        {
+          "accession_number": "0001140361-22-010103",
+          "filing_type": "DEF 14A",
+          "filing_date": "2022-03-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000114036122010103/ny20002429x1_def14a.htm",
+          "local_path": "data/filings/COLB/0001140361-22-010103_ny20002429x1_def14a.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000038",
+          "filing_type": "10-K",
+          "filing_date": "2022-02-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000038/colb-20211231.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000038_colb-20211231.htm"
+        },
+        {
+          "accession_number": "0001193125-22-021719",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312522021719/d606548d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-22-021719_d606548d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-22-000006",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734322000006/colb-20220119.htm",
+          "local_path": "data/filings/COLB/0000887343-22-000006_colb-20220119.htm"
+        },
+        {
+          "accession_number": "0001193125-22-012767",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312522012767/d252428d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-22-012767_d252428d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-21-369114",
+          "filing_type": "8-K",
+          "filing_date": "2021-12-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521369114/d162205d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-21-369114_d162205d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-21-337013",
+          "filing_type": "S-4",
+          "filing_date": "2021-11-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521337013/d261205ds4.htm",
+          "local_path": "data/filings/COLB/0001193125-21-337013_d261205ds4.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000165",
+          "filing_type": "10-Q",
+          "filing_date": "2021-11-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000165/colb-20210930.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000165_colb-20210930.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000162",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000162/colb-20211028.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000162_colb-20211028.htm"
+        },
+        {
+          "accession_number": "0001193125-21-300178",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521300178/d237749d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-21-300178_d237749d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-21-296324",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521296324/d229230d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-21-296324_d229230d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-21-288971",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521288971/d221969d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-21-288971_d221969d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-21-287452",
+          "filing_type": "8-K",
+          "filing_date": "2021-09-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521287452/d233740d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-21-287452_d233740d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000155",
+          "filing_type": "10-Q",
+          "filing_date": "2021-08-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000155/colb-20210630.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000155_colb-20210630.htm"
+        },
+        {
+          "accession_number": "0001193125-21-238938",
+          "filing_type": "S-4",
+          "filing_date": "2021-08-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521238938/d190993ds4.htm",
+          "local_path": "data/filings/COLB/0001193125-21-238938_d190993ds4.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000151",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000151/colb-20210729.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000151_colb-20210729.htm"
+        },
+        {
+          "accession_number": "0001193125-21-198112",
+          "filing_type": "8-K",
+          "filing_date": "2021-06-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312521198112/d165081d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-21-198112_d165081d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000113",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000113/colb-20210526.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000113_colb-20210526.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000111",
+          "filing_type": "10-Q",
+          "filing_date": "2021-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000111/colb-20210331.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000111_colb-20210331.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000108",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000108/colb-20210429.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000108_colb-20210429.htm"
+        },
+        {
+          "accession_number": "0001140361-21-012371",
+          "filing_type": "DEF 14A",
+          "filing_date": "2021-04-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000114036121012371/nc10022254x1_def14a.htm",
+          "local_path": "data/filings/COLB/0001140361-21-012371_nc10022254x1_def14a.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000065",
+          "filing_type": "10-K",
+          "filing_date": "2021-02-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000065/colb-20201231.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000065_colb-20201231.htm"
+        },
+        {
+          "accession_number": "0000887343-21-000020",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734321000020/colb-20210128.htm",
+          "local_path": "data/filings/COLB/0000887343-21-000020_colb-20210128.htm"
+        },
+        {
+          "accession_number": "0001193125-20-327206",
+          "filing_type": "8-K",
+          "filing_date": "2020-12-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312520327206/d70778d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-20-327206_d70778d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000213",
+          "filing_type": "8-K",
+          "filing_date": "2020-12-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000213/colb-20201125.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000213_colb-20201125.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000210",
+          "filing_type": "10-Q",
+          "filing_date": "2020-11-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000210/colb-20200930.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000210_colb-20200930.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000203",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000203/colb-20201029.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000203_colb-20201029.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000200",
+          "filing_type": "8-K",
+          "filing_date": "2020-09-17",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000200/colb-20200917.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000200_colb-20200917.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000193",
+          "filing_type": "10-Q",
+          "filing_date": "2020-07-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000193/colb2q2020form10-q.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000193_colb2q2020form10-q.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000189",
+          "filing_type": "8-K",
+          "filing_date": "2020-07-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000189/colb-20200723.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000189_colb-20200723.htm"
+        },
+        {
+          "accession_number": "0001193125-20-157250",
+          "filing_type": "8-K",
+          "filing_date": "2020-06-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312520157250/d904425d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-20-157250_d904425d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-20-147849",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000119312520147849/d857174d8k.htm",
+          "local_path": "data/filings/COLB/0001193125-20-147849_d857174d8k.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000149",
+          "filing_type": "10-Q",
+          "filing_date": "2020-05-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000149/colb1q2020form10-q.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000149_colb1q2020form10-q.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000147",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000147/colbmay20form8-kxcicaa.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000147_colbmay20form8-kxcicaa.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000138",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000138/colb-20200430.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000138_colb-20200430.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000130",
+          "filing_type": "DEF 14A",
+          "filing_date": "2020-04-17",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000130/columbiabankproxy2020.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000130_columbiabankproxy2020.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000122",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000122/colbform8-kxnewcfoxade.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000122_colbform8-kxnewcfoxade.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000117",
+          "filing_type": "8-K",
+          "filing_date": "2020-03-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000117/colbform8-kxcfodepartu.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000117_colbform8-kxcfodepartu.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000073",
+          "filing_type": "8-K",
+          "filing_date": "2020-02-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000073/colbform8-kxcfodepartu.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000073_colbform8-kxcfodepartu.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000070",
+          "filing_type": "10-K",
+          "filing_date": "2020-02-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000070/colb2019form10-k.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000070_colb2019form10-k.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000026",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000026/colb4q2019form8-k.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000026_colb4q2019form8-k.htm"
+        },
+        {
+          "accession_number": "0000887343-20-000018",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/887343/000088734320000018/colbjan20form8-kxcicch.htm",
+          "local_path": "data/filings/COLB/0000887343-20-000018_colbjan20form8-kxcicch.htm"
+        }
+      ],
+      "companyfacts_path": "data/filings/COLB/companyfacts.json",
+      "companyfacts_concept_count": 775
+    },
+    {
+      "ticker": "UMPQ",
+      "name": "Umpqua Holdings",
+      "cik": "0001077771",
+      "filings": [
+        {
+          "accession_number": "0001193125-23-056482",
+          "filing_type": "8-K",
+          "filing_date": "2023-03-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000119312523056482/d803964d8k.htm",
+          "local_path": "data/filings/UMPQ/0001193125-23-056482_d803964d8k.htm"
+        },
+        {
+          "accession_number": "0001077771-23-000012",
+          "filing_type": "10-K",
+          "filing_date": "2023-02-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777123000012/umpq-20221231.htm",
+          "local_path": "data/filings/UMPQ/0001077771-23-000012_umpq-20221231.htm"
+        },
+        {
+          "accession_number": "0001077771-23-000007",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777123000007/umpq-20230123.htm",
+          "local_path": "data/filings/UMPQ/0001077771-23-000007_umpq-20230123.htm"
+        },
+        {
+          "accession_number": "0001077771-23-000003",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777123000003/umpq-20230111.htm",
+          "local_path": "data/filings/UMPQ/0001077771-23-000003_umpq-20230111.htm"
+        },
+        {
+          "accession_number": "0001140361-23-001115",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000114036123001115/brhc10046453_8k.htm",
+          "local_path": "data/filings/UMPQ/0001140361-23-001115_brhc10046453_8k.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000061",
+          "filing_type": "10-Q",
+          "filing_date": "2022-10-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000061/umpq-20220930.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000061_umpq-20220930.htm"
+        },
+        {
+          "accession_number": "0001140361-22-038456",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000114036122038456/brhc10043293_8k.htm",
+          "local_path": "data/filings/UMPQ/0001140361-22-038456_brhc10043293_8k.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000058",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000058/umpq-20221019.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000058_umpq-20221019.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000054",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000054/umpq-20221003.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000054_umpq-20221003.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000052",
+          "filing_type": "8-K",
+          "filing_date": "2022-09-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000052/umpq-20220930.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000052_umpq-20220930.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000049",
+          "filing_type": "8-K",
+          "filing_date": "2022-09-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000049/umpq-20220902.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000049_umpq-20220902.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000044",
+          "filing_type": "10-Q",
+          "filing_date": "2022-07-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000044/umpq-20220630.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000044_umpq-20220630.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000040",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000040/umpq-20220720.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000040_umpq-20220720.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000036",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000036/umpq-20220720.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000036_umpq-20220720.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000031",
+          "filing_type": "8-K",
+          "filing_date": "2022-06-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000031/umpq-20220630.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000031_umpq-20220630.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000026",
+          "filing_type": "8-K",
+          "filing_date": "2022-05-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000026/umpq-20220526.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000026_umpq-20220526.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000022",
+          "filing_type": "10-Q",
+          "filing_date": "2022-05-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000022/umpq-20220331.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000022_umpq-20220331.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000019",
+          "filing_type": "8-K",
+          "filing_date": "2022-05-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000019/umpq-20220505.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000019_umpq-20220505.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000017",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000017/umpq-20220420.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000017_umpq-20220420.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000014",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000014/umpq-20220331.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000014_umpq-20220331.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000011",
+          "filing_type": "10-K",
+          "filing_date": "2022-02-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000011/umpq-20211231.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000011_umpq-20211231.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000008",
+          "filing_type": "8-K",
+          "filing_date": "2022-02-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000008/umpq-20220204.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000008_umpq-20220204.htm"
+        },
+        {
+          "accession_number": "0001193125-22-021768",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000119312522021768/d58570d8k.htm",
+          "local_path": "data/filings/UMPQ/0001193125-22-021768_d58570d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-22-012750",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000119312522012750/d285068d8k.htm",
+          "local_path": "data/filings/UMPQ/0001193125-22-012750_d285068d8k.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000006",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000006/umpq-20220119.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000006_umpq-20220119.htm"
+        },
+        {
+          "accession_number": "0001077771-22-000002",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777122000002/umpq-20220104.htm",
+          "local_path": "data/filings/UMPQ/0001077771-22-000002_umpq-20220104.htm"
+        },
+        {
+          "accession_number": "0001140361-21-040755",
+          "filing_type": "8-K",
+          "filing_date": "2021-12-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000114036121040755/ny20000997x11_8k.htm",
+          "local_path": "data/filings/UMPQ/0001140361-21-040755_ny20000997x11_8k.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000066",
+          "filing_type": "8-K",
+          "filing_date": "2021-11-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000066/umpq-20211122.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000066_umpq-20211122.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000063",
+          "filing_type": "8-K",
+          "filing_date": "2021-11-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000063/umpq-20211105.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000063_umpq-20211105.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000061",
+          "filing_type": "10-Q",
+          "filing_date": "2021-11-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000061/umpq-20210930.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000061_umpq-20210930.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000057",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000057/umpq-20211020.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000057_umpq-20211020.htm"
+        },
+        {
+          "accession_number": "0001140361-21-034624",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000114036121034624/ny20000977x8_8k.htm",
+          "local_path": "data/filings/UMPQ/0001140361-21-034624_ny20000977x8_8k.htm"
+        },
+        {
+          "accession_number": "0001140361-21-034285",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000114036121034285/ny20000977x1_8k.htm",
+          "local_path": "data/filings/UMPQ/0001140361-21-034285_ny20000977x1_8k.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000053",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000053/umpq-20211005.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000053_umpq-20211005.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000051",
+          "filing_type": "8-K",
+          "filing_date": "2021-08-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000051/umpq-20210809.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000051_umpq-20210809.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000048",
+          "filing_type": "10-Q",
+          "filing_date": "2021-08-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000048/umpq-20210630.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000048_umpq-20210630.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000044",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000044/umpq-20210721.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000044_umpq-20210721.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000042",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000042/umpq-20210721.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000042_umpq-20210721.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000037",
+          "filing_type": "8-K",
+          "filing_date": "2021-06-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000037/umpq-20210630.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000037_umpq-20210630.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000031",
+          "filing_type": "10-Q",
+          "filing_date": "2021-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000031/umpq-20210331.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000031_umpq-20210331.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000028",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000028/umpq-20210505.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000028_umpq-20210505.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000025",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000025/umpq-20210420.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000025_umpq-20210420.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000023",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000023/umpq-20210421.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000023_umpq-20210421.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000019",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000019/umpq-20210401.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000019_umpq-20210401.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000014",
+          "filing_type": "8-K",
+          "filing_date": "2021-03-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000014/umpq-20210330.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000014_umpq-20210330.htm"
+        },
+        {
+          "accession_number": "0001564590-21-011277",
+          "filing_type": "DEF 14A",
+          "filing_date": "2021-03-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000156459021011277/umpq-def14a_20210420.htm",
+          "local_path": "data/filings/UMPQ/0001564590-21-011277_umpq-def14a_20210420.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000011",
+          "filing_type": "10-K",
+          "filing_date": "2021-02-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000011/umpq-20201231.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000011_umpq-20201231.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000006",
+          "filing_type": "8-K",
+          "filing_date": "2021-02-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000006/umpq-20210201.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000006_umpq-20210201.htm"
+        },
+        {
+          "accession_number": "0001077771-21-000004",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777121000004/umpq-20210120.htm",
+          "local_path": "data/filings/UMPQ/0001077771-21-000004_umpq-20210120.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000090",
+          "filing_type": "8-K",
+          "filing_date": "2020-12-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000090/umpq-20201230.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000090_umpq-20201230.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000088",
+          "filing_type": "8-K",
+          "filing_date": "2020-11-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000088/umpq-20201109.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000088_umpq-20201109.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000086",
+          "filing_type": "10-Q",
+          "filing_date": "2020-11-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000086/umpq-20200930.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000086_umpq-20200930.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000083",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000083/umpq-20201022.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000083_umpq-20201022.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000080",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000080/umpq-20201021.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000080_umpq-20201021.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000077",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000077/umpq-20201001.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000077_umpq-20201001.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000073",
+          "filing_type": "8-K",
+          "filing_date": "2020-09-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000073/umpq-20200928.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000073_umpq-20200928.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000071",
+          "filing_type": "8-K",
+          "filing_date": "2020-08-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000071/umpq-20200810.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000071_umpq-20200810.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000069",
+          "filing_type": "10-Q",
+          "filing_date": "2020-08-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000069/umpq-20200630.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000069_umpq-20200630.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000066",
+          "filing_type": "8-K",
+          "filing_date": "2020-07-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000066/umpq-20200722.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000066_umpq-20200722.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000061",
+          "filing_type": "8-K",
+          "filing_date": "2020-06-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000061/umpq-20200630.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000061_umpq-20200630.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000054",
+          "filing_type": "8-K",
+          "filing_date": "2020-06-17",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000054/umpq-20200617.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000054_umpq-20200617.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000051",
+          "filing_type": "8-K",
+          "filing_date": "2020-06-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000051/umpq-20200608.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000051_umpq-20200608.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000047",
+          "filing_type": "10-Q",
+          "filing_date": "2020-05-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000047/umpq-20200331.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000047_umpq-20200331.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000043",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000043/umpq-20200506.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000043_umpq-20200506.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000040",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000040/umpq-20200420.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000040_umpq-20200420.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000038",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000038/umpq-20200422.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000038_umpq-20200422.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000032",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000032/umpq-20200407.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000032_umpq-20200407.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000027",
+          "filing_type": "8-K",
+          "filing_date": "2020-03-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000027/umpq-20200319.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000027_umpq-20200319.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000024",
+          "filing_type": "8-K",
+          "filing_date": "2020-03-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000024/umpq-20200313.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000024_umpq-20200313.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000019",
+          "filing_type": "DEF 14A",
+          "filing_date": "2020-03-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000019/umpqdef14a2020proxystateme.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000019_umpqdef14a2020proxystateme.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000014",
+          "filing_type": "10-K",
+          "filing_date": "2020-02-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000014/umpq-20191231.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000014_umpq-20191231.htm"
+        },
+        {
+          "accession_number": "0001077771-20-000007",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/1077771/000107777120000007/umpq-20200122.htm",
+          "local_path": "data/filings/UMPQ/0001077771-20-000007_umpq-20200122.htm"
+        }
+      ],
+      "companyfacts_path": "data/filings/UMPQ/companyfacts.json",
+      "companyfacts_concept_count": 728
+    },
+    {
+      "ticker": "GBCI",
+      "name": "Glacier Bancorp",
+      "cik": "0000868671",
+      "filings": [
+        {
+          "accession_number": "0000868671-24-000106",
+          "filing_type": "8-K",
+          "filing_date": "2024-11-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000106/gbci-20241119.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000106_gbci-20241119.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000102",
+          "filing_type": "8-K",
+          "filing_date": "2024-11-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000102/gbci-20241030.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000102_gbci-20241030.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000097",
+          "filing_type": "8-K",
+          "filing_date": "2024-11-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000097/gbci-20241030.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000097_gbci-20241030.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000094",
+          "filing_type": "10-Q",
+          "filing_date": "2024-10-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000094/gbci-20240930.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000094_gbci-20240930.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000089",
+          "filing_type": "8-K",
+          "filing_date": "2024-10-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000089/gbci-20241024.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000089_gbci-20241024.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000086",
+          "filing_type": "8-K",
+          "filing_date": "2024-08-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000086/gbci-20240814.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000086_gbci-20240814.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000084",
+          "filing_type": "10-Q",
+          "filing_date": "2024-08-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000084/gbci-20240630.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000084_gbci-20240630.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000073",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000073/gbci-20240722.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000073_gbci-20240722.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000070",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000070/gbci-20240718.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000070_gbci-20240718.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000066",
+          "filing_type": "8-K",
+          "filing_date": "2024-05-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000066/gbci-20240508.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000066_gbci-20240508.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000064",
+          "filing_type": "10-Q",
+          "filing_date": "2024-05-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000064/gbci-20240331.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000064_gbci-20240331.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000060",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000060/gbci-20240424.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000060_gbci-20240424.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000058",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000058/gbci-20240418.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000058_gbci-20240418.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000057",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000057/gbci-20240418.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000057_gbci-20240418.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000051",
+          "filing_type": "DEF 14A",
+          "filing_date": "2024-03-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000051/gbci-20240315.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000051_gbci-20240315.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000044",
+          "filing_type": "8-K",
+          "filing_date": "2024-02-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000044/gbci-20240228.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000044_gbci-20240228.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000042",
+          "filing_type": "10-K",
+          "filing_date": "2024-02-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000042/gbci-20231231.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000042_gbci-20231231.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000011",
+          "filing_type": "8-K",
+          "filing_date": "2024-02-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000011/gbci-20240214.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000011_gbci-20240214.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000009",
+          "filing_type": "8-K",
+          "filing_date": "2024-02-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000009/gbci-20240212.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000009_gbci-20240212.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000007",
+          "filing_type": "8-K",
+          "filing_date": "2024-02-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000007/gbci-20240131.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000007_gbci-20240131.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000004",
+          "filing_type": "8-K",
+          "filing_date": "2024-02-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000004/gbci-20240131.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000004_gbci-20240131.htm"
+        },
+        {
+          "accession_number": "0000868671-24-000002",
+          "filing_type": "8-K",
+          "filing_date": "2024-01-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867124000002/gbci-20240125.htm",
+          "local_path": "data/filings/GBCI/0000868671-24-000002_gbci-20240125.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000131",
+          "filing_type": "10-Q",
+          "filing_date": "2023-11-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000131/gbci-20230930.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000131_gbci-20230930.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000127",
+          "filing_type": "8-K",
+          "filing_date": "2023-10-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000127/gbci-20231019.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000127_gbci-20231019.htm"
+        },
+        {
+          "accession_number": "0001193125-23-235346",
+          "filing_type": "S-4",
+          "filing_date": "2023-09-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000119312523235346/d541071ds4.htm",
+          "local_path": "data/filings/GBCI/0001193125-23-235346_d541071ds4.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000120",
+          "filing_type": "8-K",
+          "filing_date": "2023-08-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000120/gbci-20230822.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000120_gbci-20230822.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000117",
+          "filing_type": "8-K",
+          "filing_date": "2023-08-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000117/gbci-20230808.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000117_gbci-20230808.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000114",
+          "filing_type": "10-Q",
+          "filing_date": "2023-08-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000114/gbci-20230630.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000114_gbci-20230630.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000110",
+          "filing_type": "8-K",
+          "filing_date": "2023-07-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000110/gbci-20230720.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000110_gbci-20230720.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000108",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000108/gbci-20230523.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000108_gbci-20230523.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000106",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000106/gbci-20230515.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000106_gbci-20230515.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000101",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000101/gbci-20230509.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000101_gbci-20230509.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000095",
+          "filing_type": "10-Q",
+          "filing_date": "2023-05-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000095/gbci-20230331.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000095_gbci-20230331.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000089",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000089/gbci-20230426.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000089_gbci-20230426.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000074",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000074/gbci-20230420.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000074_gbci-20230420.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000055",
+          "filing_type": "DEF 14A",
+          "filing_date": "2023-03-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000055/gbci-20230315.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000055_gbci-20230315.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000045",
+          "filing_type": "10-K",
+          "filing_date": "2023-02-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000045/gbci-20221231.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000045_gbci-20221231.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000012",
+          "filing_type": "8-K",
+          "filing_date": "2023-02-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000012/gbci-20230215.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000012_gbci-20230215.htm"
+        },
+        {
+          "accession_number": "0000868671-23-000005",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867123000005/gbci-20230126.htm",
+          "local_path": "data/filings/GBCI/0000868671-23-000005_gbci-20230126.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000092",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000092/gbci-20221031.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000092_gbci-20221031.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000091",
+          "filing_type": "10-Q",
+          "filing_date": "2022-10-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000091/gbci-20220930.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000091_gbci-20220930.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000084",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000084/gbci-20221026.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000084_gbci-20221026.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000082",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000082/gbci-20221020.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000082_gbci-20221020.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000079",
+          "filing_type": "8-K",
+          "filing_date": "2022-09-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000079/gbci-20220907.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000079_gbci-20220907.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000077",
+          "filing_type": "10-Q",
+          "filing_date": "2022-08-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000077/gbci-20220630.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000077_gbci-20220630.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000074",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000074/gbci-20220721.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000074_gbci-20220721.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000070",
+          "filing_type": "8-K",
+          "filing_date": "2022-05-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000070/gbci-20220504.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000070_gbci-20220504.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000068",
+          "filing_type": "10-Q",
+          "filing_date": "2022-05-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000068/gbci-20220331.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000068_gbci-20220331.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000065",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000065/gbci-20220427.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000065_gbci-20220427.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000061",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000061/gbci-20220421.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000061_gbci-20220421.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000058",
+          "filing_type": "DEF 14A",
+          "filing_date": "2022-03-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000058/gbci-03152022xdef14a.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000058_gbci-03152022xdef14a.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000053",
+          "filing_type": "10-K",
+          "filing_date": "2022-02-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000053/gbci-20211231.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000053_gbci-20211231.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000021",
+          "filing_type": "8-K",
+          "filing_date": "2022-02-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000021/gbci-20220216.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000021_gbci-20220216.htm"
+        },
+        {
+          "accession_number": "0000868671-22-000002",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867122000002/gbci-20220127.htm",
+          "local_path": "data/filings/GBCI/0000868671-22-000002_gbci-20220127.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000094",
+          "filing_type": "8-K",
+          "filing_date": "2021-12-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000094/gbci-20211206.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000094_gbci-20211206.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000092",
+          "filing_type": "8-K",
+          "filing_date": "2021-11-17",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000092/gbci-20211117.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000092_gbci-20211117.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000089",
+          "filing_type": "10-Q",
+          "filing_date": "2021-11-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000089/gbci-20210930.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000089_gbci-20210930.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000086",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000086/gbci-20211021.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000086_gbci-20211021.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000082",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000082/gbci-20211001.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000082_gbci-20211001.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000078",
+          "filing_type": "8-K",
+          "filing_date": "2021-09-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000078/gbci-20210907.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000078_gbci-20210907.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000076",
+          "filing_type": "10-Q",
+          "filing_date": "2021-08-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000076/gbci-20210630.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000076_gbci-20210630.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000072",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000072/gbci-20210728.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000072_gbci-20210728.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000065",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000065/gbci-20210722.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000065_gbci-20210722.htm"
+        },
+        {
+          "accession_number": "0001193125-21-207673",
+          "filing_type": "S-4",
+          "filing_date": "2021-07-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000119312521207673/d178004ds4.htm",
+          "local_path": "data/filings/GBCI/0001193125-21-207673_d178004ds4.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000061",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000061/gbci-20210519.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000061_gbci-20210519.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000057",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000057/gbci-20210518.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000057_gbci-20210518.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000054",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000054/gbci-20210505.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000054_gbci-20210505.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000052",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000052/gbci-20210428.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000052_gbci-20210428.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000046",
+          "filing_type": "10-Q",
+          "filing_date": "2021-05-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000046/gbci-20210331.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000046_gbci-20210331.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000043",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000043/gbci-20210422.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000043_gbci-20210422.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000041",
+          "filing_type": "DEF 14A",
+          "filing_date": "2021-03-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000041/gbci-03162021xdef14a.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000041_gbci-03162021xdef14a.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000037",
+          "filing_type": "10-K",
+          "filing_date": "2021-03-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000037/gbci-20201231.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000037_gbci-20201231.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000010",
+          "filing_type": "8-K",
+          "filing_date": "2021-02-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000010/gbci-20210204.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000010_gbci-20210204.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000006",
+          "filing_type": "8-K",
+          "filing_date": "2021-02-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000006/gbci-20210203.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000006_gbci-20210203.htm"
+        },
+        {
+          "accession_number": "0000868671-21-000004",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867121000004/gbci-20210128.htm",
+          "local_path": "data/filings/GBCI/0000868671-21-000004_gbci-20210128.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000083",
+          "filing_type": "8-K",
+          "filing_date": "2020-11-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000083/gbci-20201112.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000083_gbci-20201112.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000080",
+          "filing_type": "10-Q",
+          "filing_date": "2020-10-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000080/gbci-20200930.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000080_gbci-20200930.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000077",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000077/gbci-20201022.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000077_gbci-20201022.htm"
+        },
+        {
+          "accession_number": "0001193125-20-264778",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000119312520264778/d71190d8k.htm",
+          "local_path": "data/filings/GBCI/0001193125-20-264778_d71190d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-20-243139",
+          "filing_type": "8-K",
+          "filing_date": "2020-09-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000119312520243139/d18512d8k.htm",
+          "local_path": "data/filings/GBCI/0001193125-20-243139_d18512d8k.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000072",
+          "filing_type": "10-Q",
+          "filing_date": "2020-07-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000072/gbci-20200630.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000072_gbci-20200630.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000068",
+          "filing_type": "8-K",
+          "filing_date": "2020-07-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000068/gbci-20200723.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000068_gbci-20200723.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000063",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000063/gbci-20200518.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000063_gbci-20200518.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000061",
+          "filing_type": "10-Q",
+          "filing_date": "2020-05-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000061/gbci-20200331.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000061_gbci-20200331.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000058",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000058/gbci-20200505.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000058_gbci-20200505.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000055",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000055/gbci-20200429.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000055_gbci-20200429.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000053",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000053/gbci-20200423.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000053_gbci-20200423.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000051",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000051/gbci-20200407.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000051_gbci-20200407.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000049",
+          "filing_type": "8-K",
+          "filing_date": "2020-03-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000049/gbci-20200326.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000049_gbci-20200326.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000047",
+          "filing_type": "DEF 14A",
+          "filing_date": "2020-03-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000047/gbci-03162020xdef14a.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000047_gbci-03162020xdef14a.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000037",
+          "filing_type": "8-K",
+          "filing_date": "2020-03-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000037/gbci-20200229.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000037_gbci-20200229.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000032",
+          "filing_type": "10-K",
+          "filing_date": "2020-02-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000032/gbci-20191231.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000032_gbci-20191231.htm"
+        },
+        {
+          "accession_number": "0000868671-20-000003",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/868671/000086867120000003/gbci-20200123.htm",
+          "local_path": "data/filings/GBCI/0000868671-20-000003_gbci-20200123.htm"
+        }
+      ],
+      "companyfacts_path": "data/filings/GBCI/companyfacts.json",
+      "companyfacts_concept_count": 720
+    },
+    {
+      "ticker": "WSBC",
+      "name": "WesBanco",
+      "cik": "0000203596",
+      "filings": [
+        {
+          "accession_number": "0000950170-24-135445",
+          "filing_type": "8-K",
+          "filing_date": "2024-12-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024135445/wsbc-20241211.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-135445_wsbc-20241211.htm"
+        },
+        {
+          "accession_number": "0000950170-24-131482",
+          "filing_type": "8-K",
+          "filing_date": "2024-11-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024131482/wsbc-20241127.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-131482_wsbc-20241127.htm"
+        },
+        {
+          "accession_number": "0000950170-24-129307",
+          "filing_type": "8-K",
+          "filing_date": "2024-11-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024129307/wsbc-20241120.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-129307_wsbc-20241120.htm"
+        },
+        {
+          "accession_number": "0000950170-24-122399",
+          "filing_type": "8-K",
+          "filing_date": "2024-11-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024122399/wsbc-20241106.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-122399_wsbc-20241106.htm"
+        },
+        {
+          "accession_number": "0000950170-24-119518",
+          "filing_type": "10-Q",
+          "filing_date": "2024-10-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024119518/wsbc-20240930.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-119518_wsbc-20240930.htm"
+        },
+        {
+          "accession_number": "0000950170-24-116675",
+          "filing_type": "8-K",
+          "filing_date": "2024-10-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024116675/wsbc-20241023.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-116675_wsbc-20241023.htm"
+        },
+        {
+          "accession_number": "0001193125-24-233159",
+          "filing_type": "S-4",
+          "filing_date": "2024-10-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312524233159/d864335ds4.htm",
+          "local_path": "data/filings/WSBC/0001193125-24-233159_d864335ds4.htm"
+        },
+        {
+          "accession_number": "0000950170-24-111483",
+          "filing_type": "8-K",
+          "filing_date": "2024-10-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024111483/wsbc-20241002.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-111483_wsbc-20241002.htm"
+        },
+        {
+          "accession_number": "0001193125-24-218851",
+          "filing_type": "8-K",
+          "filing_date": "2024-09-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312524218851/d857150d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-24-218851_d857150d8k.htm"
+        },
+        {
+          "accession_number": "0000950170-24-102337",
+          "filing_type": "8-K",
+          "filing_date": "2024-08-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024102337/wsbc-20240830.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-102337_wsbc-20240830.htm"
+        },
+        {
+          "accession_number": "0000950170-24-089351",
+          "filing_type": "10-Q",
+          "filing_date": "2024-08-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024089351/wsbc-20240630.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-089351_wsbc-20240630.htm"
+        },
+        {
+          "accession_number": "0001193125-24-185459",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312524185459/d869328d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-24-185459_d869328d8k.htm"
+        },
+        {
+          "accession_number": "0000950170-24-086725",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024086725/wsbc-20240726.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-086725_wsbc-20240726.htm"
+        },
+        {
+          "accession_number": "0000950170-24-081621",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024081621/wsbc-20240703.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-081621_wsbc-20240703.htm"
+        },
+        {
+          "accession_number": "0000950170-24-055831",
+          "filing_type": "8-K",
+          "filing_date": "2024-05-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024055831/wsbc-20240508.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-055831_wsbc-20240508.htm"
+        },
+        {
+          "accession_number": "0000950170-24-052154",
+          "filing_type": "10-Q",
+          "filing_date": "2024-05-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024052154/wsbc-20240331.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-052154_wsbc-20240331.htm"
+        },
+        {
+          "accession_number": "0000950170-24-048405",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024048405/wsbc-20240425.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-048405_wsbc-20240425.htm"
+        },
+        {
+          "accession_number": "0000950170-24-046939",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024046939/wsbc-20240423.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-046939_wsbc-20240423.htm"
+        },
+        {
+          "accession_number": "0000950170-24-045577",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024045577/wsbc-20240417.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-045577_wsbc-20240417.htm"
+        },
+        {
+          "accession_number": "0000950170-24-041112",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024041112/wsbc-20240403.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-041112_wsbc-20240403.htm"
+        },
+        {
+          "accession_number": "0000950170-24-030757",
+          "filing_type": "DEF 14A",
+          "filing_date": "2024-03-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024030757/wsbc-20240312.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-030757_wsbc-20240312.htm"
+        },
+        {
+          "accession_number": "0000950170-24-020323",
+          "filing_type": "10-K",
+          "filing_date": "2024-02-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024020323/wsbc-20231231.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-020323_wsbc-20231231.htm"
+        },
+        {
+          "accession_number": "0000950170-24-009265",
+          "filing_type": "8-K",
+          "filing_date": "2024-01-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024009265/wsbc-20240131.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-009265_wsbc-20240131.htm"
+        },
+        {
+          "accession_number": "0000950170-24-006568",
+          "filing_type": "8-K",
+          "filing_date": "2024-01-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024006568/wsbc-20240123.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-006568_wsbc-20240123.htm"
+        },
+        {
+          "accession_number": "0000950170-24-001899",
+          "filing_type": "8-K",
+          "filing_date": "2024-01-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017024001899/wsbc-20240104.htm",
+          "local_path": "data/filings/WSBC/0000950170-24-001899_wsbc-20240104.htm"
+        },
+        {
+          "accession_number": "0000950170-23-064216",
+          "filing_type": "8-K",
+          "filing_date": "2023-11-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023064216/wsbc-20231115.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-064216_wsbc-20231115.htm"
+        },
+        {
+          "accession_number": "0000950170-23-058186",
+          "filing_type": "10-Q",
+          "filing_date": "2023-11-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023058186/wsbc-20230930.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-058186_wsbc-20230930.htm"
+        },
+        {
+          "accession_number": "0000950170-23-057457",
+          "filing_type": "8-K",
+          "filing_date": "2023-11-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023057457/wsbc-20231101.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-057457_wsbc-20231101.htm"
+        },
+        {
+          "accession_number": "0000950170-23-055210",
+          "filing_type": "8-K",
+          "filing_date": "2023-10-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023055210/wsbc-20231025.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-055210_wsbc-20231025.htm"
+        },
+        {
+          "accession_number": "0000950170-23-051554",
+          "filing_type": "8-K",
+          "filing_date": "2023-10-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023051554/wsbc-20231003.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-051554_wsbc-20231003.htm"
+        },
+        {
+          "accession_number": "0000950170-23-044782",
+          "filing_type": "8-K",
+          "filing_date": "2023-08-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023044782/wsbc-20230828.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-044782_wsbc-20230828.htm"
+        },
+        {
+          "accession_number": "0000950170-23-037998",
+          "filing_type": "10-Q",
+          "filing_date": "2023-08-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023037998/wsbc-20230630.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-037998_wsbc-20230630.htm"
+        },
+        {
+          "accession_number": "0000950170-23-034459",
+          "filing_type": "8-K",
+          "filing_date": "2023-07-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023034459/wsbc-20230725.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-034459_wsbc-20230725.htm"
+        },
+        {
+          "accession_number": "0001193125-23-191367",
+          "filing_type": "8-K",
+          "filing_date": "2023-07-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312523191367/d539631d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-23-191367_d539631d8k.htm"
+        },
+        {
+          "accession_number": "0000950170-23-031649",
+          "filing_type": "8-K",
+          "filing_date": "2023-07-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023031649/wsbc-20230705.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-031649_wsbc-20230705.htm"
+        },
+        {
+          "accession_number": "0000950170-23-023930",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023023930/wsbc-20230524.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-023930_wsbc-20230524.htm"
+        },
+        {
+          "accession_number": "0000950170-23-022476",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023022476/wsbc-20230516.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-022476_wsbc-20230516.htm"
+        },
+        {
+          "accession_number": "0000950170-23-022239",
+          "filing_type": "8-K",
+          "filing_date": "2023-05-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023022239/wsbc-20230515.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-022239_wsbc-20230515.htm"
+        },
+        {
+          "accession_number": "0000950170-23-017611",
+          "filing_type": "10-Q",
+          "filing_date": "2023-05-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023017611/wsbc-20230331.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-017611_wsbc-20230331.htm"
+        },
+        {
+          "accession_number": "0000950170-23-014109",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023014109/wsbc-20230424.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-014109_wsbc-20230424.htm"
+        },
+        {
+          "accession_number": "0000950170-23-013660",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023013660/wsbc-20230419.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-013660_wsbc-20230419.htm"
+        },
+        {
+          "accession_number": "0000950170-23-011799",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023011799/wsbc-20230404.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-011799_wsbc-20230404.htm"
+        },
+        {
+          "accession_number": "0001193125-23-071295",
+          "filing_type": "DEF 14A",
+          "filing_date": "2023-03-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312523071295/d434046ddef14a.htm",
+          "local_path": "data/filings/WSBC/0001193125-23-071295_d434046ddef14a.htm"
+        },
+        {
+          "accession_number": "0000950170-23-004507",
+          "filing_type": "10-K",
+          "filing_date": "2023-02-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023004507/wsbc-20221231.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-004507_wsbc-20221231.htm"
+        },
+        {
+          "accession_number": "0000950170-23-002900",
+          "filing_type": "8-K",
+          "filing_date": "2023-02-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023002900/wsbc-20230215.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-002900_wsbc-20230215.htm"
+        },
+        {
+          "accession_number": "0000950170-23-001095",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023001095/wsbc-20230124.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-001095_wsbc-20230124.htm"
+        },
+        {
+          "accession_number": "0000950170-23-000253",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017023000253/wsbc-20230105.htm",
+          "local_path": "data/filings/WSBC/0000950170-23-000253_wsbc-20230105.htm"
+        },
+        {
+          "accession_number": "0000950170-22-025543",
+          "filing_type": "8-K",
+          "filing_date": "2022-11-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022025543/wsbc-20221116.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-025543_wsbc-20221116.htm"
+        },
+        {
+          "accession_number": "0000950170-22-021934",
+          "filing_type": "10-Q",
+          "filing_date": "2022-11-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022021934/wsbc-20220930.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-021934_wsbc-20220930.htm"
+        },
+        {
+          "accession_number": "0000950170-22-021266",
+          "filing_type": "8-K",
+          "filing_date": "2022-11-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022021266/wsbc-20221102.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-021266_wsbc-20221102.htm"
+        },
+        {
+          "accession_number": "0000950170-22-020035",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022020035/wsbc-20221025.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-020035_wsbc-20221025.htm"
+        },
+        {
+          "accession_number": "0000950170-22-019270",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022019270/wsbc-20221004.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-019270_wsbc-20221004.htm"
+        },
+        {
+          "accession_number": "0000950170-22-017919",
+          "filing_type": "8-K",
+          "filing_date": "2022-08-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022017919/wsbc-20220830.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-017919_wsbc-20220830.htm"
+        },
+        {
+          "accession_number": "0000950170-22-017859",
+          "filing_type": "8-K",
+          "filing_date": "2022-08-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022017859/wsbc-20220825.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-017859_wsbc-20220825.htm"
+        },
+        {
+          "accession_number": "0000950170-22-014792",
+          "filing_type": "10-Q",
+          "filing_date": "2022-08-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022014792/wsbc-20220630.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-014792_wsbc-20220630.htm"
+        },
+        {
+          "accession_number": "0000950170-22-013095",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022013095/wsbc-20220726.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-013095_wsbc-20220726.htm"
+        },
+        {
+          "accession_number": "0000950170-22-012459",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022012459/wsbc-20220705.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-012459_wsbc-20220705.htm"
+        },
+        {
+          "accession_number": "0001193125-22-187597",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312522187597/d339200d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-22-187597_d339200d8k.htm"
+        },
+        {
+          "accession_number": "0000950170-22-007853",
+          "filing_type": "10-Q",
+          "filing_date": "2022-05-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022007853/wsbc-20220331.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-007853_wsbc-20220331.htm"
+        },
+        {
+          "accession_number": "0000950170-22-007449",
+          "filing_type": "8-K",
+          "filing_date": "2022-05-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022007449/wsbc-20220504.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-007449_wsbc-20220504.htm"
+        },
+        {
+          "accession_number": "0000950170-22-006216",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022006216/wsbc-20220426.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-006216_wsbc-20220426.htm"
+        },
+        {
+          "accession_number": "0000950170-22-005869",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022005869/wsbc-20220420.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-005869_wsbc-20220420.htm"
+        },
+        {
+          "accession_number": "0000950170-22-005333",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022005333/wsbc-20220404.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-005333_wsbc-20220404.htm"
+        },
+        {
+          "accession_number": "0001193125-22-082762",
+          "filing_type": "8-K",
+          "filing_date": "2022-03-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312522082762/d308169d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-22-082762_d308169d8k.htm"
+        },
+        {
+          "accession_number": "0001193125-22-076875",
+          "filing_type": "DEF 14A",
+          "filing_date": "2022-03-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312522076875/d191126ddef14a.htm",
+          "local_path": "data/filings/WSBC/0001193125-22-076875_d191126ddef14a.htm"
+        },
+        {
+          "accession_number": "0001193125-22-063547",
+          "filing_type": "8-K",
+          "filing_date": "2022-03-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312522063547/d110734d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-22-063547_d110734d8k.htm"
+        },
+        {
+          "accession_number": "0000950170-22-002226",
+          "filing_type": "10-K",
+          "filing_date": "2022-02-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022002226/wsbc-20211231.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-002226_wsbc-20211231.htm"
+        },
+        {
+          "accession_number": "0000950170-22-001991",
+          "filing_type": "8-K",
+          "filing_date": "2022-02-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022001991/wsbc-20220224.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-001991_wsbc-20220224.htm"
+        },
+        {
+          "accession_number": "0000950170-22-001629",
+          "filing_type": "8-K",
+          "filing_date": "2022-02-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022001629/wsbc-20220216.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-001629_wsbc-20220216.htm"
+        },
+        {
+          "accession_number": "0000950170-22-001285",
+          "filing_type": "8-K",
+          "filing_date": "2022-02-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022001285/wsbc-20220215.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-001285_wsbc-20220215.htm"
+        },
+        {
+          "accession_number": "0000950170-22-000476",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022000476/wsbc-20220125.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-000476_wsbc-20220125.htm"
+        },
+        {
+          "accession_number": "0000950170-22-000060",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017022000060/wsbc-20220105.htm",
+          "local_path": "data/filings/WSBC/0000950170-22-000060_wsbc-20220105.htm"
+        },
+        {
+          "accession_number": "0000950170-21-005252",
+          "filing_type": "8-K",
+          "filing_date": "2021-12-17",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000095017021005252/wsbc-20211216.htm",
+          "local_path": "data/filings/WSBC/0000950170-21-005252_wsbc-20211216.htm"
+        },
+        {
+          "accession_number": "0001564590-21-055277",
+          "filing_type": "10-Q",
+          "filing_date": "2021-11-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021055277/wsbc-10q_20210930.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-055277_wsbc-10q_20210930.htm"
+        },
+        {
+          "accession_number": "0001564590-21-053738",
+          "filing_type": "8-K",
+          "filing_date": "2021-11-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021053738/wsbc-8k_20211103.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-053738_wsbc-8k_20211103.htm"
+        },
+        {
+          "accession_number": "0001564590-21-052026",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021052026/wsbc-8k_20211026.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-052026_wsbc-8k_20211026.htm"
+        },
+        {
+          "accession_number": "0001564590-21-050639",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021050639/wsbc-8k_20211007.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-050639_wsbc-8k_20211007.htm"
+        },
+        {
+          "accession_number": "0001564590-21-050552",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021050552/wsbc-8k_20211008.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-050552_wsbc-8k_20211008.htm"
+        },
+        {
+          "accession_number": "0001564590-21-046964",
+          "filing_type": "8-K",
+          "filing_date": "2021-09-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021046964/wsbc-8k_20210901.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-046964_wsbc-8k_20210901.htm"
+        },
+        {
+          "accession_number": "0001564590-21-045940",
+          "filing_type": "8-K",
+          "filing_date": "2021-08-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021045940/wsbc-8k_20210826.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-045940_wsbc-8k_20210826.htm"
+        },
+        {
+          "accession_number": "0001564590-21-044183",
+          "filing_type": "8-K",
+          "filing_date": "2021-08-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021044183/wsbc-8k_20210813.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-044183_wsbc-8k_20210813.htm"
+        },
+        {
+          "accession_number": "0001564590-21-041613",
+          "filing_type": "10-Q",
+          "filing_date": "2021-08-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021041613/wsbc-10q_20210630.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-041613_wsbc-10q_20210630.htm"
+        },
+        {
+          "accession_number": "0001564590-21-040259",
+          "filing_type": "8-K",
+          "filing_date": "2021-08-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021040259/wsbc-8k_20210802.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-040259_wsbc-8k_20210802.htm"
+        },
+        {
+          "accession_number": "0001564590-21-038280",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021038280/wsbc-8k_20210727.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-038280_wsbc-8k_20210727.htm"
+        },
+        {
+          "accession_number": "0001564590-21-035868",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021035868/wsbc-8k_20210706.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-035868_wsbc-8k_20210706.htm"
+        },
+        {
+          "accession_number": "0001564590-21-029298",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021029298/wsbc-8k_20210519.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-029298_wsbc-8k_20210519.htm"
+        },
+        {
+          "accession_number": "0001564590-21-024985",
+          "filing_type": "10-Q",
+          "filing_date": "2021-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021024985/wsbc-10q_20210331.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-024985_wsbc-10q_20210331.htm"
+        },
+        {
+          "accession_number": "0001564590-21-023364",
+          "filing_type": "8-K",
+          "filing_date": "2021-05-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021023364/wsbc-8k_20210504.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-023364_wsbc-8k_20210504.htm"
+        },
+        {
+          "accession_number": "0001564590-21-020927",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021020927/wsbc-8k_20210427.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-020927_wsbc-8k_20210427.htm"
+        },
+        {
+          "accession_number": "0001564590-21-020122",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021020122/wsbc-8k_20210422.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-020122_wsbc-8k_20210422.htm"
+        },
+        {
+          "accession_number": "0001564590-21-019829",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021019829/wsbc-8k_20210421.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-019829_wsbc-8k_20210421.htm"
+        },
+        {
+          "accession_number": "0001564590-21-017709",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021017709/wsbc-8k_20210406.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-017709_wsbc-8k_20210406.htm"
+        },
+        {
+          "accession_number": "0001193125-21-083797",
+          "filing_type": "DEF 14A",
+          "filing_date": "2021-03-17",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312521083797/d45195ddef14a.htm",
+          "local_path": "data/filings/WSBC/0001193125-21-083797_d45195ddef14a.htm"
+        },
+        {
+          "accession_number": "0001564590-21-009469",
+          "filing_type": "10-K",
+          "filing_date": "2021-02-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021009469/wsbc-10k_20201231.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-009469_wsbc-10k_20201231.htm"
+        },
+        {
+          "accession_number": "0001564590-21-008889",
+          "filing_type": "8-K",
+          "filing_date": "2021-02-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021008889/wsbc-8k_20210225.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-008889_wsbc-8k_20210225.htm"
+        },
+        {
+          "accession_number": "0001564590-21-006689",
+          "filing_type": "8-K",
+          "filing_date": "2021-02-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021006689/wsbc-8k_20210217.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-006689_wsbc-8k_20210217.htm"
+        },
+        {
+          "accession_number": "0001564590-21-005272",
+          "filing_type": "8-K",
+          "filing_date": "2021-02-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021005272/wsbc-8k_20210210.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-005272_wsbc-8k_20210210.htm"
+        },
+        {
+          "accession_number": "0001564590-21-002343",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021002343/wsbc-8k_20210126.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-002343_wsbc-8k_20210126.htm"
+        },
+        {
+          "accession_number": "0001564590-21-001146",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021001146/wsbc-8k_20210113.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-001146_wsbc-8k_20210113.htm"
+        },
+        {
+          "accession_number": "0001564590-21-000420",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459021000420/wsbc-8k_20210106.htm",
+          "local_path": "data/filings/WSBC/0001564590-21-000420_wsbc-8k_20210106.htm"
+        },
+        {
+          "accession_number": "0001564590-20-052251",
+          "filing_type": "8-K",
+          "filing_date": "2020-11-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020052251/wsbc-8k_20201109.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-052251_wsbc-8k_20201109.htm"
+        },
+        {
+          "accession_number": "0001564590-20-049314",
+          "filing_type": "10-Q",
+          "filing_date": "2020-10-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020049314/wsbc-10q_20200930.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-049314_wsbc-10q_20200930.htm"
+        },
+        {
+          "accession_number": "0001564590-20-047105",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020047105/wsbc-8k_20201021.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-047105_wsbc-8k_20201021.htm"
+        },
+        {
+          "accession_number": "0001564590-20-045786",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020045786/wsbc-8k_20201005.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-045786_wsbc-8k_20201005.htm"
+        },
+        {
+          "accession_number": "0001564590-20-041811",
+          "filing_type": "8-K",
+          "filing_date": "2020-08-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020041811/wsbc-8k_20200828.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-041811_wsbc-8k_20200828.htm"
+        },
+        {
+          "accession_number": "0001564590-20-041548",
+          "filing_type": "8-K",
+          "filing_date": "2020-08-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020041548/wsbc-8k_20200827.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-041548_wsbc-8k_20200827.htm"
+        },
+        {
+          "accession_number": "0001193125-20-216296",
+          "filing_type": "8-K",
+          "filing_date": "2020-08-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312520216296/d76551d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-20-216296_d76551d8k.htm"
+        },
+        {
+          "accession_number": "0001564590-20-037384",
+          "filing_type": "8-K",
+          "filing_date": "2020-08-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020037384/wsbc-8k_20200806.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-037384_wsbc-8k_20200806.htm"
+        },
+        {
+          "accession_number": "0001193125-20-210710",
+          "filing_type": "8-K",
+          "filing_date": "2020-08-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312520210710/d20895d8k.htm",
+          "local_path": "data/filings/WSBC/0001193125-20-210710_d20895d8k.htm"
+        },
+        {
+          "accession_number": "0001564590-20-034299",
+          "filing_type": "10-Q",
+          "filing_date": "2020-07-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020034299/wsbc-10q_20200630.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-034299_wsbc-10q_20200630.htm"
+        },
+        {
+          "accession_number": "0001564590-20-033086",
+          "filing_type": "8-K",
+          "filing_date": "2020-07-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020033086/wsbc-8k_20200722.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-033086_wsbc-8k_20200722.htm"
+        },
+        {
+          "accession_number": "0001564590-20-031774",
+          "filing_type": "8-K",
+          "filing_date": "2020-07-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020031774/wsbc-8k_20200706.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-031774_wsbc-8k_20200706.htm"
+        },
+        {
+          "accession_number": "0001564590-20-023596",
+          "filing_type": "10-Q",
+          "filing_date": "2020-05-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020023596/wsbc-10q_20200331.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-023596_wsbc-10q_20200331.htm"
+        },
+        {
+          "accession_number": "0001564590-20-022040",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020022040/wsbc-8k_20200506.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-022040_wsbc-8k_20200506.htm"
+        },
+        {
+          "accession_number": "0001564590-20-018842",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020018842/wsbc-8k_20200427.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-018842_wsbc-8k_20200427.htm"
+        },
+        {
+          "accession_number": "0001564590-20-017968",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020017968/wsbc-8k_20200422.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-017968_wsbc-8k_20200422.htm"
+        },
+        {
+          "accession_number": "0001564590-20-015401",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020015401/wsbc-8k_20200406.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-015401_wsbc-8k_20200406.htm"
+        },
+        {
+          "accession_number": "0001564590-20-012570",
+          "filing_type": "8-K",
+          "filing_date": "2020-03-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020012570/wsbc-8k_20200324.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-012570_wsbc-8k_20200324.htm"
+        },
+        {
+          "accession_number": "0001193125-20-077135",
+          "filing_type": "DEF 14A",
+          "filing_date": "2020-03-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000119312520077135/d815996ddef14a.htm",
+          "local_path": "data/filings/WSBC/0001193125-20-077135_d815996ddef14a.htm"
+        },
+        {
+          "accession_number": "0001564590-20-007827",
+          "filing_type": "10-K",
+          "filing_date": "2020-02-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020007827/wsbc-10k_20191231.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-007827_wsbc-10k_20191231.htm"
+        },
+        {
+          "accession_number": "0001564590-20-007642",
+          "filing_type": "8-K",
+          "filing_date": "2020-02-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020007642/wsbc-8k_20200228.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-007642_wsbc-8k_20200228.htm"
+        },
+        {
+          "accession_number": "0001564590-20-007461",
+          "filing_type": "8-K",
+          "filing_date": "2020-02-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020007461/wsbc-8k_20200227.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-007461_wsbc-8k_20200227.htm"
+        },
+        {
+          "accession_number": "0001564590-20-004367",
+          "filing_type": "8-K",
+          "filing_date": "2020-02-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020004367/wsbc-8k_20200212.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-004367_wsbc-8k_20200212.htm"
+        },
+        {
+          "accession_number": "0001564590-20-004067",
+          "filing_type": "8-K",
+          "filing_date": "2020-02-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020004067/wsbc-8k_20200205.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-004067_wsbc-8k_20200205.htm"
+        },
+        {
+          "accession_number": "0001564590-20-002064",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020002064/wsbc-8k_20200127.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-002064_wsbc-8k_20200127.htm"
+        },
+        {
+          "accession_number": "0001564590-20-000212",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/203596/000156459020000212/wsbc-8k_20200103.htm",
+          "local_path": "data/filings/WSBC/0001564590-20-000212_wsbc-8k_20200103.htm"
+        }
+      ],
+      "companyfacts_path": "data/filings/WSBC/companyfacts.json",
+      "companyfacts_concept_count": 658
+    },
+    {
+      "ticker": "SSB",
+      "name": "South State Corporation",
+      "cik": "0000764038",
+      "filings": [
+        {
+          "accession_number": "0001558370-24-016390",
+          "filing_type": "8-K",
+          "filing_date": "2024-12-19",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024016390/ssb-20241219x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-016390_ssb-20241219x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-016230",
+          "filing_type": "8-K",
+          "filing_date": "2024-12-13",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024016230/ssb-20241213x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-016230_ssb-20241213x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-014094",
+          "filing_type": "10-Q",
+          "filing_date": "2024-11-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024014094/ssb-20240930x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-24-014094_ssb-20240930x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-24-013516",
+          "filing_type": "8-K",
+          "filing_date": "2024-10-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024013516/ssb-20241023x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-013516_ssb-20241023x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-013138",
+          "filing_type": "8-K",
+          "filing_date": "2024-10-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024013138/ssb-20241004x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-013138_ssb-20241004x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-012208",
+          "filing_type": "8-K",
+          "filing_date": "2024-08-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024012208/ssb-20240814x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-012208_ssb-20240814x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-010655",
+          "filing_type": "10-Q",
+          "filing_date": "2024-08-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024010655/ssb-20240630x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-24-010655_ssb-20240630x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-24-010191",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024010191/ssb-20240724x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-010191_ssb-20240724x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-010040",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024010040/ssb-20240724x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-010040_ssb-20240724x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-009681",
+          "filing_type": "8-K",
+          "filing_date": "2024-07-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024009681/ssb-20240708x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-009681_ssb-20240708x8k.htm"
+        },
+        {
+          "accession_number": "0001104659-24-075763",
+          "filing_type": "S-4",
+          "filing_date": "2024-06-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465924075763/tm2417792-1_s4.htm",
+          "local_path": "data/filings/SSB/0001104659-24-075763_tm2417792-1_s4.htm"
+        },
+        {
+          "accession_number": "0001558370-24-008442",
+          "filing_type": "8-K",
+          "filing_date": "2024-05-20",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024008442/ssb-20240517x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-008442_ssb-20240517x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-006602",
+          "filing_type": "10-Q",
+          "filing_date": "2024-05-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024006602/ssb-20240331x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-24-006602_ssb-20240331x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-24-005776",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024005776/ssb-20240425x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-005776_ssb-20240425x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-005614",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024005614/ssb-20240424x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-005614_ssb-20240424x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-005613",
+          "filing_type": "8-K",
+          "filing_date": "2024-04-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024005613/ssb-20240424x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-005613_ssb-20240424x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-004389",
+          "filing_type": "8-K",
+          "filing_date": "2024-03-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024004389/ssb-20240329x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-004389_ssb-20240329x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-002793",
+          "filing_type": "DEF 14A",
+          "filing_date": "2024-03-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024002793/ssb-20240424xdef14a.htm",
+          "local_path": "data/filings/SSB/0001558370-24-002793_ssb-20240424xdef14a.htm"
+        },
+        {
+          "accession_number": "0001558370-24-002302",
+          "filing_type": "10-K",
+          "filing_date": "2024-03-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024002302/ssb-20231231x10k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-002302_ssb-20231231x10k.htm"
+        },
+        {
+          "accession_number": "0000950103-24-002017",
+          "filing_type": "8-K",
+          "filing_date": "2024-02-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000095010324002017/dp206600_8k.htm",
+          "local_path": "data/filings/SSB/0000950103-24-002017_dp206600_8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-000538",
+          "filing_type": "8-K",
+          "filing_date": "2024-01-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024000538/ssb-20240125x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-000538_ssb-20240125x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-24-000082",
+          "filing_type": "8-K",
+          "filing_date": "2024-01-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837024000082/ssb-20240105x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-24-000082_ssb-20240105x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-019689",
+          "filing_type": "8-K",
+          "filing_date": "2023-12-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023019689/ssb-20231206x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-019689_ssb-20231206x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-017515",
+          "filing_type": "10-Q",
+          "filing_date": "2023-11-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023017515/ssb-20230930x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-23-017515_ssb-20230930x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-23-016851",
+          "filing_type": "8-K",
+          "filing_date": "2023-10-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023016851/ssb-20231026x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-016851_ssb-20231026x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-016180",
+          "filing_type": "8-K",
+          "filing_date": "2023-10-02",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023016180/ssb-20231002x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-016180_ssb-20231002x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-013327",
+          "filing_type": "10-Q",
+          "filing_date": "2023-08-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023013327/ssb-20230630x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-23-013327_ssb-20230630x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-23-012404",
+          "filing_type": "8-K",
+          "filing_date": "2023-07-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023012404/ssb-20230727x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-012404_ssb-20230727x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-011579",
+          "filing_type": "8-K",
+          "filing_date": "2023-06-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023011579/ssb-20230629x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-011579_ssb-20230629x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-008207",
+          "filing_type": "10-Q",
+          "filing_date": "2023-05-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023008207/ssb-20230331x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-23-008207_ssb-20230331x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-23-007056",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023007056/ssb-20230427x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-007056_ssb-20230427x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-006879",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023006879/ssb-20230426x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-006879_ssb-20230426x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-006876",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023006876/ssb-20230426x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-006876_ssb-20230426x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-005536",
+          "filing_type": "8-K",
+          "filing_date": "2023-04-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023005536/ssb-20230406x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-005536_ssb-20230406x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-003401",
+          "filing_type": "DEF 14A",
+          "filing_date": "2023-03-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023003401/ssb-20230426xdef14a.htm",
+          "local_path": "data/filings/SSB/0001558370-23-003401_ssb-20230426xdef14a.htm"
+        },
+        {
+          "accession_number": "0001558370-23-002774",
+          "filing_type": "8-K",
+          "filing_date": "2023-03-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023002774/ssb-20230302x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-002774_ssb-20230302x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-002028",
+          "filing_type": "10-K",
+          "filing_date": "2023-02-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023002028/ssb-20221231x10k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-002028_ssb-20221231x10k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-000612",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023000612/ssb-20230126x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-000612_ssb-20230126x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-23-000149",
+          "filing_type": "8-K",
+          "filing_date": "2023-01-09",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837023000149/ssb-20230109x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-23-000149_ssb-20230109x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-018626",
+          "filing_type": "8-K",
+          "filing_date": "2022-12-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022018626/ssb-20221213x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-018626_ssb-20221213x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-018115",
+          "filing_type": "8-K",
+          "filing_date": "2022-11-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022018115/ssb-20221121x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-018115_ssb-20221121x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-016347",
+          "filing_type": "10-Q",
+          "filing_date": "2022-11-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022016347/ssb-20220930x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-22-016347_ssb-20220930x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-22-015229",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022015229/ssb-20221024x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-015229_ssb-20221024x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-014846",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022014846/ssb-20221005x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-014846_ssb-20221005x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-014775",
+          "filing_type": "8-K",
+          "filing_date": "2022-10-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022014775/ssb-20221003x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-014775_ssb-20221003x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-012352",
+          "filing_type": "10-Q",
+          "filing_date": "2022-08-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022012352/ssb-20220630x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-22-012352_ssb-20220630x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-22-011265",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022011265/ssb-20220728x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-011265_ssb-20220728x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-010602",
+          "filing_type": "8-K",
+          "filing_date": "2022-07-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022010602/ssb-20220711x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-010602_ssb-20220711x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-009835",
+          "filing_type": "8-K",
+          "filing_date": "2022-06-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022009835/ssb-20220607x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-009835_ssb-20220607x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-009620",
+          "filing_type": "8-K",
+          "filing_date": "2022-06-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022009620/ssb-20220601x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-009620_ssb-20220601x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-009525",
+          "filing_type": "8-K",
+          "filing_date": "2022-05-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022009525/ssb-20220526x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-009525_ssb-20220526x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-009296",
+          "filing_type": "8-K",
+          "filing_date": "2022-05-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022009296/ssb-20220524x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-009296_ssb-20220524x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-007530",
+          "filing_type": "10-Q",
+          "filing_date": "2022-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022007530/ssb-20220331x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-22-007530_ssb-20220331x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-22-006293",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022006293/ssb-20220428x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-006293_ssb-20220428x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-006139",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022006139/ssb-20220427x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-006139_ssb-20220427x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-006123",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022006123/ssb-20220427x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-006123_ssb-20220427x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-005309",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-12",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022005309/ssb-20220412x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-005309_ssb-20220412x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-005105",
+          "filing_type": "8-K",
+          "filing_date": "2022-04-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022005105/ssb-20220406x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-005105_ssb-20220406x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-004499",
+          "filing_type": "8-K",
+          "filing_date": "2022-03-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022004499/ssb-20220328x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-004499_ssb-20220328x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-003373",
+          "filing_type": "DEF 14A",
+          "filing_date": "2022-03-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022003373/tmb-20220427xdef14a.htm",
+          "local_path": "data/filings/SSB/0001558370-22-003373_tmb-20220427xdef14a.htm"
+        },
+        {
+          "accession_number": "0001558370-22-002462",
+          "filing_type": "8-K",
+          "filing_date": "2022-03-01",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022002462/ssb-20220301x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-002462_ssb-20220301x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-002075",
+          "filing_type": "10-K",
+          "filing_date": "2022-02-25",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022002075/ssb-20211231x10k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-002075_ssb-20211231x10k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-001936",
+          "filing_type": "8-K",
+          "filing_date": "2022-02-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022001936/ssb-20220224x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-001936_ssb-20220224x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-001078",
+          "filing_type": "8-K",
+          "filing_date": "2022-02-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022001078/ssb-20220211x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-001078_ssb-20220211x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-000381",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022000381/ssb-20220124x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-000381_ssb-20220124x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-22-000120",
+          "filing_type": "8-K",
+          "filing_date": "2022-01-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837022000120/ssb-20220107x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-22-000120_ssb-20220107x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-016067",
+          "filing_type": "8-K",
+          "filing_date": "2021-11-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021016067/ssb-20211115x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-016067_ssb-20211115x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-014767",
+          "filing_type": "10-Q",
+          "filing_date": "2021-11-05",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021014767/ssb-20210930x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-21-014767_ssb-20210930x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-21-013614",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021013614/ssb-20211027x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-013614_ssb-20211027x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-013023",
+          "filing_type": "8-K",
+          "filing_date": "2021-10-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021013023/ssb-20211006x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-013023_ssb-20211006x8k.htm"
+        },
+        {
+          "accession_number": "0001104659-21-115989",
+          "filing_type": "S-4",
+          "filing_date": "2021-09-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465921115989/tm2126649-1_s4.htm",
+          "local_path": "data/filings/SSB/0001104659-21-115989_tm2126649-1_s4.htm"
+        },
+        {
+          "accession_number": "0001558370-21-012216",
+          "filing_type": "8-K",
+          "filing_date": "2021-09-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021012216/ssb-20210901x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-012216_ssb-20210901x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-010698",
+          "filing_type": "10-Q",
+          "filing_date": "2021-08-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021010698/ssb-20210630x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-21-010698_ssb-20210630x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-21-009490",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021009490/ssb-20210728x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-009490_ssb-20210728x8k.htm"
+        },
+        {
+          "accession_number": "0000950103-21-011170",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000095010321011170/dp155014_8k.htm",
+          "local_path": "data/filings/SSB/0000950103-21-011170_dp155014_8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-009139",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021009139/ssb-20210723x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-009139_ssb-20210723x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-009132",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-23",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021009132/ssb-20210722x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-009132_ssb-20210722x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-008909",
+          "filing_type": "8-K",
+          "filing_date": "2021-07-14",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021008909/ssb-20210714x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-008909_ssb-20210714x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-006420",
+          "filing_type": "10-Q",
+          "filing_date": "2021-05-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021006420/ssb-20210331x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-21-006420_ssb-20210331x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-21-005096",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021005096/ssb-20210428x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-005096_ssb-20210428x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-005091",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021005091/ssb-20210428x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-005091_ssb-20210428x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-005088",
+          "filing_type": "8-K",
+          "filing_date": "2021-04-28",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021005088/ssb-20210428x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-005088_ssb-20210428x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-003827",
+          "filing_type": "8-K",
+          "filing_date": "2021-03-31",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021003827/ssb-20210331x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-003827_ssb-20210331x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-002545",
+          "filing_type": "DEF 14A",
+          "filing_date": "2021-03-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021002545/tmb-20210428xdef14a.htm",
+          "local_path": "data/filings/SSB/0001558370-21-002545_tmb-20210428xdef14a.htm"
+        },
+        {
+          "accession_number": "0001558370-21-001976",
+          "filing_type": "10-K",
+          "filing_date": "2021-02-26",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021001976/ssb-20201231x10k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-001976_ssb-20201231x10k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-000451",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021000451/ssb-20210127x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-000451_ssb-20210127x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-21-000099",
+          "filing_type": "8-K",
+          "filing_date": "2021-01-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837021000099/ssb-20210107x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-21-000099_ssb-20210107x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-014210",
+          "filing_type": "8-K",
+          "filing_date": "2020-12-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020014210/ssb-20201204x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-014210_ssb-20201204x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-013873",
+          "filing_type": "8-K",
+          "filing_date": "2020-11-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020013873/ssb-20201115x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-013873_ssb-20201115x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-013071",
+          "filing_type": "10-Q",
+          "filing_date": "2020-11-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020013071/ssb-20200930x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-20-013071_ssb-20200930x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-20-012105",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020012105/ssb-20201029x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-012105_ssb-20201029x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-012057",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020012057/ssb-20201029x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-012057_ssb-20201029x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-011494",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-15",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020011494/ssb-20201015x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-011494_ssb-20201015x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-011385",
+          "filing_type": "8-K",
+          "filing_date": "2020-10-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020011385/ssb-20201006x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-011385_ssb-20201006x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-011318",
+          "filing_type": "8-K",
+          "filing_date": "2020-09-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020011318/ssb-20200930x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-011318_ssb-20200930x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-010339",
+          "filing_type": "DEF 14A",
+          "filing_date": "2020-08-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020010339/ssb-20200930xdef14a.htm",
+          "local_path": "data/filings/SSB/0001558370-20-010339_ssb-20200930xdef14a.htm"
+        },
+        {
+          "accession_number": "0001558370-20-009855",
+          "filing_type": "10-Q",
+          "filing_date": "2020-08-07",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020009855/ssb-20200630x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-20-009855_ssb-20200630x10q.htm"
+        },
+        {
+          "accession_number": "0001558370-20-008805",
+          "filing_type": "8-K",
+          "filing_date": "2020-07-30",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020008805/ssb-20200730x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-008805_ssb-20200730x8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-008105",
+          "filing_type": "8-K",
+          "filing_date": "2020-07-10",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020008105/ssb-20200710x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-008105_ssb-20200710x8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-070646",
+          "filing_type": "8-K",
+          "filing_date": "2020-06-08",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920070646/tm2021778-1_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-070646_tm2021778-1_8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-007251",
+          "filing_type": "8-K",
+          "filing_date": "2020-06-03",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020007251/ssb-20200603x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-007251_ssb-20200603x8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-065310",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-22",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920065310/tm2019844d6_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-065310_tm2019844d6_8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-064822",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920064822/tm2019844d5_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-064822_tm2019844d5_8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-062911",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-18",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920062911/tm2019844-3_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-062911_tm2019844-3_8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-058968",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-11",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920058968/tm2018796d2_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-058968_tm2018796d2_8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-057510",
+          "filing_type": "8-K",
+          "filing_date": "2020-05-06",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920057510/tm2018796-1_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-057510_tm2018796-1_8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-004989",
+          "filing_type": "10-Q",
+          "filing_date": "2020-05-04",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020004989/ssb-20200504x10q.htm",
+          "local_path": "data/filings/SSB/0001558370-20-004989_ssb-20200504x10q.htm"
+        },
+        {
+          "accession_number": "0001104659-20-052626",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920052626/tm2017960-1_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-052626_tm2017960-1_8k.htm"
+        },
+        {
+          "accession_number": "0001558370-20-004258",
+          "filing_type": "8-K",
+          "filing_date": "2020-04-24",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020004258/ssb-20200424x8k.htm",
+          "local_path": "data/filings/SSB/0001558370-20-004258_ssb-20200424x8k.htm"
+        },
+        {
+          "accession_number": "0001047469-20-001531",
+          "filing_type": "S-4",
+          "filing_date": "2020-03-16",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000104746920001531/a2240969zs-4.htm",
+          "local_path": "data/filings/SSB/0001047469-20-001531_a2240969zs-4.htm"
+        },
+        {
+          "accession_number": "0001558370-20-001131",
+          "filing_type": "10-K",
+          "filing_date": "2020-02-21",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000155837020001131/ssb-20191231x10ka6f6de.htm",
+          "local_path": "data/filings/SSB/0001558370-20-001131_ssb-20191231x10ka6f6de.htm"
+        },
+        {
+          "accession_number": "0001104659-20-008157",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-29",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920008157/tm205893-6_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-008157_tm205893-6_8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-006920",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920006920/tm205893-2_8k.htm",
+          "local_path": "data/filings/SSB/0001104659-20-006920_tm205893-2_8k.htm"
+        },
+        {
+          "accession_number": "0001104659-20-006918",
+          "filing_type": "8-K",
+          "filing_date": "2020-01-27",
+          "document_url": "https://www.sec.gov/Archives/edgar/data/764038/000110465920006918/tm205893-1_8kseq1.htm",
+          "local_path": "data/filings/SSB/0001104659-20-006918_tm205893-1_8kseq1.htm"
+        }
+      ],
+      "companyfacts_path": "data/filings/SSB/companyfacts.json",
+      "companyfacts_concept_count": 747
+    }
+  ]
+}

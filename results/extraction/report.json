@@ -1,0 +1,46 @@
+{
+  "total": 3,
+  "passed": 3,
+  "accuracy": 1.0,
+  "results": [
+    {
+      "eval_id": "xbrl-001",
+      "type": "xbrl",
+      "company": "COLB",
+      "concept": "NetIncomeLoss",
+      "accession_number": "0000887343-24-000089",
+      "expected_value": 348715000.0,
+      "verification_note": "Item 7 MD&A prose: \"Net income was $348.7 million for the year ended December 31, 2023\" \u2014 exact match at dollar precision (348,715,000 rounds to $348.7M).",
+      "status": "checked",
+      "actual_value": 348715000.0,
+      "relative_error": 0.0,
+      "passed": true
+    },
+    {
+      "eval_id": "xbrl-002",
+      "type": "xbrl",
+      "company": "COLB",
+      "concept": "Deposits",
+      "accession_number": "0000887343-24-000089",
+      "expected_value": 41607020000.0,
+      "verification_note": "Item 7 MD&A prose: \"Total deposits were $41.6 billion as of December 31, 2023\" \u2014 exact match (41,607,020,000 rounds to $41.6B).",
+      "status": "checked",
+      "actual_value": 41607020000.0,
+      "relative_error": 0.0,
+      "passed": true
+    },
+    {
+      "eval_id": "xbrl-003",
+      "type": "xbrl",
+      "company": "GBCI",
+      "concept": "NetIncomeLoss",
+      "accession_number": "0000868671-24-000042",
+      "expected_value": 222927000.0,
+      "verification_note": "Item 7 MD&A prose: \"The Company had net income for the current year of $223 million\" \u2014 exact match (222,927,000 rounds to $223M).",
+      "status": "checked",
+      "actual_value": 222927000.0,
+      "relative_error": 0.0,
+      "passed": true
+    }
+  ]
+}

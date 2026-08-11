@@ -1,0 +1,65 @@
+# Due-diligence RAG runtime configuration.
+#
+# Corpus centers on Columbia Banking System's real 2023 merger of equals
+# with Umpqua Holdings — a real, public, independently fact-checkable deal —
+# plus three standalone regional banks for corpus breadth and cross-company
+# comparison questions.
+companies:
+  - ticker: COLB
+    name: "Columbia Banking System"
+  - ticker: UMPQ
+    name: "Umpqua Holdings"
+    # Acquired by Columbia Banking System in 2023 and delisted — dropped out
+    # of SEC's current ticker->CIK lookup file, so the CIK (permanent,
+    # verified via SEC EDGAR filing history) is given explicitly.
+    cik: "1077771"
+  - ticker: GBCI
+    name: "Glacier Bancorp"
+  - ticker: WSBC
+    name: "WesBanco"
+  - ticker: SSB
+    name: "South State Corporation"
+
+filing_types: ["10-K", "10-Q", "8-K", "DEF 14A", "S-4"]
+
+date_range:
+  start: "2020-01-01"
+  end: "2024-12-31"
+
+edgar:
+  # SEC requires a real, honest User-Agent identifying who's making the
+  # request (name + contact email) — requests without one are often
+  # rejected with 403. No API key or registration needed otherwise.
+  user_agent: "DueDiligenceRAG-PortfolioProject flamingdj30@gmail.com"
+  data_base_url: "https://data.sec.gov"
+  archives_base_url: "https://www.sec.gov/Archives/edgar/data"
+  ticker_lookup_url: "https://www.sec.gov/files/company_tickers.json"
+  # SEC's documented cap is 10 req/sec; stay under it with margin rather
+  # than hugging the limit.
+  rate_limit_per_second: 8
+
+paths:
+  filings_dir: "data/filings"
+  manifest_path: "data/manifest.json"
+  eval_set_path: "data/eval_set.jsonl"
+  extraction_eval_set_path: "data/extraction_eval_set.jsonl"
+
+models:
+  embedding_model: "BAAI/bge-small-en-v1.5"
+  reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  # Gemini's free tier (verified: no card required) — used for both text
+  # generation and chart-image understanding, since it's multimodal.
+  # "-latest" alias, not a pinned version: a pinned "gemini-2.5-flash" was
+  # confirmed dead on this API key ("no longer available to new users",
+  # verified by an actual call) despite still appearing in the model list —
+  # the alias tracks whatever Google currently recommends instead of going
+  # stale the same way.
+  generation_model: "gemini-flash-latest"
+  vision_model: "gemini-flash-latest"
+
+opensearch:
+  index_name: "duediligence-chunks"
+  # "local" = self-hosted Docker OpenSearch, no auth. "aws" = AWS OpenSearch
+  # Service via IAM SigV4 (boto3 credentials).
+  backend: "local"
+  local_endpoint: "http://localhost:9200"

@@ -1,0 +1,40 @@
+{
+  "total_graded": 3,
+  "fully_correct": 3,
+  "fully_correct_rate": 1.0,
+  "per_criterion_correct": {
+    "chart_type_correct": 3,
+    "trend_direction_correct": 3,
+    "labels_correct": 3
+  },
+  "note": "Hand-graded against the source image, not an automated numeric-accuracy score \u2014 see each entry's grading_note in the eval set.",
+  "entries": [
+    {
+      "eval_id": "chart-001",
+      "company": "COLB",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/887343/000114036123017022/ny20006886x1_linechart01.jpg",
+      "chart_type_correct": true,
+      "trend_direction_correct": true,
+      "labels_correct": true,
+      "grading_note": "Line chart, Columbia Banking System vs. KBW Nasdaq Regional Banking Index, 12/31/17-12/31/22. Description correctly identifies both series, the 5-year period, the index-value axis starting at 100, and correctly describes the KBW index pulling ahead of COLB after 2020 through 2021-2022 \u2014 visually confirmed against the image."
+    },
+    {
+      "eval_id": "chart-002",
+      "company": "COLB",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/887343/000114036123017022/ny20006886x1_barchart01x1.jpg",
+      "chart_type_correct": true,
+      "trend_direction_correct": true,
+      "labels_correct": true,
+      "grading_note": "Dual-axis bar+line chart, CEO/Non-CEO compensation actually paid vs. TSR, FY2020-FY2022. Description correctly identifies both axes, all four series (CEO CAP, Non-CEO CAP, COLB TSR, KRX TSR peer benchmark), correctly characterizes compensation as generally increasing and COLB TSR as gradually declining \u2014 matches the exact bar/line values in the image without claiming false numeric precision."
+    },
+    {
+      "eval_id": "chart-003",
+      "company": "COLB",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/887343/000114036122010103/ny20002429x1_graphic01x1.jpg",
+      "chart_type_correct": true,
+      "trend_direction_correct": true,
+      "labels_correct": true,
+      "grading_note": "Chevron-style vesting-schedule timeline, RSUs vs. PSUs granted 2021. Description correctly identifies the timeline format, both award types, and correctly describes RSUs vesting incrementally over 2022-2024 (actual: 34%/33%/33%) vs. PSUs cliff-vesting in 2024 \u2014 exact match to the image."
+    }
+  ]
+}
