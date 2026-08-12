@@ -209,7 +209,7 @@ sections — exact matches. See `results/extraction/report.json`.
 | 1 Hierarchical narrative chunking | **Done** — 30,088 chunks (502 document, 1,442 section, 28,144 paragraph) |
 | 2 Table + XBRL structured extraction | **Done** — 8,740 tables, 10,416 XBRL facts, extraction eval 3/3 (100%) |
 | 3 Chart/image understanding | **Done** — 11/11 real charts described, qualitative eval 3/3 (100%) |
-| 4 Embeddings + baseline retrieval eval | **Done** — 38,552 chunks indexed; eval set awaiting user verification |
+| 4 Embeddings + baseline retrieval eval | **Done** — 38,483 chunks indexed; eval set awaiting user verification |
 | 5 Hybrid search, reranking, chunking ablation | **Done** — RRF + cross-encoder, recall@10 0.703 (+0.099); 3 ablations |
 | 6 Structured-vs-semantic query routing | **Done** — deterministic router, structured exactness 3/3 |
 | 7 Generation + groundedness evaluation | **Code done, no numbers** — Gemini daily quota exhausted; harness is resumable |
@@ -224,7 +224,7 @@ sections — exact matches. See `results/extraction/report.json`.
 
 ### Retrieval numbers (real, from `results/retrieval/report.json`)
 
-101 questions, 38,552 indexed chunks, **0 human-verified so far**:
+101 questions, 38,483 indexed chunks, **0 human-verified so far**:
 
 | retriever | recall@1 | recall@5 | recall@10 | MRR | nDCG@10 | ms |
 |---|---|---|---|---|---|---|

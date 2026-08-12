@@ -6,7 +6,7 @@ Umpqua Holdings — a real, public, independently fact-checkable transaction —
 plus three more regional banks (Glacier Bancorp, WesBanco, South State) for
 corpus breadth and cross-company comparison.
 
-**502 real filings. 38,552 indexed chunks. No synthetic data.**
+**502 real filings. 38,483 indexed chunks. No synthetic data.**
 
 Factual questions ("What was Columbia's net income for 2023?") route to an
 exact XBRL lookup and return a figure traceable to the accession number that
@@ -26,7 +26,7 @@ partial, or a lower bound, it says so.
 |---|---|---|
 | 502 filings, 5 companies, real accession numbers | `data/manifest.json` | `python scripts/fetch_filings.py` |
 | 30,088 narrative chunks (502 doc / 1,442 section / 28,144 paragraph) | `data/chunks/*.jsonl` | `python scripts/run_ingestion.py` |
-| 8,740 table chunks with exact cell values | `data/tables/*.jsonl` | same |
+| 8,671 table chunks with exact cell values (69 tables of contents excluded) | `data/tables/*.jsonl` | same |
 | 10,416 XBRL structured facts | `data/facts/*.jsonl` | same |
 | 11 chart descriptions (Gemini Vision) | `data/chunks_charts/*.jsonl` | `python scripts/run_chart_extraction.py` |
 | XBRL extraction accuracy **3/3 (100%)** | `results/extraction/report.json` | `python -m duediligence.eval.run_extraction_eval` |
@@ -34,32 +34,35 @@ partial, or a lower bound, it says so.
 | Retrieval: dense / BM25 / hybrid / +rerank | `results/retrieval/report.json` | `python -m duediligence.eval.run_retrieval_eval` |
 | Fusion-weight, chunk-level, rerank-depth ablations | `results/ablations/report.json` | `python scripts/run_ablations.py` |
 | Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
-| 161 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
+| 166 passing tests, ruff clean | — | `pytest -q && ruff check .` |
 
 ---
 
 ## Headline result: reranking, not embeddings
 
-Measured on 101 questions against the full 38,552-chunk index.
+Measured on 101 questions against the full 38,483-chunk index.
 
-| retriever | recall@1 | recall@5 | recall@10 | MRR | nDCG@10 | ms/query |
-|---|---|---|---|---|---|---|
-| dense (bge-small-en-v1.5) | 0.149 | 0.257 | 0.322 | 0.201 | 0.228 | 13 |
-| BM25 | 0.282 | 0.500 | 0.604 | 0.400 | 0.442 | 10 |
-| hybrid (RRF) | 0.218 | 0.465 | 0.663 | 0.360 | 0.425 | 28 |
-| **hybrid + cross-encoder rerank** | **0.302** | **0.579** | **0.703** | **0.435** | **0.493** | 337 |
+| retriever | recall@1 | recall@5 | recall@10 | MRR | nDCG@10 |
+|---|---|---|---|---|---|
+| dense (bge-small-en-v1.5) | 0.158 | 0.277 | 0.322 | 0.208 | 0.233 |
+| BM25 | 0.282 | 0.500 | 0.604 | 0.399 | 0.441 |
+| hybrid (RRF, dense weight 0.25) | 0.218 | 0.485 | 0.663 | 0.361 | 0.424 |
+| **hybrid + cross-encoder rerank** | **0.302** | **0.579** | **0.703** | **0.435** | **0.493** |
 
 **+0.099 recall@10 over the strongest single retriever**, at 27x the
-latency.
+latency. Latencies in `results/retrieval/report.json` are machine-dependent
+(this is an 8 GB laptop also running OpenSearch), so treat their ratios
+rather than their absolute values as meaningful.
 
 Three findings worth more than the headline number:
 
 **1. Dense retrieval lost badly to BM25 here — 0.322 vs 0.604 recall@10.**
 Not the expected result, and the breakdown says why: on serialized financial
-tables dense scores 0.17 against BM25's 0.42. A 384-dimensional semantic
+tables dense scores 0.20 against BM25's 0.42. A 384-dimensional semantic
 embedding of a table that reads `Balance at January 1, 2019 | 73249 | $ |
 1642246 | ...` carries little signal, while exact lexical matching handles
-it. Dense is only competitive on chart descriptions (0.80), which are the
+it. Dense is only competitive on chart descriptions (0.60 here, 1.00 for BM25), which are the
 one part of the corpus written as natural prose.
 
 **2. Naive RRF fusion made things worse, and the ablation shows the fix.**
@@ -81,7 +84,7 @@ pool gives the cross-encoder more chances to promote a distractor.
 ### Two caveats that belong next to those numbers
 
 - **The absolute values are a lower bound.** Relevance labels come from a
-  stratified sample of 163 chunks, not exhaustive judgments over all 38,552.
+  stratified sample of 163 chunks, not exhaustive judgments over all 38,483.
   Verified by inspection: for *"What is the date of the merger agreement
   between Columbia and Umpqua?"*, the dense retriever's top three hits all
   correctly state October 11, 2021 — and all scored as misses, because the
@@ -188,16 +191,25 @@ and the FastAPI service — the API was run against the live index and every
 endpoint exercised (`/healthz`, `/readyz`, `/route`, `/ask` on both routes,
 `/search` with filters, `/metrics`, and request validation).
 
-**Written but not executed:**
+**Container and Kubernetes deployment: verified by deploying it.**
+`results/deployment/k8s_verification.json` records the run. The image builds
+(2.13 GB) and runs as non-root `appuser`; the full stack was deployed to a
+kind cluster, the StatefulSet's PVC bound, and both API replicas plus
+OpenSearch reached Ready. The probe design was confirmed under real
+conditions rather than asserted: while OpenSearch was still starting,
+`/healthz` stayed 200 and `/readyz` returned 503, so pods were held out of
+the Service without being restarted — and both flipped to Ready the moment
+the index existed. Traffic through the Service reached `/healthz`,
+`/readyz`, `/route` and `/metrics`.
 
-- **The Docker image has never been built.** The Dockerfile is written, and
-  `docker compose config` validates, but Docker Hub pulls timed out
-  repeatedly in this environment, so the build was never completed. CI's
-  `docker-build` job will be the first real test of it.
-- **The Kubernetes manifests parse but were not schema-validated.** They
-  load as valid YAML with the expected kinds; `kubectl --dry-run=server`
-  needs a running cluster and none was available. CI's `manifests` job does
-  this against a kind cluster.
+One real limitation found this way: the HPA reports
+`FailedGetResourceMetric` on kind, which ships without `metrics-server`. The
+manifest is correct; `metrics-server` is a cluster prerequisite. The HPA was
+observed working in one respect — it immediately restored `minReplicas: 2`
+after a manual scale to 1.
+
+The in-cluster OpenSearch held an empty index, so this validated deployment,
+probes and routing — not retrieval quality in-cluster.
 
 **Not yet verified, and stated as such:**
 
@@ -218,10 +230,14 @@ endpoint exercised (`/healthz`, `/readyz`, `/route`, `/ask` on both routes,
 - **CI has not yet run on GitHub.** The workflow is written; this repository
   has no remote, so no green run exists to point at.
 
-**Known defect, measured and not yet fixed:** 53 of 8,740 table chunks
-(0.6%) are 10-Q tables of contents. The exclusion regex requires whitespace
-after the item number, which matches a 10-K's `Item 1A. Risk Factors` in one
-cell but never a 10-Q's, where the number sits alone as `Item 1.`.
+**Previously-known defect, now fixed:** 69 of 8,740 table chunks were 10-Q
+tables of contents. Two things were wrong — the exclusion regex required
+whitespace after the item number (never present in a 10-Q, where the cell is
+exactly `Item 1.`), and the threshold counted *cells*, which a table of
+contents dilutes to ~14% with its title and page-number cells. Measuring
+both populations across all 8,740 tables showed a row-based signal separates
+them cleanly: genuine tables sit at 0.000 even at the 99th percentile, every
+table of contents at 0.268+. The corpus is now 8,671 tables.
 
 ---
 

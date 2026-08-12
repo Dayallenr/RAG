@@ -1,0 +1,30 @@
+{
+  "verified_at": "2026-08-11T22:18:27",
+  "cluster": "kind (local), Kubernetes v1.36.1",
+  "manifests": [
+    "k8s/opensearch.yaml",
+    "k8s/api.yaml"
+  ],
+  "image": "duediligence-api:latest (2.13GB, built from docker/Dockerfile)",
+  "results": {
+    "resources_created": [
+      "Service/opensearch",
+      "StatefulSet/opensearch",
+      "Service/duediligence-api",
+      "Deployment/duediligence-api",
+      "HorizontalPodAutoscaler/duediligence-api"
+    ],
+    "statefulset_pvc_bound": "data-opensearch-0 -> 5Gi RWO, bound",
+    "pods_ready": "opensearch-0 1/1, duediligence-api x2 1/1",
+    "container_user": "appuser (non-root)",
+    "liveness_healthz": "200 throughout, including while OpenSearch was unready",
+    "readiness_readyz_before_index": "503 (index absent) - pods held out of Service, not restarted",
+    "readiness_readyz_after_index": "200 {'status':'ready','index':'duediligence-chunks'}",
+    "service_routing": "port-forward svc/duediligence-api -> /healthz, /readyz, /route, /metrics all served",
+    "service_endpoints": "10.244.0.5 10.244.0.8",
+    "metrics_exposed": "14 duediligence_* Prometheus series",
+    "route_endpoint_check": "structured / NetIncomeLoss / COLB / 2023"
+  },
+  "known_limitation": "The HorizontalPodAutoscaler reports FailedGetResourceMetric on this cluster: kind ships without metrics-server, which the HPA requires to read CPU utilization. The manifest is correct; metrics-server is a cluster prerequisite. The HPA was still observed working in one respect - it immediately restored replicas to minReplicas=2 after a manual scale to 1.",
+  "not_verified": "The kind OpenSearch held an empty index; the corpus was not re-indexed into it. This validated deployment, probes and routing, not retrieval quality in-cluster."
+}
