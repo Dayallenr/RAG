@@ -1,6 +1,19 @@
 # AWS OpenSearch Service domain for the one gated, real-cloud demo.
 #
 # ############################################################
+# #  STATUS: NEVER APPLIED.                                  #
+# #                                                          #
+# #  No AWS resource has ever been created from any file in  #
+# #  this directory. It passes `terraform fmt` and           #
+# #  `terraform validate` (both enforced in CI), which proves #
+# #  the configuration is well-formed and NOTHING MORE.      #
+# #                                                          #
+# #  Specifically unproven: that the domain comes up, that    #
+# #  AWS's managed OpenSearch build behaves like the pinned   #
+# #  2.19.1 container used everywhere else, and that the      #
+# #  SigV4 signing path in index/opensearch_client.py works   #
+# #  against a real domain — that code has never executed.    #
+# #                                                          #
 # #  THIS CONFIGURATION COSTS REAL MONEY WHEN APPLIED.       #
 # #  Do not run `terraform apply` without an explicit,       #
 # #  real-time go-ahead from the repository owner.           #

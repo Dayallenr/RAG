@@ -37,6 +37,32 @@ partial, or a lower bound, it says so.
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | 166 passing tests, ruff clean | — | `pytest -q && ruff check .` |
 
+### What is *not* on that list, and why that matters
+
+Everything above was produced by running the thing and is backed by a file
+you can open. Three parts of this project are **not** on that list, and the
+distinction is deliberate — reading code is not evidence that the code was
+ever executed:
+
+- **The AWS infrastructure has never been applied.** `terraform/` defines an
+  OpenSearch domain and, behind an opt-in flag, a VPC/EKS/ECR stack. It
+  passes `fmt` and `validate`, and CI enforces both — but validation proves
+  the configuration is well-formed and nothing more. No AWS resource has
+  ever been created from it, and the SigV4 signing path it would exercise in
+  `duediligence/index/opensearch_client.py` has never run against a real
+  domain.
+- **Answer generation has no measured numbers.** The pipeline runs end to
+  end and citation handling is unit-tested, but the Gemini free tier allows
+  20 requests/day and the quota was exhausted.
+  `results/generation/report.json` honestly records 0 answers.
+- **The evaluation set is not human-verified.** All 101 retrieval questions
+  were drafted by reading the corpus, and every entry carries
+  `"verified": false`. Each eval report prints the human-verified count so a
+  self-graded set cannot be mistaken for a curated one.
+
+If any of those three later become verified, they get an artifact in the
+table above and a line here — not a quiet edit to a sentence elsewhere.
+
 ---
 
 ## Headline result: reranking, not embeddings
@@ -177,8 +203,17 @@ trigger pod restarts. `/readyz` is readiness and does check it. `/metrics`
 exposes Prometheus counters, including the structured-vs-semantic split.
 
 Kubernetes manifests are in `k8s/` (OpenSearch as a StatefulSet, API as a
-Deployment with an HPA). Terraform for AWS OpenSearch Service is in
-`terraform/`.
+Deployment with an HPA) — **verified by deploying to a real cluster**, see
+`results/deployment/k8s_verification.json`.
+
+Terraform for AWS (OpenSearch domain; optionally VPC + EKS + ECR) is in
+`terraform/`. **It has never been applied — no AWS resource has ever been
+created from it.** It passes `fmt` and `validate` and CI enforces both, but
+that proves only that the configuration is well-formed. It does not prove
+the domain comes up, that the k-NN plugin behaves the same on AWS's managed
+build, or that the SigV4 signing path in `opensearch_client.py` works —
+that code has never run against a real domain. Treat it as reviewed
+infrastructure code, not as a deployment.
 
 ---
 

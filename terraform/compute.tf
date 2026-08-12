@@ -1,6 +1,12 @@
 # VPC, EKS cluster, and ECR registry to run the API on real AWS.
 #
 # ############################################################
+# #  STATUS: NEVER APPLIED. No EKS cluster, VPC, NAT gateway  #
+# #  or ECR repository has ever been created from this file.  #
+# #  It passes `fmt` and `validate` only — that proves the    #
+# #  HCL is well-formed, not that the stack provisions or     #
+# #  that the API runs on it.                                 #
+# #                                                           #
 # #  OPT-IN. Everything in this file is gated behind          #
 # #  `var.enable_compute`, which defaults to FALSE.           #
 # #                                                           #
