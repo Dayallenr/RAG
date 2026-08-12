@@ -60,12 +60,30 @@ _NUMERIC_CELL_RE = re.compile(r"^\(?\$?[\d,]+\.?\d*%?\)?$")
 # Reuses chunk_html's heading shape (not the compiled pattern itself, to
 # keep this module independent) to recognize "this row is a table-of-
 # contents entry," e.g. "ITEM 1A. RISK FACTORS".
-_ITEM_HEADING_CELL_RE = re.compile(r"^ITEM\s+\d+(?:\.\d+|[A-Z])?\.?\s", re.IGNORECASE)
+#
+# The trailing `(?:\s|$)` matters and was a real bug. 10-K tables of
+# contents put the whole heading in one cell ("Item 1A. Risk Factors"), so a
+# required trailing space matched. 10-Q tables of contents put the number in
+# its own column, making the cell exactly "Item 1." with nothing after it —
+# the space never matched, and 53 of 8,740 table chunks were 10-Q tables of
+# contents indexed as though they were financial tables.
+_ITEM_HEADING_CELL_RE = re.compile(r"^ITEM\s+\d+(?:\.\d+|[A-Z])?\.?(?:\s|$)", re.IGNORECASE)
 
 _MIN_ROWS = 3
 _MIN_COLS = 2
 _MIN_NUMERIC_FRACTION = 0.15
-_MAX_ITEM_HEADING_FRACTION = 0.3
+
+# Fraction of *rows* containing an Item heading, not fraction of cells.
+#
+# Measured, not guessed. The original cell-based threshold could not
+# separate the two populations: in a 10-Q table of contents the "Item N."
+# cells are only ~14% of all cells (the titles and page numbers dominate),
+# well under any threshold that genuine financial tables would survive.
+# Counting rows instead separates them cleanly — across all 8,740 extracted
+# tables, genuine ones sit at 0.000 even at the 99th percentile, while every
+# table of contents is at 0.268 or above. 0.25 sits in that gap and catches
+# 69 tables of contents while rejecting no genuine table.
+_MAX_ITEM_HEADING_ROW_FRACTION = 0.25
 
 
 @dataclass(frozen=True)
@@ -110,11 +128,13 @@ def _is_data_table(rows: list[list[str]]) -> bool:
     if numeric / len(all_cells) < _MIN_NUMERIC_FRACTION:
         return False
 
-    # Table-of-contents rows are mostly "Item N. Title" cells with a page
-    # number — passes the numeric check above, so it needs this separate,
-    # explicit exclusion.
-    item_headings = sum(1 for c in all_cells if _ITEM_HEADING_CELL_RE.match(c))
-    if item_headings / len(all_cells) > _MAX_ITEM_HEADING_FRACTION:
+    # A table of contents passes the numeric check above (page numbers are
+    # "numeric"), so it needs this separate, explicit exclusion. Scored per
+    # row — a row counts once if any of its cells is an Item heading —
+    # because the per-cell version is diluted to nothing by the title and
+    # page-number cells that make up most of a table of contents.
+    heading_rows = sum(1 for row in rows if any(_ITEM_HEADING_CELL_RE.match(c) for c in row))
+    if heading_rows / len(rows) > _MAX_ITEM_HEADING_ROW_FRACTION:
         return False
 
     return True
