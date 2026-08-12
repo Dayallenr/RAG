@@ -1,0 +1,14 @@
+{
+  "questions_in_eval_set": 101,
+  "answers_generated": 0,
+  "coverage": 0.0,
+  "structured_route": 0,
+  "semantic_route": 0,
+  "refusals": 0,
+  "refusal_rate": null,
+  "answers_with_valid_citations": 0,
+  "citation_coverage": null,
+  "judged_answers": 0,
+  "mean_claim_support_rate": null,
+  "fully_supported_answers": 0
+}

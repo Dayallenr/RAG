@@ -1,0 +1,104 @@
+# OpenSearch as a StatefulSet, not a Deployment.
+#
+# A search index is state. A Deployment gives pods random names and a shared
+# PVC template is not available, so a restarted pod could come back with a
+# different identity and an empty volume — meaning a rebuilt index and, for
+# this project, roughly ten minutes of embedding to repopulate. A
+# StatefulSet gives each pod a stable name and its own
+# volumeClaimTemplate-provisioned disk that survives rescheduling.
+#
+# Single replica, matching the local Docker setup: this is a portfolio
+# deployment, and a real multi-node cluster would need replica shard
+# configuration that a one-node index (number_of_replicas: 0) deliberately
+# does not use.
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch
+  labels:
+    app: opensearch
+spec:
+  # Headless: StatefulSet pods get stable DNS (opensearch-0.opensearch)
+  # rather than being load balanced, which is what cluster membership needs.
+  clusterIP: None
+  selector:
+    app: opensearch
+  ports:
+    - name: http
+      port: 9200
+      targetPort: 9200
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opensearch
+spec:
+  serviceName: opensearch
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch
+  template:
+    metadata:
+      labels:
+        app: opensearch
+    spec:
+      # OpenSearch refuses to start if vm.max_map_count is below 262144, and
+      # the default on many nodes is lower. This is the documented remedy;
+      # it needs privileged access, which is why it is an init container
+      # that exits rather than something granted to OpenSearch itself.
+      initContainers:
+        - name: sysctl
+          image: busybox:1.36
+          command: ["sh", "-c", "sysctl -w vm.max_map_count=262144"]
+          securityContext:
+            privileged: true
+      containers:
+        - name: opensearch
+          image: opensearchproject/opensearch:2.19.1
+          env:
+            - name: discovery.type
+              value: single-node
+            - name: DISABLE_SECURITY_PLUGIN
+              value: "true"
+            - name: DISABLE_INSTALL_DEMO_CONFIG
+              value: "true"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          ports:
+            - name: http
+              containerPort: 9200
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              # Heap is 512m; the limit leaves headroom for the JVM's
+              # off-heap usage (Lucene mmaps index segments outside the
+              # heap). Setting the limit equal to the heap would OOM-kill it
+              # under normal operation.
+              memory: "2Gi"
+              cpu: "2"
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/opensearch/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi

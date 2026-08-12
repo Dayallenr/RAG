@@ -50,11 +50,25 @@ BANK_CONCEPTS: tuple[str, ...] = (
 
 
 def _fiscal_period(fact: dict) -> str:
+    """A human-readable period label — *not* a unique key.
+
+    SEC assigns a normalized ``frame`` (e.g. "CY2023", "CY2023Q4I") to some
+    facts but not all. The fallback built from ``fy``/``fp`` is genuinely
+    ambiguous and must not be treated as identifying: those two fields
+    describe **the filing the fact was reported in**, not the period the
+    fact covers. Verified against real data — Columbia's FY2023 10-K
+    (accession 0000887343-24-000089) reports three NetIncomeLoss entries,
+    for 2021, 2022 and 2023, and all three carry ``fy=2023, fp=FY``:
+
+        start 2021-01-01 end 2021-12-31 val 420,300,000  frame CY2021
+        start 2022-01-01 end 2022-12-31 val 336,752,000  (no frame)
+        start 2023-01-01 end 2023-12-31 val 348,715,000  (no frame)
+
+    Only ``start``/``end`` separate them, which is why those are captured on
+    every fact and are what ``route/structured_lookup.py`` selects on.
+    """
     if "frame" in fact:
         return fact["frame"]
-    # SEC doesn't always assign a normalized "frame" label (seen for some
-    # non-calendar-aligned or amended periods) — fall back to an equivalent
-    # built from fy/fp rather than dropping the fact.
     return f"FY{fact.get('fy', '?')}{fact.get('fp', '')}"
 
 
@@ -89,6 +103,8 @@ def extract_structured_facts(
                         period_type="duration" if "start" in entry else "instant",
                         accession_number=entry["accn"],
                         source_url=_filing_index_url(cik, entry["accn"]),
+                        period_start=entry.get("start"),
+                        period_end=entry.get("end"),
                     )
                 )
     return results

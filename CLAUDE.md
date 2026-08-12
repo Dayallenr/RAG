@@ -81,6 +81,7 @@ hybrid search — a real, testable routing decision, not an LLM judgment call.
 | Gemini model | `gemini-flash-latest`, **not** a pinned version — `gemini-2.5-flash` was confirmed dead ("no longer available to new users") on this API key despite still appearing in the model list. The `-latest` alias tracks whatever Google currently recommends. |
 | Gemini free tier quota | **20 requests/day** for the vision-capable flash model on this key (confirmed by an actual 429, not documentation) — not just a per-minute limit. Any script calling Gemini must be idempotent/resumable (see `scripts/run_chart_extraction.py`'s `skip_urls` pattern) or you'll burn the day's quota re-doing finished work. |
 | AWS | User has ~$100 in credits, same budget pool as PathFinder. Zero-spend by default; real AWS OpenSearch Service only for one short, gated, explicitly-approved demo late in the project. |
+| Local OpenSearch | `docker compose -f docker/docker-compose.yml up -d` → `http://localhost:9200`. Pinned 2.19.1, security plugin off, k-NN plugin confirmed present. Data lives in a named Docker volume and **survives container restarts** — a rebuilt index is not lost when Docker Desktop stops. |
 
 Always run `ruff check .` and `pytest` before claiming work is done.
 
@@ -130,6 +131,69 @@ Gemini Vision descriptions; 3 were personally viewed and verified against
 the source image (100% accurate on chart type / trend direction / labels —
 see `data/chart_eval_set.jsonl` for the grading notes).
 
+**Section and document chunks were placeholders, and it mattered.** Phase
+1 deliberately left document/section chunks holding only their heading
+("Item 1A. Risk Factors"), deferring enrichment to Phase 4 — all 1,442
+section chunks were verified to be heading-only. That is a false positive
+factory: a chunk whose entire text is "Item 1A. Risk Factors" is a
+near-perfect match for any risk question while containing nothing that
+answers one, and it was observed as the top-scoring dense hit for "What are
+the risks of the merger with Umpqua?" on a 500-chunk test index. The
+original plan (LLM-generated summaries) is arithmetically impossible here —
+1,944 chunks against a verified 20-requests/day Gemini quota is 97 days —
+so `index/enrich.py` rolls a section's own opening paragraphs up into it
+instead: free, deterministic, CI-reproducible, and it embeds the filing's
+real language rather than a paraphrase. Sections that still come out empty
+(e.g. a 10-Q "Item 3. Defaults Upon Senior Securities" whose body is
+"None.") are flagged and **not indexed at all**. Enrichment never
+recomputes `chunk_id` — ids are content-addressed over text, so
+regenerating one would silently break every `parent_chunk_id` pointing at
+it.
+
+**Embedding throughput is CPU-contention-sensitive, and `ps` lies about
+it.** Measured on this Mac: MPS embeds 256 chunks in a rock-steady 2.1s
+across 15 consecutive iterations (zero drift); the same work on CPU takes
+~11s. Two indexing runs appeared to "degrade" from ~90/s to ~20/s, and both
+degradation windows coincided exactly with other corpus-loading Python
+scripts being run alongside them — the degraded batches cost ~12s, i.e.
+CPU-only speed. There is no leak or accumulating bug; the pipeline just
+needs the machine to itself. Diagnosis was initially misdirected by `ps`
+showing the process at 2.7% CPU, which looked like blocking on OpenSearch —
+**MPS work executes on the GPU and does not register as process CPU time**,
+so low CPU% does not mean idle. `scripts/build_index.py` now logs embed and
+bulk seconds separately per batch so this is readable straight off the log.
+
+**10-Q tables of contents leak into the table corpus**: 53 of 8,740 table
+chunks (0.6%, mostly SSB/COLB 10-Qs) are TOC tables. `chunk_tables.py`'s
+`_ITEM_HEADING_CELL_RE` requires whitespace *after* the item number, which
+matches a 10-K's "Item 1A. Risk Factors" in one cell but never a 10-Q's,
+where the number sits alone in its own column as exactly "Item 1.". Known,
+measured, not yet fixed — fixing it requires re-running ingestion and
+re-indexing.
+
+**SEC's `fy`/`fp` fields identify the filing, not the fact — this produced
+wrong answers.** Columbia's FY2023 10-K reports 2021, 2022 and 2023 net
+income as prior-year comparatives, and all three carry `fy=2023, fp=FY`.
+`chunk_xbrl.py`'s period label fell back to `FY{fy}{fp}` when SEC assigned
+no normalized `frame`, so all three were indistinguishable: two facts
+collided on an identical content-addressed `fact_id`, and a lookup keyed on
+the label returned **$336.8M** (the 2022 comparative) for a 2023 question
+against a verified $348.7M. Glacier was worse — six values shared the label,
+including individual quarters, returning $303.2M against a verified $222.9M.
+Fixed by capturing `period_start`/`period_end` on every `StructuredFact`
+(and including them in the fingerprint) and selecting on actual dates:
+durations must start and end inside the year and span 350–380 days;
+instants must fall on the year end.
+
+**A later filing is not automatically a better source.** The same 2023
+period also appears as a rounded `349,000,000` in a 2026 filing — which is
+the value SEC promotes into its normalized `CY2023` frame. Preferring the
+most recent filing therefore fails the hand-verified ground truth.
+`structured_lookup.py` prefers the *earliest* accession (the original
+as-filed figure) and surfaces the accession number so a user can see which
+filing a number came from. Stated trade-off: a genuine restatement would
+also be filed later, and this rule returns the superseded original.
+
 **XBRL extraction is verified accurate**: 3 extracted facts (COLB net
 income $348.7M, COLB deposits $41.6B, GBCI net income $223M, all FY2023)
 were cross-checked against independent prose in the *same filings*' MD&A
@@ -145,52 +209,116 @@ sections — exact matches. See `results/extraction/report.json`.
 | 1 Hierarchical narrative chunking | **Done** — 30,088 chunks (502 document, 1,442 section, 28,144 paragraph) |
 | 2 Table + XBRL structured extraction | **Done** — 8,740 tables, 10,416 XBRL facts, extraction eval 3/3 (100%) |
 | 3 Chart/image understanding | **Done** — 11/11 real charts described, qualitative eval 3/3 (100%) |
-| 4 Embeddings + baseline retrieval eval | **Not started ← next** |
-| 5 Hybrid search, reranking, chunking ablation | Not started |
-| 6 Structured-vs-semantic query routing | Not started |
-| 7 Generation + groundedness evaluation | Not started |
-| 8 FastAPI serving layer | Not started |
-| 9 Docker + local OpenSearch | Not started |
-| 10 Kubernetes + observability | Not started |
-| 11 CI/CD (must verify a real green run on GitHub, not just local validation) | Not started |
-| 12 Terraform + real AWS OpenSearch demo (money-gated) | Not started |
-| 13 README + claim-to-artifact mapping | Not started |
+| 4 Embeddings + baseline retrieval eval | **Done** — 38,552 chunks indexed; eval set awaiting user verification |
+| 5 Hybrid search, reranking, chunking ablation | **Done** — RRF + cross-encoder, recall@10 0.703 (+0.099); 3 ablations |
+| 6 Structured-vs-semantic query routing | **Done** — deterministic router, structured exactness 3/3 |
+| 7 Generation + groundedness evaluation | **Code done, no numbers** — Gemini daily quota exhausted; harness is resumable |
+| 8 FastAPI serving layer | **Done** — /ask, /search, /route, /healthz, /readyz, /metrics |
+| 9 Docker + local OpenSearch | **Done** — compose (OpenSearch + api profile), two-stage Dockerfile |
+| 10 Kubernetes + observability | **Done** — StatefulSet/Deployment/HPA + Prometheus metrics |
+| 11 CI/CD | **Workflow written, never run on GitHub** — no remote exists yet |
+| 12 Terraform + real AWS OpenSearch demo (money-gated) | **Written + validated, never applied** — see terraform/README.md |
+| 13 README + claim-to-artifact mapping | **Done** — README.md |
 
-45 tests pass; `ruff check` clean.
+161 tests pass; `ruff check` clean.
+
+### Retrieval numbers (real, from `results/retrieval/report.json`)
+
+101 questions, 38,552 indexed chunks, **0 human-verified so far**:
+
+| retriever | recall@1 | recall@5 | recall@10 | MRR | nDCG@10 | ms |
+|---|---|---|---|---|---|---|
+| dense (bge-small-en-v1.5 k-NN) | 0.149 | 0.257 | 0.322 | 0.201 | 0.228 | 13 |
+| BM25 | 0.282 | 0.500 | 0.604 | 0.400 | 0.442 | 10 |
+| hybrid (RRF, dense weight 0.25) | 0.218 | 0.465 | 0.663 | 0.360 | 0.425 | 28 |
+| **hybrid + cross-encoder rerank** | **0.302** | **0.579** | **0.703** | **0.435** | **0.493** | 337 |
+
+**Ablations** (`results/ablations/report.json`):
+- *Fusion weight*: equal weighting is harmful (recall@1 0.183 vs BM25's
+  0.282) — the weaker dense retriever pollutes the top ranks. 0.25 is best
+  for recall@10 (0.663). **Tuned on the same eval set it is scored against,
+  so that figure is optimistically biased.**
+- *Chunk levels*: on the 35 paragraph-ground-truth questions, searching
+  paragraphs only is best (0.757); adding tables drops it to 0.729, adding
+  document+section to 0.714. The hierarchy helps as context, hurts as a
+  search pool. An earlier version of this ablation was invalid — it scored
+  table-ground-truth queries against configs forbidden from returning
+  tables, a measurement artifact, since fixed.
+- *Rerank depth*: 50 candidates optimal; **100 is worse than 50** (0.703 vs
+  0.713) at 70% more latency.
+
+**BM25 beats dense on every metric, by roughly 2x.** Recall@10 by chunk
+type shows where: tables dense 0.18 / BM25 0.43, paragraphs 0.39 / 0.74,
+chart descriptions 0.80 / 1.00. Serialized financial tables are numeric
+soup — bad for a 384-dim semantic embedding, fine for exact lexical
+matching — while chart descriptions are natural prose and the one place
+dense is competitive. Head-to-head: BM25-only wins 41 queries, dense-only
+wins 4, both miss 23.
+
+**Two confounds that must be stated with these numbers, not buried:**
+
+1. **The questions were written by reading the chunks**, so they reuse the
+   chunks' vocabulary — which structurally favors lexical matching. A user
+   asking in their own words would not hand BM25 that advantage. The gap is
+   real but is probably overstated by this eval set.
+2. **Labels are incomplete, and it materially depresses both scores.**
+   Spot-checked: for "What is the date of the merger agreement between
+   Columbia and Umpqua?", dense's top three hits all correctly state
+   October 11, 2021 and all scored as misses, because the label points at
+   an exhibit-index table that answers the question *worse* than they do.
+   Not every miss is like this — "How did PPP loans affect Columbia's
+   deposit balances in 2020?" is a genuine failure for both retrievers —
+   but enough are that these figures are a floor, not an estimate.
+
+Both are why Phase 5's headline must be the **delta** on this fixed eval
+set, not the absolute level.
 
 ---
 
-## Immediate next step: Phase 4
+## Remaining work (all phases built; these are the honest gaps)
 
-Two things need building before the retrieval eval can run at all, then the
-eval itself:
+1. **Eval-set verification — needs the user.** All 101 retrieval entries and
+   all 36 routing entries are `verified: false`. See the section below.
+2. **Generation numbers.** `python -m duediligence.eval.run_groundedness_eval
+   --limit 15` — resumable, skips completed questions, 20 Gemini
+   requests/day. `results/generation/report.json` currently records 0
+   answers because the quota was exhausted on the day it was built.
+3. **A real green CI run.** `.github/workflows/ci.yml` exists but this repo
+   has no remote. Create one, push, and confirm the run passes — CLAUDE.md's
+   standing rule is that CI counts only when verified green on GitHub, not
+   locally.
+4. **Fix the 10-Q table-of-contents leak** (53/8,740 table chunks). Needs an
+   ingestion re-run and a re-index afterwards.
+5. **Terraform apply** — money-gated, never without explicit real-time
+   go-ahead. `terraform/README.md` has the cost breakdown.
 
-1. **Local OpenSearch isn't running yet.** Nothing has stood up even a dev
-   instance — Phase 4 needs somewhere to index into. Bring up OpenSearch via
-   Docker (`docker run -p 9200:9200 -e "discovery.type=single-node" ...
-   opensearchproject/opensearch:latest`, or write the `docker-compose.yml`
-   Phase 9 was going to build anyway — pulling that piece forward makes
-   sense) before writing the indexing/embedding pipeline.
-2. **Embedding pipeline**: embed the ~39k text chunks (30,088 narrative +
-   8,740 tables + 11 chart descriptions — XBRL facts stay structured, never
-   embedded, per the routing design) with `BAAI/bge-small-en-v1.5`
-   (self-hosted, `sentence-transformers`, already in `requirements.txt`),
-   index into OpenSearch with k-NN enabled.
-3. **Retrieval metrics**: implement recall@k, MRR, nDCG
-   (`duediligence/eval/retrieval_metrics.py`, doesn't exist yet).
-4. **Eval-set curation — needs the user, not just Claude Code.** Hand-curate
-   ~100+ `(question, relevant_chunk_ids)` pairs by reading the actual
-   filings. This is the labor-intensive, non-automatable part — the same
-   discipline as PathFinder's KITTI eval set: a self-graded eval set is
-   worthless, and the user needs to be able to defend specific examples in
-   an interview. Suggested split from earlier in this project: Claude drafts
-   candidate questions + identifies chunk_ids, user verifies/corrects a
-   sample rather than writing all ~100 from scratch — but confirm this
-   approach with the user again if it wasn't already settled.
-5. Run the eval, produce `results/retrieval/report.json` with a real
-   (probably mediocre) baseline number — that's the point, Phase 5's hybrid
-   search + reranking is what improves it, and the delta is the headline
-   finding (this project's version of PathFinder's "49 mAP points" result).
+## Previous next step: finish Phase 4, then Phase 5
+
+**Blocked on the user (can't be faked):** verify a sample of the eval set.
+`data/eval_verification_sample.md` has 20 of the 101 questions laid out with
+their labeled chunk and what each retriever actually returned — weighted
+toward the cases where the label looks wrong (8 both-miss, 6 split, 6
+both-hit). The workflow: read each, then edit `data/eval_set.jsonl` to set
+`"verified": true`, correct `relevant_chunk_ids`, and fill
+`verification_note`. Questions that turn out ambiguous or unanswerable
+should get `"relevant_chunk_ids": []`, which drops them from scoring rather
+than counting as permanent misses. Re-run
+`python -m duediligence.eval.run_retrieval_eval` afterwards — the report
+prints the human-verified count, so a self-graded eval set cannot quietly
+be presented as a curated one.
+
+Then Phase 5: hybrid BM25+dense fusion, cross-encoder reranking, and the
+chunking ablation (`--chunk-types` on `build_index.py` already supports
+indexing levels independently for it). The headline is the **delta** on the
+fixed eval set, not the absolute level — see the two confounds recorded
+above.
+
+**Watch the memory ceiling in Phase 5.** The reranker
+(`cross-encoder/ms-marco-MiniLM-L-6-v2`) is a bigger model than bge-small,
+and this is an 8 GB machine that already swaps — see the embedding-
+throughput finding above. Run indexing/eval with nothing else heavy on the
+box, and reach for `build_index.py --resume --batch-size 64` rather than
+re-running from scratch.
 
 ---
 
@@ -207,12 +335,19 @@ duediligence/
                     chunk_charts.py (Gemini Vision chart understanding)
   generate/         gemini_client.py (shared client, text + vision)
   eval/             run_extraction_eval.py · run_chart_eval.py
-                    (retrieval_metrics.py, run_retrieval_eval.py — Phase 4, not built yet)
-  index/            (Phase 4 — not built yet: embed.py, opensearch_client.py, hybrid_search.py, rerank.py)
+                    retrieval_metrics.py (recall@k, MRR, nDCG, MAP, hit-rate)
+                    run_retrieval_eval.py (dense + BM25 baselines)
+  index/            embed.py (bge-small-en-v1.5, query-prefix + normalization)
+                    enrich.py (index-time rollup of placeholder doc/section chunks)
+                    opensearch_client.py (two backends, mapping, k-NN + BM25)
+                    (hybrid_search.py, rerank.py — Phase 5, not built yet)
   route/            (Phase 6 — not built yet: query_router.py)
   api/              (Phase 8 — not built yet: FastAPI app)
 config/config.yaml  companies, filing types, date range, EDGAR settings, model names
+docker/             docker-compose.yml (local OpenSearch 2.19.1, k-NN enabled)
 scripts/            fetch_filings.py · run_ingestion.py · run_chart_extraction.py
+                    build_index.py (embed + index the corpus)
+                    sample_eval_candidates.py · draft_eval_set.py (eval-set curation)
 data/
   manifest.json         real provenance: accession numbers per filing
   filings/<TICKER>/     downloaded HTML + companyfacts.json (large, gitignored)
@@ -222,6 +357,8 @@ data/
   chunks_charts/<TICKER>.jsonl chart description chunks
   extraction_eval_set.jsonl    hand-verified XBRL ground truth (3 entries)
   chart_eval_set.jsonl         hand-graded chart description rubric (3 entries)
+  eval_candidates.jsonl        163 stratified sampled chunks the eval questions were written from
+  eval_set.jsonl               101 retrieval (question, relevant_chunk_ids) pairs
 results/
   extraction/report.json   3/3 (100%)
   charts/report.json       3/3 (100%)

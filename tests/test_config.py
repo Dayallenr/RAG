@@ -35,3 +35,20 @@ def test_edgar_and_paths_and_models_sections_load():
     assert "flamingdj30@gmail.com" in config.edgar.user_agent
     assert config.paths.manifest_path == "data/manifest.json"
     assert config.models.generation_model == "gemini-flash-latest"
+
+
+class TestEnvironmentOverrides:
+    """The YAML endpoint is a developer default; every deployed context
+    (Docker network, Kubernetes service DNS, AWS) needs a different one."""
+
+    def test_endpoint_is_overridable_by_env(self, monkeypatch):
+        monkeypatch.setenv("DUEDILIGENCE_OPENSEARCH_ENDPOINT", "http://opensearch:9200")
+        assert load_config().opensearch.local_endpoint == "http://opensearch:9200"
+
+    def test_backend_is_overridable_by_env(self, monkeypatch):
+        monkeypatch.setenv("DUEDILIGENCE_OPENSEARCH_BACKEND", "aws")
+        assert load_config().opensearch.backend == "aws"
+
+    def test_yaml_value_is_used_when_env_is_absent(self, monkeypatch):
+        monkeypatch.delenv("DUEDILIGENCE_OPENSEARCH_ENDPOINT", raising=False)
+        assert load_config().opensearch.local_endpoint == "http://localhost:9200"

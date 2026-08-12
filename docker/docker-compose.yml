@@ -1,0 +1,92 @@
+# Local OpenSearch for development, retrieval eval, and CI.
+#
+# One engine serving both halves of the hybrid search this project is built
+# around: BM25 lexical scoring and k-NN dense vector search over the same
+# documents, so a hybrid query is one request against one index rather than
+# a fan-out to two systems that then need score fusion across a network hop.
+#
+# Security plugin is disabled deliberately: this listens on localhost only,
+# holds nothing but public SEC filing text, and enabling it would mean
+# either committing a password or adding a secret-management step to every
+# `pytest` run. The AWS OpenSearch Service deployment (Phase 12) is the
+# opposite — IAM SigV4, no anonymous access — which is why
+# `duediligence/index/opensearch_client.py` has two backends rather than
+# assuming this one.
+#
+# Pinned version, not `:latest`: CI has to reproduce the retrieval numbers
+# this project reports, and a silent major-version bump could change BM25
+# defaults or k-NN engine behavior underneath them.
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.19.1
+    container_name: duediligence-opensearch
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      # 512m, not the 1g default-ish figure that seems harmless: this is a
+      # 8 GB Mac that also has to hold a torch process with an embedding
+      # model resident while indexing. At 1g the machine swapped (3.4 GB of
+      # swap in use, measured), and the swapping showed up as sporadic
+      # multi-minute stalls in the embedding loop that were reproducible
+      # nowhere else. 39k documents of 384-dim vectors fit fine in 512m.
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    healthcheck:
+      # `wait_for_status=yellow` means yellow-or-better, not "expect yellow".
+      # This cluster does report green (its own system indices auto-expand
+      # replicas to fit one node), but any index created with the default
+      # replica count would sit yellow forever with nowhere to place the
+      # replica — so the healthcheck must not demand green. The project's
+      # own index sidesteps this by setting number_of_replicas: 0 explicitly
+      # (see duediligence/index/opensearch_client.py).
+      test:
+        ["CMD-SHELL", "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+  # The serving layer. Started only with `--profile api`, because the
+  # retrieval eval and indexing scripts need OpenSearch alone and pulling a
+  # torch-sized image to run them would be pure overhead:
+  #     docker compose -f docker/docker-compose.yml --profile api up -d
+  api:
+    profiles: ["api"]
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: duediligence-api
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    environment:
+      # Inside the compose network OpenSearch is reachable by service name,
+      # not localhost — localhost in a container is the container itself.
+      - DUEDILIGENCE_OPENSEARCH_ENDPOINT=http://opensearch:9200
+      # Generation is off by default here: the Gemini free tier allows 20
+      # requests/day, and a demo that burns it on startup smoke-tests is
+      # worse than one that serves retrieval and exact lookup.
+      - ENABLE_GENERATION=${ENABLE_GENERATION:-false}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist downloaded model weights so a container restart does not
+      # re-download ~150MB from the HuggingFace Hub.
+      - model-cache:/app/.cache/huggingface
+
+volumes:
+  opensearch-data:
+  model-cache:

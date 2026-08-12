@@ -1,0 +1,157 @@
+{
+  "eval_set": "data/eval_set.jsonl",
+  "queries": 101,
+  "human_verified_queries": 0,
+  "baselines": {
+    "bm25": {
+      "recall@1": 0.2822,
+      "recall@5": 0.5,
+      "recall@10": 0.604,
+      "mrr": 0.3995,
+      "ndcg@10": 0.4415
+    },
+    "dense": {
+      "recall@1": 0.1485,
+      "recall@5": 0.2574,
+      "recall@10": 0.3218,
+      "mrr": 0.2007,
+      "ndcg@10": 0.2278
+    }
+  },
+  "ablation_a_fusion_weight": [
+    {
+      "dense_weight": 0.0,
+      "metrics": {
+        "recall@1": 0.2822,
+        "recall@5": 0.5,
+        "recall@10": 0.604,
+        "mrr": 0.3995,
+        "ndcg@10": 0.4415
+      }
+    },
+    {
+      "dense_weight": 0.25,
+      "metrics": {
+        "recall@1": 0.2178,
+        "recall@5": 0.4653,
+        "recall@10": 0.6634,
+        "mrr": 0.3604,
+        "ndcg@10": 0.4249
+      }
+    },
+    {
+      "dense_weight": 0.5,
+      "metrics": {
+        "recall@1": 0.2178,
+        "recall@5": 0.4554,
+        "recall@10": 0.6139,
+        "mrr": 0.3395,
+        "ndcg@10": 0.3924
+      }
+    },
+    {
+      "dense_weight": 0.75,
+      "metrics": {
+        "recall@1": 0.2079,
+        "recall@5": 0.4703,
+        "recall@10": 0.6238,
+        "mrr": 0.3303,
+        "ndcg@10": 0.3878
+      }
+    },
+    {
+      "dense_weight": 1.0,
+      "metrics": {
+        "recall@1": 0.1832,
+        "recall@5": 0.4505,
+        "recall@10": 0.6337,
+        "mrr": 0.3128,
+        "ndcg@10": 0.3799
+      }
+    }
+  ],
+  "ablation_b_chunk_levels": [
+    {
+      "searchable_levels": "all_levels",
+      "queries": 35,
+      "scored_on": "queries whose ground-truth chunk is a paragraph (reachable in every config)",
+      "metrics": {
+        "recall@1": 0.3,
+        "recall@5": 0.5571,
+        "recall@10": 0.7143,
+        "mrr": 0.4444,
+        "ndcg@10": 0.4972
+      }
+    },
+    {
+      "searchable_levels": "paragraph_table_only",
+      "queries": 35,
+      "scored_on": "queries whose ground-truth chunk is a paragraph (reachable in every config)",
+      "metrics": {
+        "recall@1": 0.3286,
+        "recall@5": 0.5571,
+        "recall@10": 0.7286,
+        "mrr": 0.4679,
+        "ndcg@10": 0.5172
+      }
+    },
+    {
+      "searchable_levels": "paragraph_only",
+      "queries": 35,
+      "scored_on": "queries whose ground-truth chunk is a paragraph (reachable in every config)",
+      "metrics": {
+        "recall@1": 0.3286,
+        "recall@5": 0.6143,
+        "recall@10": 0.7571,
+        "mrr": 0.4872,
+        "ndcg@10": 0.5407
+      }
+    }
+  ],
+  "ablation_c_rerank_depth": [
+    {
+      "candidate_k": 10,
+      "metrics": {
+        "recall@1": 0.2822,
+        "recall@5": 0.5396,
+        "recall@10": 0.599,
+        "mrr": 0.3905,
+        "ndcg@10": 0.4391
+      },
+      "latency_ms_mean": 100.4
+    },
+    {
+      "candidate_k": 25,
+      "metrics": {
+        "recall@1": 0.2921,
+        "recall@5": 0.5594,
+        "recall@10": 0.6931,
+        "mrr": 0.4202,
+        "ndcg@10": 0.4823
+      },
+      "latency_ms_mean": 224.4
+    },
+    {
+      "candidate_k": 50,
+      "metrics": {
+        "recall@1": 0.3119,
+        "recall@5": 0.5693,
+        "recall@10": 0.7129,
+        "mrr": 0.4386,
+        "ndcg@10": 0.4992
+      },
+      "latency_ms_mean": 346.3
+    },
+    {
+      "candidate_k": 100,
+      "metrics": {
+        "recall@1": 0.3119,
+        "recall@5": 0.5693,
+        "recall@10": 0.703,
+        "mrr": 0.4392,
+        "ndcg@10": 0.4968
+      },
+      "latency_ms_mean": 585.9
+    }
+  ]
+}

@@ -6,6 +6,7 @@ project imports a `Config` instance rather than parsing YAML itself.
 """
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -81,7 +82,27 @@ class Config:
 
 
 def load_config(path: Path | str = "config/config.yaml") -> Config:
+    """Load config from YAML, with environment overrides for deployment.
+
+    The YAML holds the developer default (``http://localhost:9200``), which
+    is wrong in every deployed context: inside a Docker network OpenSearch
+    is reachable by service name, and in Kubernetes by service DNS —
+    ``localhost`` in a container is the container itself. Rather than ship
+    a second config file per environment, the two values that actually
+    change between environments are overridable by env var:
+
+        DUEDILIGENCE_OPENSEARCH_ENDPOINT   e.g. http://opensearch:9200
+        DUEDILIGENCE_OPENSEARCH_BACKEND    "local" | "aws"
+    """
     raw = yaml.safe_load(Path(path).read_text())
+
+    opensearch = dict(raw["opensearch"])
+    if endpoint := os.environ.get("DUEDILIGENCE_OPENSEARCH_ENDPOINT"):
+        opensearch["local_endpoint"] = endpoint
+    if backend := os.environ.get("DUEDILIGENCE_OPENSEARCH_BACKEND"):
+        opensearch["backend"] = backend
+    raw["opensearch"] = opensearch
+
     return Config(
         companies=[CompanyConfig(**entry) for entry in raw.get("companies", [])],
         filing_types=raw.get("filing_types", []),

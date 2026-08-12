@@ -1,0 +1,223 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# A new push to the same branch cancels the previous run — the older result
+# is about to be superseded anyway, and this keeps queue time down.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-test:
+    name: Lint and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        # CPU-only torch: the CUDA build is gigabytes and CI has no GPU.
+        # Without this index the default wheel pulls the full CUDA stack and
+        # the job spends most of its time downloading drivers it cannot use.
+        run: |
+          python -m pip install --upgrade pip
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Ruff
+        run: ruff check .
+
+      - name: Unit tests
+        # The suite is hermetic by design: no network, no OpenSearch, no
+        # Gemini. Model-loading and cluster-dependent paths are covered by
+        # stubs (see tests/test_api.py, tests/test_answer.py), which is what
+        # lets this job stay under a minute and never touch the 20/day
+        # Gemini quota.
+        run: pytest -q
+
+  integration:
+    name: Integration against real OpenSearch
+    runs-on: ubuntu-latest
+    services:
+      opensearch:
+        image: opensearchproject/opensearch:2.19.1
+        env:
+          discovery.type: single-node
+          DISABLE_SECURITY_PLUGIN: "true"
+          DISABLE_INSTALL_DEMO_CONFIG: "true"
+          OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl -fsS http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 20
+          --health-start-period 40s
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Wait for OpenSearch
+        run: |
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:9200/_cluster/health && exit 0
+            sleep 5
+          done
+          echo "OpenSearch did not become healthy" >&2
+          exit 1
+
+      - name: Verify k-NN plugin is present
+        # The whole retrieval design depends on it; a base image without the
+        # plugin would fail much later and far less legibly.
+        run: curl -fsS 'http://localhost:9200/_cat/plugins' | grep -q opensearch-knn
+
+      - name: Index a small corpus slice and search it
+        # A real end-to-end check: create the k-NN index, embed and index
+        # real chunks, then run dense, BM25 and hybrid queries against them.
+        # Deliberately a slice — embedding all 38k chunks would make CI take
+        # ten minutes for no extra signal about correctness.
+        run: |
+          python scripts/build_index.py --recreate --limit 200
+          python - <<'PY'
+          from duediligence.config import load_config
+          from duediligence.index.embed import ChunkEmbedder
+          from duediligence.index.hybrid_search import hybrid_search
+          from duediligence.index.opensearch_client import (
+              build_client, bm25_search, document_count, knn_search,
+          )
+
+          config = load_config()
+          client = build_client(config.opensearch)
+          count = document_count(client, config.opensearch.index_name)
+          assert count > 0, "index is empty after build_index"
+
+          embedder = ChunkEmbedder(config.models.embedding_model)
+          vector = embedder.embed_query("merger with Umpqua Holdings")
+
+          assert knn_search(client, config.opensearch.index_name, vector, k=5), "dense returned nothing"
+          assert bm25_search(client, config.opensearch.index_name, "merger", k=5), "bm25 returned nothing"
+          assert hybrid_search(
+              client, config.opensearch.index_name, "merger", vector, k=5
+          ), "hybrid returned nothing"
+          print(f"integration OK: {count} documents indexed, all three retrievers returned hits")
+          PY
+
+      - name: Structured route returns hand-verified XBRL values
+        # Scores against data/extraction_eval_set.jsonl, whose entries were
+        # checked against the filings' own MD&A prose. This is the one eval
+        # with an unambiguous right answer, so a regression here is a real
+        # correctness failure, not a metric drift.
+        run: |
+          python -m duediligence.eval.run_routing_eval
+          python - <<'PY'
+          import json
+          report = json.load(open("results/routing/report.json"))
+          exactness = report["exactness"]
+          assert exactness["passed"] == exactness["total"], (
+              f"structured lookup regressed: {exactness['passed']}/{exactness['total']}"
+          )
+          print(f"structured exactness: {exactness['passed']}/{exactness['total']}")
+          PY
+
+  docker-build:
+    name: Build serving image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: false
+          load: true
+          tags: duediligence-api:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Container starts and serves liveness
+        # Generation off so the container never calls Gemini in CI, and the
+        # 20-requests/day quota is untouched by automation.
+        run: |
+          docker run -d --name api -p 8000:8000 \
+            -e ENABLE_GENERATION=false \
+            -e ENABLE_RERANK=false \
+            duediligence-api:ci
+          for i in $(seq 1 40); do
+            if curl -fsS http://localhost:8000/healthz; then
+              echo "container healthy"
+              docker rm -f api
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "container never became healthy" >&2
+          docker logs api
+          docker rm -f api
+          exit 1
+
+  manifests:
+    name: Validate Kubernetes manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create a kind cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: duediligence-ci
+
+      - name: Server-side validate manifests
+        # --dry-run=server validates against the real API server schema,
+        # which catches field and apiVersion errors that a YAML parse or a
+        # client-side dry run does not.
+        run: |
+          kubectl apply --dry-run=server -f k8s/opensearch.yaml
+          kubectl apply --dry-run=server -f k8s/api.yaml
+
+  terraform:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: Format check
+        run: terraform -chdir=terraform fmt -check -recursive
+
+      - name: Init and validate
+        # `init -backend=false` and `validate` need no AWS credentials and
+        # create nothing. There is deliberately no `plan` or `apply` step
+        # here: applying this configuration provisions a real, billable AWS
+        # OpenSearch domain, and that is gated on an explicit human decision
+        # (see terraform/README.md).
+        run: |
+          terraform -chdir=terraform init -backend=false
+          terraform -chdir=terraform validate

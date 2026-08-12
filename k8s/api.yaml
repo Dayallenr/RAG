@@ -1,0 +1,133 @@
+# The API as a Deployment — stateless, so pods are interchangeable and can
+# be scaled and replaced freely. All state lives in OpenSearch (see
+# opensearch.yaml, which is a StatefulSet for exactly that reason).
+apiVersion: v1
+kind: Service
+metadata:
+  name: duediligence-api
+  labels:
+    app: duediligence-api
+spec:
+  type: ClusterIP
+  selector:
+    app: duediligence-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duediligence-api
+  labels:
+    app: duediligence-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: duediligence-api
+  template:
+    metadata:
+      labels:
+        app: duediligence-api
+      annotations:
+        # Scraped by Prometheus; the endpoint is served by
+        # duediligence/api/metrics.py.
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
+    spec:
+      containers:
+        - name: api
+          image: duediligence-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            # Service DNS, not localhost — localhost in a pod is the pod.
+            - name: DUEDILIGENCE_OPENSEARCH_ENDPOINT
+              value: "http://opensearch:9200"
+            - name: ENABLE_GENERATION
+              value: "false"
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: duediligence-secrets
+                  key: google-api-key
+                  # Optional so the deployment works with generation
+                  # disabled and no secret created at all, which is the
+                  # default posture given the 20-requests/day quota.
+                  optional: true
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              # Two transformer models plus torch resident. Measured at
+              # roughly 1.2 GB in practice; 2Gi leaves headroom without
+              # letting a leak take down the node.
+              memory: "2Gi"
+              cpu: "2"
+          # Liveness deliberately hits /healthz, which does NOT check
+          # OpenSearch: if the search cluster is briefly down, restarting
+          # API pods cannot help and would drop in-flight requests.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            failureThreshold: 3
+          # Readiness hits /readyz, which DOES check OpenSearch — an API pod
+          # that cannot reach the index should be pulled from the load
+          # balancer, but not restarted.
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          # Startup probe covers the slow first boot: two models are loaded
+          # (and downloaded, on a cold cache) before the app can serve.
+          # Without it, the liveness probe would kill the pod mid-download
+          # and loop forever.
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            periodSeconds: 10
+            failureThreshold: 30  # up to 5 minutes to come up
+          volumeMounts:
+            - name: model-cache
+              mountPath: /app/.cache/huggingface
+      volumes:
+        # emptyDir, not a PVC: the cache is a startup optimisation, it is
+        # rebuildable from the Hub, and a ReadWriteOnce PVC shared by two
+        # replicas would block scheduling.
+        - name: model-cache
+          emptyDir:
+            sizeLimit: 2Gi
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: duediligence-api
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: duediligence-api
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          # Reranking is CPU-bound and bursty; 70% leaves room to absorb a
+          # burst while new pods complete their ~90s model-loading startup.
+          averageUtilization: 70

@@ -82,10 +82,23 @@ class StructuredFact:
     period_type: str  # "instant" | "duration"
     accession_number: str  # the filing this fact was reported in
     source_url: str
+    # The period the fact actually *covers*, which is the only reliable way
+    # to identify it. SEC's fy/fp fields describe the filing the fact was
+    # reported in, not the fact's own period: a FY2023 10-K reports 2021,
+    # 2022 and 2023 net income as prior-year comparatives, and all three
+    # carry fy=2023, fp=FY. Without these dates those three are
+    # indistinguishable — which produced both a fact_id collision and a
+    # lookup that confidently returned the wrong year's figure.
+    # ``period_start`` is None for instants (a balance has no start).
+    period_start: str | None = None  # ISO date
+    period_end: str | None = None  # ISO date
 
     @property
     def fact_id(self) -> str:
-        fingerprint = f"{self.company}:{self.concept}:{self.fiscal_period}:{self.accession_number}"
+        fingerprint = (
+            f"{self.company}:{self.concept}:{self.fiscal_period}:"
+            f"{self.period_start}:{self.period_end}:{self.accession_number}"
+        )
         return hashlib.sha256(fingerprint.encode("utf-8")).hexdigest()[:16]
 
     def to_dict(self) -> dict:
@@ -99,4 +112,9 @@ class StructuredFact:
             "company", "concept", "value", "unit", "fiscal_period",
             "period_type", "accession_number", "source_url",
         }
-        return cls(**{key: payload[key] for key in known_fields})
+        record = {key: payload[key] for key in known_fields}
+        # Optional so a facts file written before these were captured still
+        # loads, rather than crashing every consumer of the older format.
+        record["period_start"] = payload.get("period_start")
+        record["period_end"] = payload.get("period_end")
+        return cls(**record)
