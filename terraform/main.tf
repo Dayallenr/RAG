@@ -62,8 +62,17 @@ data "aws_iam_policy_document" "domain_access" {
     effect = "Allow"
 
     principals {
-      type        = "AWS"
-      identifiers = [data.aws_caller_identity.current.arn]
+      type = "AWS"
+      # The identity running Terraform, plus — when compute is enabled — the
+      # EKS node role. Pods inherit the node role through the instance
+      # metadata service, so boto3 signs SigV4 requests with it and needs it
+      # named here or every query from the cluster returns 403. Without this
+      # the domain comes up, the pods come up, and retrieval fails in a way
+      # that looks like a code bug rather than an IAM one.
+      identifiers = compact([
+        data.aws_caller_identity.current.arn,
+        var.enable_compute ? module.eks[0].eks_managed_node_groups["default"].iam_role_arn : "",
+      ])
     }
 
     actions   = ["es:ESHttp*"]

@@ -31,3 +31,16 @@ variable "environment" {
   type        = string
   default     = "demo"
 }
+
+variable "enable_compute" {
+  description = <<-EOT
+    Create the VPC, EKS cluster and ECR registry to run the API on AWS.
+
+    Defaults to false. When false, `terraform apply` creates only the
+    OpenSearch domain (~$0.04/hr). When true it adds roughly $0.23/hr
+    (~$165/month), dominated by the EKS control plane, which bills
+    continuously whether or not anything is scheduled on it.
+  EOT
+  type        = bool
+  default     = false
+}
