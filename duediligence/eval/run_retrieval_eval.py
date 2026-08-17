@@ -43,6 +43,7 @@ from duediligence.eval.retrieval_metrics import aggregate_metrics
 from duediligence.index.embed import ChunkEmbedder
 from duediligence.index.hybrid_search import hybrid_search
 from duediligence.index.opensearch_client import bm25_search, build_client, knn_search
+from duediligence.track import flatten_metrics, log_run
 
 logger = logging.getLogger(__name__)
 
@@ -228,8 +229,31 @@ def main() -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(report, indent=2) + "\n")
 
+    # The report file stays the source of truth; this is additive, and a
+    # no-op without WANDB_API_KEY.
+    run_url = log_run(
+        name="retrieval-eval",
+        tags=["retrieval", "eval"],
+        config={
+            "eval_set": report["eval_set"],
+            "index": report["index"],
+            "embedding_model": report["embedding_model"],
+            "reranker_model": report["reranker_model"],
+            "k": report["k"],
+            "candidate_k": report["candidate_k"],
+            "queries": report["queries"],
+            # Logged as configuration rather than as a metric: how much of
+            # the eval set a human has checked is a property of the run, and
+            # every reported number should be read against it.
+            "human_verified_queries": report["human_verified_queries"],
+        },
+        metrics=flatten_metrics(report),
+    )
+
     print(f"retrieval eval over {report['queries']} queries "
           f"({report['human_verified_queries']} human-verified)\n")
+    if run_url:
+        print(f"tracked: {run_url}\n")
     _print_table(report)
 
     print("\nby question type (recall@10):")

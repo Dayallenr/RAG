@@ -51,6 +51,7 @@ from duediligence.generate.backends import (
     backends_are_independent,
     default_generation_backend,
 )
+from duediligence.track import flatten_metrics, log_run
 
 logger = logging.getLogger(__name__)
 
@@ -276,6 +277,23 @@ def main() -> None:
     output = Path(args.out)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n")
+
+    judging = report["judging"]
+    run_url = log_run(
+        name="groundedness-eval",
+        tags=["generation", "eval"],
+        config={
+            "eval_set": args.eval_set,
+            "generation_model": judging["generation"]["model"],
+            "judge_model": judging["judge"]["model"],
+            # Config, not a metric: whether the judge was independent
+            # qualifies every support rate in this run.
+            "independent_judge": judging["independent_judge"],
+        },
+        metrics=flatten_metrics(report),
+    )
+    if run_url:
+        print(f"tracked: {run_url}")
 
     print(f"\nanswers generated: {report['answers_generated']}/{report['questions_in_eval_set']} "
           f"({report['coverage']:.0%} of the eval set)")

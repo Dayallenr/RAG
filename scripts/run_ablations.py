@@ -41,6 +41,7 @@ from duediligence.eval.retrieval_metrics import aggregate_metrics
 from duediligence.index.embed import ChunkEmbedder
 from duediligence.index.hybrid_search import hybrid_search
 from duediligence.index.opensearch_client import bm25_search, build_client, knn_search
+from duediligence.track import flatten_metrics, log_run
 
 logger = logging.getLogger("ablations")
 
@@ -193,6 +194,23 @@ def main() -> None:
     output = Path(args.out)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n")
+
+    # Sweeps are the runs most worth having a history for: the point of an
+    # ablation is the shape across parameter values, which a single
+    # overwritten report file cannot show.
+    run_url = log_run(
+        name="ablations",
+        tags=["ablation", "eval"],
+        config={
+            "eval_set": report["eval_set"],
+            "queries": report["queries"],
+            "human_verified_queries": report["human_verified_queries"],
+            "rerank": not args.skip_rerank,
+        },
+        metrics=flatten_metrics(report),
+    )
+    if run_url:
+        print(f"\ntracked: {run_url}")
 
     print("\n=== A. RRF dense weight (1.0 = equal weighting) ===")
     print(f"{'dense_w':>8}" + "".join(f"{m:>12}" for m in _METRICS))

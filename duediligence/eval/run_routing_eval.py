@@ -34,6 +34,7 @@ from pathlib import Path
 
 from duediligence.route.query_router import classify_query
 from duediligence.route.structured_lookup import lookup_fact
+from duediligence.track import flatten_metrics, log_run
 
 __all__ = ["run_routing_eval"]
 
@@ -154,6 +155,15 @@ def main() -> None:
     output = Path(args.out)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n")
+
+    run_url = log_run(
+        name="routing-eval",
+        tags=["routing", "eval"],
+        config={"eval_set": "data/routing_eval_set.jsonl"},
+        metrics=flatten_metrics(report),
+    )
+    if run_url:
+        print(f"tracked: {run_url}\n")
 
     classification = report["classification"]
     print(
