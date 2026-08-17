@@ -9,9 +9,13 @@ pydantic>=2.9.0
 opensearch-py>=2.7.0
 boto3>=1.35.0
 
-# Embeddings + cross-encoder reranker — both self-hosted, inference-only.
+# Embeddings + cross-encoder reranker, both self-hosted. The bi-encoder is
+# also fine-tuned here (see duediligence/train/), which is what datasets is
+# for — SentenceTransformerTrainer takes a datasets.Dataset, so training
+# cannot run without it even though nothing at inference time imports it.
 sentence-transformers>=3.2.0
 torch>=2.0.0
+datasets>=3.0.0
 
 # Generation + chart-image understanding — Gemini's free API tier
 # (verified free, no card required, multimodal), not a paid provider.

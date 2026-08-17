@@ -68,6 +68,10 @@ def main() -> None:
     parser.add_argument("--lr", type=float, default=2e-5)
     parser.add_argument("--warmup-ratio", type=float, default=0.1)
     parser.add_argument("--max-steps", type=int, default=-1, help="cap steps for a quick run")
+    parser.add_argument(
+        "--fp16", action="store_true",
+        help="mixed-precision training (CUDA only; ignored with a warning elsewhere)",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -91,6 +95,14 @@ def main() -> None:
     logger.info("contamination check passed over %d training rows", cleared)
 
     device = resolve_device()
+
+    # fp16 is a CUDA path. On MPS or CPU the flag is silently ignored by the
+    # trainer, so it is refused loudly here instead — a run that quietly did
+    # not do what was asked is worse than one that stopped.
+    fp16 = args.fp16
+    if fp16 and device != "cuda":
+        logger.warning("--fp16 ignored: mixed precision needs CUDA, running on %s", device)
+        fp16 = False
     logger.info(
         "%d train / %d val triplets on %s", len(train_rows), len(val_rows), device
     )
@@ -124,9 +136,7 @@ def main() -> None:
         report_to=["wandb"] if _wandb_enabled() else [],
         run_name="finetune-bge-small",
         seed=17,
-        # fp16 is a CUDA path; MPS runs fp32 and enabling it here silently
-        # does nothing on this machine.
-        fp16=False,
+        fp16=fp16,
     )
 
     trainer = SentenceTransformerTrainer(
@@ -153,6 +163,7 @@ def main() -> None:
         "batch_size": args.batch_size,
         "learning_rate": args.lr,
         "device": device,
+        "fp16": fp16,
         "train_seconds": round(elapsed, 1),
         "final_train_loss": next(
             (h["loss"] for h in reversed(history) if "loss" in h), None
