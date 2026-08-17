@@ -1,13 +1,14 @@
 """
 Text-generation backends: one small interface, several models behind it.
 
-Answer generation and groundedness judging used to reach for the hosted
-Gemini client directly, each constructing its own. That made the generator
-and the judge *the same thing by construction* — and judging a model's
-output with that same model shares a failure mode, because a claim both find
-plausible gets marked supported. The seam here does not fix that on its own;
-what it does is make independence arrangeable, and make it visible in the
-report instead of leaving it as an assumption a reader has to take on trust.
+Answer generation and groundedness judging were both handed the hosted
+Gemini client: the groundedness eval constructed one and passed the same
+object to the pipeline and to the judge. So the generator and the judge were
+the same *model* by construction — and judging a model's output with that
+same model shares a failure mode, because a claim both find plausible gets
+marked supported. The seam here does not fix that on its own; what it does
+is make independence arrangeable, and make it visible in the report instead
+of leaving it as an assumption a reader has to take on trust.
 
 The second reason this exists is quota. The hosted free tier allows a
 verified 20 requests/day on this key (CLAUDE.md), which is not enough to
@@ -33,6 +34,7 @@ __all__ = [
     "GeminiBackend",
     "TextGenerationBackend",
     "backends_are_independent",
+    "default_generation_backend",
 ]
 
 
@@ -86,6 +88,18 @@ class GeminiBackend:
 
     def describe(self) -> dict[str, str]:
         return {"backend": self.name, "model": self.model}
+
+
+def default_generation_backend(config) -> TextGenerationBackend:
+    """The backend used when a caller does not choose one.
+
+    Holds the "hosted Gemini unless told otherwise" policy in exactly one
+    place. It was previously spelled out at each call site, which is the kind
+    of duplication that lets the serving path and the eval path drift onto
+    different models without anyone noticing — precisely the confusion this
+    module exists to remove.
+    """
+    return GeminiBackend(config.models.generation_model)
 
 
 def backends_are_independent(

@@ -43,12 +43,13 @@ import json
 import logging
 import time
 from pathlib import Path
+from typing import Any
 
 from duediligence.config import load_config
 from duediligence.generate.backends import (
-    GeminiBackend,
     TextGenerationBackend,
     backends_are_independent,
+    default_generation_backend,
 )
 
 logger = logging.getLogger(__name__)
@@ -99,7 +100,9 @@ def describe_judging(
     }
 
 
-def judge_groundedness(answer: str, passages: list[dict], *, backend) -> dict:
+def judge_groundedness(
+    answer: str, passages: list[dict], *, backend: TextGenerationBackend
+) -> dict:
     """One LLM-as-judge call. Returns parsed verdict or an error marker."""
     rendered = "\n\n".join(
         f"[{i}] {p.get('text', '')}" for i, p in enumerate(passages, start=1)
@@ -135,15 +138,24 @@ def run_groundedness_eval(
     judge: bool = True,
     generation_backend: TextGenerationBackend | None = None,
     judge_backend: TextGenerationBackend | None = None,
-    pipeline=None,
+    pipeline: Any | None = None,
 ) -> dict:
+    """Generate answers for the eval set and judge how grounded they are.
+
+    ``pipeline`` is injectable so a test can drive the whole function without
+    an OpenSearch cluster or an embedding model. It exists for a specific
+    reason: without it, nothing checks that ``generation_backend`` reaches
+    the pipeline and ``judge_backend`` reaches the judge, and swapping the
+    two would produce a green suite and a report whose provenance is exactly
+    backwards.
+    """
     config = load_config()
 
     # Both default to the hosted model, which is what this did before the
     # backend seam existed — and which means the default run is *not* an
     # independent judge. The report says so rather than hiding it.
-    generation_backend = generation_backend or GeminiBackend(config.models.generation_model)
-    judge_backend = judge_backend or GeminiBackend(config.models.generation_model)
+    generation_backend = generation_backend or default_generation_backend(config)
+    judge_backend = judge_backend or default_generation_backend(config)
 
     entries = [
         json.loads(line)
@@ -196,8 +208,15 @@ def run_groundedness_eval(
                     break
 
     report = summarize(_load_jsonl(answers_path), total_questions=len(entries))
+    # Report the backend the pipeline *actually* generated with, not the one
+    # defaulted here. An injected pipeline carries its own, and naming the
+    # wrong model would turn this provenance block into the thing it exists
+    # to prevent: an independence claim that is not true.
     report["judging"] = describe_judging(
-        generation_backend=generation_backend, judge_backend=judge_backend
+        generation_backend=(
+            pipeline.generation_backend if pipeline is not None else generation_backend
+        ),
+        judge_backend=judge_backend,
     )
     return report
 

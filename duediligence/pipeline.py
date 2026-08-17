@@ -32,7 +32,7 @@ from typing import Any
 
 from duediligence.config import Config, load_config
 from duediligence.generate.answer import GeneratedAnswer, generate_answer
-from duediligence.generate.backends import GeminiBackend, TextGenerationBackend
+from duediligence.generate.backends import TextGenerationBackend, default_generation_backend
 from duediligence.index.embed import ChunkEmbedder
 from duediligence.index.hybrid_search import hybrid_search
 from duediligence.index.opensearch_client import build_client
@@ -69,9 +69,7 @@ class DueDiligencePipeline:
         # Defaults to the hosted model so existing callers are unchanged.
         # Constructing it is free — the underlying client is built lazily —
         # so this does not require an API key to stand the pipeline up.
-        self.generation_backend = generation_backend or GeminiBackend(
-            self.config.models.generation_model
-        )
+        self.generation_backend = generation_backend or default_generation_backend(self.config)
 
         self.reranker = None
         if enable_rerank:
