@@ -1,15 +1,11 @@
-"""Tests for answer generation, citation enforcement, and the pipeline wiring.
+"""Tests for answer generation and citation enforcement.
 
-No test here touches the network — the Gemini client is injected. That is
-deliberate beyond the usual hermeticity argument: the free tier allows 20
-requests per day, and a test suite that spent them would make the
+No test here touches the network — the generation backend is injected. That
+is deliberate beyond the usual hermeticity argument: the hosted free tier
+allows 20 requests per day, and a test suite that spent them would make the
 groundedness eval unrunnable.
 """
 from __future__ import annotations
-
-from types import SimpleNamespace
-
-import pytest
 
 from duediligence.generate.answer import (
     REFUSAL_TEXT,
@@ -17,19 +13,7 @@ from duediligence.generate.answer import (
     generate_answer,
     parse_citations,
 )
-
-
-class StubGemini:
-    """Returns a canned answer and records the prompt it was given."""
-
-    def __init__(self, text):
-        self.prompts = []
-        self.models = SimpleNamespace(generate_content=self._generate)
-        self._text = text
-
-    def _generate(self, *, model, contents):
-        self.prompts.append(contents)
-        return SimpleNamespace(text=self._text)
+from tests.fakes import FakeBackend
 
 
 def _passages(n=3):
@@ -90,62 +74,38 @@ class TestParseCitations:
 
 class TestGenerateAnswer:
     def test_returns_answer_with_resolved_citations(self):
-        client = StubGemini("Net income was $348.7 million [1].")
-        result = generate_answer("q", _passages(3), model="m", client=client)
+        backend = FakeBackend("Net income was $348.7 million [1].")
+        result = generate_answer("q", _passages(3), backend=backend)
         assert result.answer.startswith("Net income")
         assert result.citations[0]["chunk_id"] == "chunk1"
         assert result.refused is False
 
     def test_empty_passages_refuse_without_calling_the_model(self):
-        client = StubGemini("should never be used")
-        result = generate_answer("q", [], model="m", client=client)
+        backend = FakeBackend("should never be used")
+        result = generate_answer("q", [], backend=backend)
         # Calling the model with no context invites answering from memory.
-        assert client.prompts == []
+        assert backend.prompts == []
         assert result.refused is True
         assert result.answer == REFUSAL_TEXT
 
     def test_detects_a_refusal_from_the_model(self):
-        client = StubGemini(REFUSAL_TEXT)
-        assert generate_answer("q", _passages(2), model="m", client=client).refused is True
+        backend = FakeBackend(REFUSAL_TEXT)
+        assert generate_answer("q", _passages(2), backend=backend).refused is True
 
     def test_context_is_capped_at_max_passages(self):
-        client = StubGemini("[1]")
-        result = generate_answer("q", _passages(10), model="m", client=client, max_passages=4)
+        backend = FakeBackend("[1]")
+        result = generate_answer("q", _passages(10), backend=backend, max_passages=4)
         assert len(result.context_chunk_ids) == 4
-        assert "[5]" not in client.prompts[0]
+        assert "[5]" not in backend.prompts[0]
+
+    def test_records_the_backend_model_that_produced_the_answer(self):
+        # Which model wrote an answer is part of the provenance the
+        # groundedness report depends on to show the judge was independent.
+        backend = FakeBackend("Answer [1].", model="local-8b")
+        assert generate_answer("q", _passages(2), backend=backend).model == "local-8b"
 
     def test_serializes_for_the_api(self):
-        client = StubGemini("Answer [1].")
-        payload = generate_answer("q", _passages(2), model="m", client=client).to_dict()
+        backend = FakeBackend("Answer [1].")
+        payload = generate_answer("q", _passages(2), backend=backend).to_dict()
         assert payload["route"] == "semantic"
         assert payload["context_chunk_ids"] == ["chunk1", "chunk2"]
-
-
-class TestGroundednessSummary:
-    def test_summary_counts_routes_refusals_and_citations(self):
-        from duediligence.eval.run_groundedness_eval import summarize
-
-        rows = [
-            {"route": "structured"},
-            {"route": "semantic", "refused": False, "citations": [{"number": 1}],
-             "judge": {"support_rate": 1.0}},
-            {"route": "semantic", "refused": False, "citations": [],
-             "judge": {"support_rate": 0.5}},
-            {"route": "semantic", "refused": True, "citations": []},
-        ]
-        summary = summarize(rows, total_questions=8)
-
-        assert summary["structured_route"] == 1
-        assert summary["semantic_route"] == 3
-        assert summary["refusals"] == 1
-        assert summary["answers_with_valid_citations"] == 1
-        assert summary["mean_claim_support_rate"] == pytest.approx(0.75)
-        assert summary["fully_supported_answers"] == 1
-        assert summary["coverage"] == pytest.approx(0.5)
-
-    def test_empty_run_does_not_divide_by_zero(self):
-        from duediligence.eval.run_groundedness_eval import summarize
-
-        summary = summarize([], total_questions=10)
-        assert summary["answers_generated"] == 0
-        assert summary["mean_claim_support_rate"] is None

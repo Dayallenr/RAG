@@ -32,6 +32,7 @@ from typing import Any
 
 from duediligence.config import Config, load_config
 from duediligence.generate.answer import GeneratedAnswer, generate_answer
+from duediligence.generate.backends import TextGenerationBackend, default_generation_backend
 from duediligence.index.embed import ChunkEmbedder
 from duediligence.index.hybrid_search import hybrid_search
 from duediligence.index.opensearch_client import build_client
@@ -57,14 +58,18 @@ class DueDiligencePipeline:
         *,
         enable_rerank: bool = True,
         enable_generation: bool = True,
-        gemini_client=None,
+        generation_backend: TextGenerationBackend | None = None,
     ) -> None:
         self.config = config or load_config()
         self.client = build_client(self.config.opensearch)
         self.index_name = self.config.opensearch.index_name
         self.embedder = ChunkEmbedder(self.config.models.embedding_model)
         self.enable_generation = enable_generation
-        self.gemini_client = gemini_client
+
+        # Defaults to the hosted model so existing callers are unchanged.
+        # Constructing it is free — the underlying client is built lazily —
+        # so this does not require an API key to stand the pipeline up.
+        self.generation_backend = generation_backend or default_generation_backend(self.config)
 
         self.reranker = None
         if enable_rerank:
@@ -135,8 +140,7 @@ class DueDiligencePipeline:
         if self.enable_generation:
             generated = generate_answer(
                 question, passages,
-                model=self.config.models.generation_model,
-                client=self.gemini_client,
+                backend=self.generation_backend,
                 max_passages=k,
             )
 
