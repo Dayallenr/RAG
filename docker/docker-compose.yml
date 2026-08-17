@@ -87,6 +87,27 @@ services:
       # re-download ~150MB from the HuggingFace Hub.
       - model-cache:/app/.cache/huggingface
 
+  # Trace collector, started only with `--profile tracing`:
+  #     docker compose -f docker/docker-compose.yml --profile tracing up -d
+  #
+  # Jaeger all-in-one speaks OTLP natively, so nothing sits between the API
+  # and the collector — no separate otel-collector process to configure and
+  # no second thing that can be misconfigured while you are trying to read a
+  # latency breakdown. UI on 16686, OTLP/HTTP ingest on 4318.
+  #
+  # Present for local development only. The AWS window exports to the cloud
+  # provider's backend instead, which is the entire reason the endpoint is
+  # an environment variable rather than a constant.
+  jaeger:
+    profiles: ["tracing"]
+    image: jaegertracing/all-in-one:1.62.0
+    container_name: duediligence-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"   # UI
+      - "4318:4318"     # OTLP/HTTP
+
 volumes:
   opensearch-data:
   model-cache:

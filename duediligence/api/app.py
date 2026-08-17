@@ -38,6 +38,7 @@ from duediligence.api.metrics import (
     ROUTE_COUNT,
     metrics_response,
 )
+from duediligence.tracing import configure_tracing
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +103,11 @@ PipelineDep = Annotated[Any, Depends(get_pipeline)]
 
 
 def create_app() -> FastAPI:
+    # Installed once at startup. A no-op unless OTEL_EXPORTER_OTLP_ENDPOINT
+    # is set, so the default deployment carries no exporter and no
+    # background threads — see duediligence/tracing.py.
+    configure_tracing()
+
     app = FastAPI(
         title="Bank M&A Due-Diligence RAG",
         description=(

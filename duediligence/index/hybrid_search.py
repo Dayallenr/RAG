@@ -46,6 +46,7 @@ from typing import Any
 from opensearchpy import OpenSearch
 
 from duediligence.index.opensearch_client import bm25_search, knn_search
+from duediligence.tracing import span
 
 logger = logging.getLogger(__name__)
 
@@ -135,8 +136,13 @@ def hybrid_search(
     """
     if weights is None:
         weights = [1.0, DEFAULT_DENSE_WEIGHT]
-    lexical = bm25_search(client, index_name, query, k=candidate_k, filters=filters)
-    dense = knn_search(client, index_name, query_vector, k=candidate_k, filters=filters)
+    # Split spans: BM25 beats dense roughly 2x on this corpus, so which of
+    # the two a slow query is waiting on is exactly the question a trace
+    # should answer rather than leave to inference.
+    with span("search.bm25", candidate_k=candidate_k):
+        lexical = bm25_search(client, index_name, query, k=candidate_k, filters=filters)
+    with span("search.knn", candidate_k=candidate_k):
+        dense = knn_search(client, index_name, query_vector, k=candidate_k, filters=filters)
 
     by_id: dict[str, dict[str, Any]] = {}
     for hit in (*lexical, *dense):

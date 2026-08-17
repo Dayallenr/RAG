@@ -180,6 +180,18 @@ the 10-K shape, the 10-Q "Item 1." shape, and a real GBCI en-dash variant
 ingestion or re-index is needed — a stale version of this note previously
 said otherwise and caused a ticket to be opened for work already done.
 
+**First-request latency is seconds, and it is warmup, not steady state.**
+The first traced `/ask` after process start (OTel spans, Jaeger, real index)
+came in at 2,995 ms: `embed.query` 1,867 ms, `search.bm25` 541 ms,
+`search.knn` 209 ms, `rerank` 374 ms. Only `rerank` matches its documented
+steady-state figure (~337 ms); embedding and BM25 are inflated by MPS kernel
+warmup and OpenSearch's cold query caches respectively. **Do not quote 1,867
+ms as an embedding latency** — it is a one-off. It does mean the serving
+layer needs a warmup request before any load test, and that a readiness
+probe firing before warmup will see multi-second responses. The same trace
+showed the structured route answering in 8.2 ms with no `retrieve` and no
+`generate` span at all, which is the no-model-call claim made visible.
+
 **SEC's `fy`/`fp` fields identify the filing, not the fact — this produced
 wrong answers.** Columbia's FY2023 10-K reports 2021, 2022 and 2023 net
 income as prior-year comparatives, and all three carry `fy=2023, fp=FY`.
