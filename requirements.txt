@@ -32,3 +32,9 @@ PyYAML>=6.0
 tqdm>=4.65.0
 numpy>=1.24.0
 python-dotenv>=1.0.0
+
+# Experiment tracking — eval and ablation runs get a history and a public
+# URL instead of a single overwritten report file. Entirely optional at
+# runtime: without WANDB_API_KEY the tracking calls are no-ops, so CI and a
+# fresh clone work with no account (see duediligence/track/experiment.py).
+wandb>=0.18.0
