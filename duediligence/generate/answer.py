@@ -34,6 +34,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from duediligence.generate.backends import TextGenerationBackend
+
 logger = logging.getLogger(__name__)
 
 __all__ = [
@@ -155,14 +157,16 @@ def generate_answer(
     question: str,
     passages: list[dict[str, Any]],
     *,
-    model: str,
-    client=None,
+    backend: TextGenerationBackend,
     max_passages: int = _DEFAULT_CONTEXT_PASSAGES,
 ) -> GeneratedAnswer:
     """Generate a cited answer from retrieved passages.
 
-    ``client`` is injectable so tests never touch the network — and so the
-    20-requests/day free-tier quota is not spent on unit tests.
+    ``backend`` is injected rather than constructed here so tests never touch
+    the network — and so the 20-requests/day free-tier quota is not spent on
+    unit tests. It also means which model writes the answer is a caller's
+    choice, which is what lets a locally-served model do the generating while
+    a different one judges the result (see ``generate/backends.py``).
     """
     passages = passages[:max_passages]
 
@@ -175,14 +179,7 @@ def generate_answer(
             refused=True, model=None, context_chunk_ids=[],
         )
 
-    if client is None:
-        from duediligence.generate.gemini_client import get_client
-
-        client = get_client()
-
-    prompt = build_prompt(question, passages)
-    response = client.models.generate_content(model=model, contents=prompt)
-    text = (response.text or "").strip()
+    text = backend.generate(build_prompt(question, passages))
 
     return GeneratedAnswer(
         question=question,
@@ -190,6 +187,6 @@ def generate_answer(
         citations=parse_citations(text, passages),
         route="semantic",
         refused=REFUSAL_TEXT.lower().rstrip(".") in text.lower(),
-        model=model,
+        model=backend.model,
         context_chunk_ids=[p.get("chunk_id") for p in passages],
     )

@@ -45,10 +45,15 @@ import time
 from pathlib import Path
 
 from duediligence.config import load_config
+from duediligence.generate.backends import (
+    GeminiBackend,
+    TextGenerationBackend,
+    backends_are_independent,
+)
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["judge_groundedness", "run_groundedness_eval"]
+__all__ = ["describe_judging", "judge_groundedness", "run_groundedness_eval"]
 
 _JUDGE_PROMPT = """\
 You are grading whether an ANSWER is fully supported by the PASSAGES it was \
@@ -75,14 +80,31 @@ def _load_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
-def judge_groundedness(answer: str, passages: list[dict], *, model: str, client) -> dict:
+def describe_judging(
+    *,
+    generation_backend: TextGenerationBackend,
+    judge_backend: TextGenerationBackend,
+) -> dict:
+    """Provenance for the report: who wrote the answers, who graded them, and
+    whether those were actually different models.
+
+    Recorded rather than assumed. A support rate produced by a model grading
+    its own output is a materially weaker number than one from an independent
+    judge, and a reader cannot tell the two apart from the score alone.
+    """
+    return {
+        "generation": generation_backend.describe(),
+        "judge": judge_backend.describe(),
+        "independent_judge": backends_are_independent(generation_backend, judge_backend),
+    }
+
+
+def judge_groundedness(answer: str, passages: list[dict], *, backend) -> dict:
     """One LLM-as-judge call. Returns parsed verdict or an error marker."""
     rendered = "\n\n".join(
         f"[{i}] {p.get('text', '')}" for i, p in enumerate(passages, start=1)
     )
-    prompt = _JUDGE_PROMPT.format(passages=rendered, answer=answer)
-    response = client.models.generate_content(model=model, contents=prompt)
-    raw = (response.text or "").strip()
+    raw = backend.generate(_JUDGE_PROMPT.format(passages=rendered, answer=answer))
 
     # Models wrap JSON in markdown fences often enough that stripping them
     # is worth doing rather than counting it as a judging failure.
@@ -111,11 +133,18 @@ def run_groundedness_eval(
     *,
     limit: int | None = None,
     judge: bool = True,
+    generation_backend: TextGenerationBackend | None = None,
+    judge_backend: TextGenerationBackend | None = None,
+    pipeline=None,
 ) -> dict:
-    from duediligence.generate.gemini_client import get_client
-    from duediligence.pipeline import DueDiligencePipeline
-
     config = load_config()
+
+    # Both default to the hosted model, which is what this did before the
+    # backend seam existed — and which means the default run is *not* an
+    # independent judge. The report says so rather than hiding it.
+    generation_backend = generation_backend or GeminiBackend(config.models.generation_model)
+    judge_backend = judge_backend or GeminiBackend(config.models.generation_model)
+
     entries = [
         json.loads(line)
         for line in Path(eval_set_path).read_text().splitlines()
@@ -133,8 +162,10 @@ def run_groundedness_eval(
         pending = pending[:limit]
 
     if pending:
-        client = get_client()
-        pipeline = DueDiligencePipeline(config, gemini_client=client)
+        if pipeline is None:
+            from duediligence.pipeline import DueDiligencePipeline
+
+            pipeline = DueDiligencePipeline(config, generation_backend=generation_backend)
 
         with answers_path.open("a") as handle:
             for entry in pending:
@@ -152,8 +183,7 @@ def run_groundedness_eval(
                     }
                     if judge and result["route"] == "semantic" and not result["refused"]:
                         row["judge"] = judge_groundedness(
-                            result["answer"], result["passages"],
-                            model=config.models.generation_model, client=client,
+                            result["answer"], result["passages"], backend=judge_backend,
                         )
                     # Written immediately, one line at a time — a 429 on the
                     # next question must not lose the work already paid for.
@@ -165,7 +195,11 @@ def run_groundedness_eval(
                     logger.error("stopping at %s: %s", entry["eval_id"], error)
                     break
 
-    return summarize(_load_jsonl(answers_path), total_questions=len(entries))
+    report = summarize(_load_jsonl(answers_path), total_questions=len(entries))
+    report["judging"] = describe_judging(
+        generation_backend=generation_backend, judge_backend=judge_backend
+    )
+    return report
 
 
 def summarize(rows: list[dict], *, total_questions: int) -> dict:
@@ -231,10 +265,19 @@ def main() -> None:
           + (f" ({report['refusal_rate']:.0%} of semantic answers)" if report["refusal_rate"] is not None else ""))
     print(f"  answers with valid citations: {report['answers_with_valid_citations']}"
           + (f" ({report['citation_coverage']:.0%})" if report["citation_coverage"] is not None else ""))
+    judging = report["judging"]
+    print(f"  generated by: {judging['generation']['model']}"
+          f"   judged by: {judging['judge']['model']}")
     if report["mean_claim_support_rate"] is not None:
         print(f"  mean claim support (LLM judge, {report['judged_answers']} judged): "
               f"{report['mean_claim_support_rate']:.1%}")
         print(f"  fully supported answers: {report['fully_supported_answers']}/{report['judged_answers']}")
+        if not judging["independent_judge"]:
+            # Stated at the point the number is printed, not only in a
+            # docstring — a self-graded support rate looks identical to an
+            # independently judged one unless something says otherwise.
+            print("  NOTE: judged by the same model that generated the answers — "
+                  "treat claim support as indicative, not measured.")
     else:
         print("  no judged answers yet")
 
