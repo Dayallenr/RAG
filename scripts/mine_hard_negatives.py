@@ -20,7 +20,7 @@ import json
 import logging
 import sys
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -33,6 +33,7 @@ from duediligence.train.mine import (  # noqa: E402
     normalize_company_names,
     select_negatives,
     split_by_query,
+    text_key,
 )
 from duediligence.train.synthetic import (  # noqa: E402
     eval_chunk_ids,
@@ -117,9 +118,12 @@ def main() -> None:
     logger.info("embedding %d queries", len(rows))
     vectors = embedder.embed_queries([r["query"] for r in rows])
 
-    triplets: list[dict] = []
+    # Retrieval first, selection second. Negatives are chosen by comparing
+    # text (see ``mine.select_negatives``), and text has to be fetched in
+    # bulk to be affordable — so the candidate ids are collected for every
+    # query before a single negative is picked.
+    candidates_by_query: list[tuple[dict, list[str]]] = []
     needed: set[str] = set()
-    no_negatives = 0
     started = time.perf_counter()
 
     for index, (row, vector) in enumerate(zip(rows, vectors, strict=True), start=1):
@@ -127,37 +131,56 @@ def main() -> None:
             client, index_name, row["query"], vector.tolist(),
             k=args.candidates, candidate_k=args.candidates,
         )
+        candidate_ids = [h["chunk_id"] for h in hits]
+        candidates_by_query.append((row, candidate_ids))
+        needed.add(row["chunk_id"])
+        needed.update(candidate_ids)
+
+        if index % 500 == 0:
+            logger.info("%d/%d queries searched", index, len(rows))
+
+    logger.info("fetching text for %d chunks", len(needed))
+    texts = fetch_texts(client, index_name, needed)
+
+    # A generic question gets generated from more than one filing, so one
+    # copy's positive must not become another copy's negative.
+    positives_by_query: dict[str, list[str]] = defaultdict(list)
+    for row, _ in candidates_by_query:
+        if text := texts.get(row["chunk_id"], ""):
+            positives_by_query[row["query"]].append(text)
+    shared = sum(1 for texts_ in positives_by_query.values() if len(texts_) > 1)
+    logger.info("%d queries were generated from more than one chunk", shared)
+
+    complete: list[dict] = []
+    no_negatives = 0
+    for row, candidate_ids in candidates_by_query:
+        positive = texts.get(row["chunk_id"], "")
+        if not positive:
+            no_negatives += 1
+            continue
+
         negatives = select_negatives(
-            [h["chunk_id"] for h in hits], row["chunk_id"],
-            n=args.negatives, skip_top=args.skip_top,
+            [(cid, texts.get(cid, "")) for cid in candidate_ids],
+            row["chunk_id"],
+            positive,
+            n=args.negatives,
+            skip_top=args.skip_top,
+            also_exclude=positives_by_query[row["query"]],
         )
         if not negatives:
             no_negatives += 1
             continue
 
-        needed.add(row["chunk_id"])
-        needed.update(negatives)
         for negative in negatives:
-            triplets.append({
+            complete.append({
                 "query": row["query"],
                 "positive_chunk_id": row["chunk_id"],
                 "negative_chunk_id": negative,
                 "company": row.get("company"),
                 "chunk_type": row.get("chunk_type"),
+                "positive": positive,
+                "negative": texts[negative],
             })
-
-        if index % 500 == 0:
-            logger.info("%d/%d queries mined", index, len(rows))
-
-    logger.info("fetching text for %d chunks", len(needed))
-    texts = fetch_texts(client, index_name, needed)
-
-    complete = []
-    for triplet in triplets:
-        positive = texts.get(triplet["positive_chunk_id"], "")
-        negative = texts.get(triplet["negative_chunk_id"], "")
-        if positive and negative:
-            complete.append(triplet | {"positive": positive, "negative": negative})
 
     train, validation = split_by_query(complete, val_fraction=args.val_fraction)
 
@@ -167,6 +190,19 @@ def main() -> None:
         with (out / f"{name}.jsonl").open("w") as handle:
             for triplet in split:
                 handle.write(json.dumps(triplet) + "\n")
+
+    # The failure this guards against is silent: a negative that is known to
+    # answer its own query trains fine and scores fine.
+    known_positives: dict[str, set[str]] = defaultdict(set)
+    for triplet in complete:
+        known_positives[triplet["query"]].add(text_key(triplet["positive"]))
+    contradictory = sum(
+        1 for t in complete if text_key(t["negative"]) in known_positives[t["query"]]
+    )
+    if contradictory:
+        raise SystemExit(
+            f"ABORTING: {contradictory} triplets use a known positive as a negative"
+        )
 
     elapsed = time.perf_counter() - started
     print(f"\nmined in {elapsed:.0f}s")
