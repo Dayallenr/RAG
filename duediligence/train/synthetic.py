@@ -29,18 +29,26 @@ from __future__ import annotations
 import json
 import logging
 import re
+from collections.abc import Iterable
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
     "GENERATION_PROMPT",
+    "EvalLeakageError",
+    "assert_no_eval_leakage",
     "build_prompt",
     "eval_chunk_ids",
+    "eval_question_keys",
     "is_contaminated",
     "normalize_question",
     "parse_questions",
 ]
+
+
+class EvalLeakageError(RuntimeError):
+    """A held-out eval question reached the training data."""
 
 # Below this many characters a chunk carries too little to ask about — a
 # heading, a page number, a one-line "None." item. Generating from them
@@ -106,6 +114,46 @@ def eval_chunk_ids(eval_set_path: str | Path) -> set[str]:
         if line.strip():
             ids.update(json.loads(line).get("relevant_chunk_ids", []))
     return ids
+
+
+def eval_question_keys(eval_set_path: str | Path) -> list[frozenset[str]]:
+    """Every held-out question, reduced to the form comparisons use."""
+    path = Path(eval_set_path)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} not found — refusing to proceed without the eval set, "
+            "because the contamination guard cannot run without it."
+        )
+    return [
+        normalize_question(json.loads(line)["question"])
+        for line in path.read_text().splitlines()
+        if line.strip()
+    ]
+
+
+def assert_no_eval_leakage(queries: Iterable[str], eval_set_path: str | Path) -> int:
+    """Refuse to proceed if any held-out question reached the training data.
+
+    The last line of defence, and the reason it is here rather than inside
+    the training script: a contaminated run produces a number that looks
+    like an improvement and is not one, and nothing downstream would reveal
+    it. That is worth a test, and a script-local function cannot have one.
+
+    Comparison is on normalised word sets, so a question differing only in
+    casing, punctuation or spacing is still caught — those are the forms a
+    generator actually produces.
+
+    Returns the number of queries cleared, for logging.
+    """
+    held_out = set(eval_question_keys(eval_set_path))
+    seen = [normalize_question(query) for query in queries]
+    leaked = held_out & set(seen)
+    if leaked:
+        raise EvalLeakageError(
+            f"{len(leaked)} eval questions appear in the training data. The "
+            "reported delta would measure memorisation, not retrieval."
+        )
+    return len(seen)
 
 
 def is_contaminated(

@@ -40,7 +40,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from duediligence.index.embed import QUERY_INSTRUCTION, resolve_device  # noqa: E402
-from duediligence.train.synthetic import normalize_question  # noqa: E402
+from duediligence.train.synthetic import (  # noqa: E402
+    EvalLeakageError,
+    assert_no_eval_leakage,
+)
 
 logger = logging.getLogger("finetune")
 
@@ -51,29 +54,6 @@ def load_split(path: str) -> list[dict]:
         for line in Path(path).read_text().splitlines()
         if line.strip()
     ]
-
-
-def assert_no_eval_leakage(rows: list[dict], eval_set: str) -> None:
-    """Refuse to train if any eval question reached the training data.
-
-    The last line of defence. The guard already ran at generation and again
-    after company-name normalisation, but this is the point of no return: a
-    contaminated run produces a number that looks like an improvement and
-    is not one, and nothing downstream would reveal it.
-    """
-    eval_questions = {
-        normalize_question(json.loads(line)["question"])
-        for line in Path(eval_set).read_text().splitlines()
-        if line.strip()
-    }
-    train_questions = {normalize_question(r["query"]) for r in rows}
-    overlap = eval_questions & train_questions
-    if overlap:
-        raise SystemExit(
-            f"ABORTING: {len(overlap)} eval questions appear verbatim in the training "
-            "data. The reported delta would measure memorisation, not retrieval."
-        )
-    logger.info("contamination check passed: no eval question in %d training rows", len(rows))
 
 
 def main() -> None:
@@ -102,7 +82,13 @@ def main() -> None:
 
     train_rows = load_split(args.train)
     val_rows = load_split(args.val)
-    assert_no_eval_leakage(train_rows + val_rows, args.eval_set)
+    try:
+        cleared = assert_no_eval_leakage(
+            (r["query"] for r in train_rows + val_rows), args.eval_set
+        )
+    except EvalLeakageError as error:
+        raise SystemExit(f"ABORTING: {error}") from error
+    logger.info("contamination check passed over %d training rows", cleared)
 
     device = resolve_device()
     logger.info(

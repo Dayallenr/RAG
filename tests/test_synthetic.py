@@ -11,8 +11,11 @@ import json
 import pytest
 
 from duediligence.train.synthetic import (
+    EvalLeakageError,
+    assert_no_eval_leakage,
     build_prompt,
     eval_chunk_ids,
+    eval_question_keys,
     is_contaminated,
     normalize_question,
     parse_questions,
@@ -72,6 +75,69 @@ class TestContamination:
         question = "What was net income for Columbia in 2023?"
         assert is_contaminated(question, [held_out], threshold=0.5)
         assert not is_contaminated(question, [held_out], threshold=0.99)
+
+
+class TestEvalQuestionKeys:
+    def test_reads_every_question(self, tmp_path):
+        path = tmp_path / "eval.jsonl"
+        path.write_text(
+            '{"question": "One thing?"}\n{"question": "Another thing?"}\n'
+        )
+        assert len(eval_question_keys(path)) == 2
+
+    def test_blank_lines_are_skipped(self, tmp_path):
+        path = tmp_path / "eval.jsonl"
+        path.write_text('{"question": "One thing?"}\n\n')
+        assert len(eval_question_keys(path)) == 1
+
+    def test_a_missing_eval_set_is_a_hard_failure(self, tmp_path):
+        with pytest.raises(FileNotFoundError):
+            eval_question_keys(tmp_path / "nope.jsonl")
+
+
+class TestAssertNoEvalLeakage:
+    def _eval_set(self, tmp_path, *questions):
+        path = tmp_path / "eval.jsonl"
+        path.write_text(
+            "\n".join(json.dumps({"question": q, "relevant_chunk_ids": ["c1"]}) for q in questions)
+        )
+        return path
+
+    def test_a_clean_training_set_passes(self, tmp_path):
+        path = self._eval_set(tmp_path, "What was Columbia's net income in 2023?")
+        # Returns the number of rows it cleared, so a caller can log it.
+        assert assert_no_eval_leakage(["What are the merger termination fees?"], path) == 1
+
+    def test_a_verbatim_eval_question_aborts(self, tmp_path):
+        question = "What was Columbia's net income in 2023?"
+        path = self._eval_set(tmp_path, question)
+        with pytest.raises(EvalLeakageError):
+            assert_no_eval_leakage([question], path)
+
+    def test_a_question_differing_only_in_case_aborts(self, tmp_path):
+        path = self._eval_set(tmp_path, "What was Columbia's net income in 2023?")
+        with pytest.raises(EvalLeakageError):
+            assert_no_eval_leakage(["WHAT WAS COLUMBIA'S NET INCOME IN 2023?"], path)
+
+    def test_a_question_differing_only_in_punctuation_and_spacing_aborts(self, tmp_path):
+        path = self._eval_set(tmp_path, "What was Columbia's net income in 2023?")
+        with pytest.raises(EvalLeakageError):
+            assert_no_eval_leakage(["What was  Columbia's net income in 2023"], path)
+
+    def test_the_error_names_how_many_leaked(self, tmp_path):
+        a, b = "What were the merger terms?", "Who approved the merger?"
+        path = self._eval_set(tmp_path, a, b, "An unrelated question about deposits?")
+        with pytest.raises(EvalLeakageError, match="2"):
+            assert_no_eval_leakage([a, b, "Something else entirely?"], path)
+
+    def test_a_missing_eval_set_is_a_hard_failure(self, tmp_path):
+        # Refusing to train is correct: the guard cannot run without it.
+        with pytest.raises(FileNotFoundError):
+            assert_no_eval_leakage(["anything"], tmp_path / "does-not-exist.jsonl")
+
+    def test_an_empty_training_set_passes_trivially(self, tmp_path):
+        path = self._eval_set(tmp_path, "What was Columbia's net income in 2023?")
+        assert assert_no_eval_leakage([], path) == 0
 
 
 class TestBuildPrompt:
