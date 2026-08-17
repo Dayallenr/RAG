@@ -123,10 +123,36 @@ would poison the fine-tuning result that depends on it.
 
 ---
 
-## Not this session's job
+## Job 2 — answers for the eval set (issue #3)
 
-Issue #3 (generating the 101 eval answers) also needs this machine, but it
-needs retrieval contexts that only exist where the index is. The Mac will
-export those to a file, commit and push; this session then pulls, generates,
-and pushes the answers back. Wait for that file to exist —
-`data/generation/retrieval_contexts.jsonl` — before attempting it.
+**Ready now.** `data/generation/retrieval_contexts.jsonl` is committed: 101
+questions, retrieval already done on the machine with the index. Pull first
+(`git pull`), then:
+
+```powershell
+python scripts/generate_answers_locally.py --limit 5    # smoke test
+python scripts/generate_answers_locally.py              # the rest
+```
+
+**Only 89 of the 101 call the model.** The other 12 route to exact XBRL
+lookup and are passed through untouched — their answer is already a precise
+figure with the accession number that reported it, and restating an exact
+number through a language model can only introduce error.
+
+Expect roughly 20–40 minutes. Resumable, same as Job 1.
+
+Check a few answers before pushing. Each should cite passages as `[1]`,
+`[2]`, and should say *"The provided filings do not state this."* rather than
+guess when the passages do not contain the answer. A refusal is a **correct**
+outcome here, not a failure — for a due-diligence tool an invented figure is
+the catastrophic result.
+
+```powershell
+git add results/generation/answers.jsonl
+git commit -m "Generate eval answers locally with qwen3:8b (refs #3)"
+git push origin main
+```
+
+Judging happens back on the Mac, where the hosted key lives — deliberately a
+**different model** from the one that generated, so the groundedness score
+is not self-assessment.
