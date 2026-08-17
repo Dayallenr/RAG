@@ -75,7 +75,7 @@ hybrid search — a real, testable routing decision, not an LLM judgment call.
 
 | | |
 |---|---|
-| Repo | `/Users/dayallenragunathan/CodingProjects/RAG` (no git remote yet, no commits yet — see Immediate next step) |
+| Repo | `/Users/dayallenragunathan/CodingProjects/RAG` — remote `github.com/Dayallenr/RAG` (public). Issues/specs live in its GitHub Issues; `gh` is installed but needs `GH_CONFIG_DIR=$HOME/.gh` (set in `~/.zshenv`) because `~/.config` is root-owned. |
 | Python | 3.13.5, venv at `.venv/` |
 | Secrets | `.env` (gitignored) holds a **real, working** `GOOGLE_API_KEY`. `.env.example` is the tracked placeholder. |
 | Gemini model | `gemini-flash-latest`, **not** a pinned version — `gemini-2.5-flash` was confirmed dead ("no longer available to new users") on this API key despite still appearing in the model list. The `-latest` alias tracks whatever Google currently recommends. |
@@ -163,13 +163,22 @@ showing the process at 2.7% CPU, which looked like blocking on OpenSearch —
 so low CPU% does not mean idle. `scripts/build_index.py` now logs embed and
 bulk seconds separately per batch so this is readable straight off the log.
 
-**10-Q tables of contents leak into the table corpus**: 53 of 8,740 table
-chunks (0.6%, mostly SSB/COLB 10-Qs) are TOC tables. `chunk_tables.py`'s
-`_ITEM_HEADING_CELL_RE` requires whitespace *after* the item number, which
-matches a 10-K's "Item 1A. Risk Factors" in one cell but never a 10-Q's,
-where the number sits alone in its own column as exactly "Item 1.". Known,
-measured, not yet fixed — fixing it requires re-running ingestion and
-re-indexing.
+**10-Q tables of contents leaked into the table corpus — FIXED.** 53 of
+8,740 table chunks (0.6%, mostly SSB/COLB 10-Qs) were TOC tables.
+`chunk_tables.py`'s `_ITEM_HEADING_CELL_RE` required whitespace *after* the
+item number, which matches a 10-K's "Item 1A. Risk Factors" in one cell but
+never a 10-Q's, where the number sits alone in its own column as exactly
+"Item 1.". Fixed by anchoring with `(?:\s|$)`, and by scoring the exclusion
+per *row* rather than per cell — in a 10-Q TOC the "Item N." cells are only
+~14% of cells, diluted below any threshold real financial tables survive.
+
+Verified end to end on 2026-08-16: 8,671 table chunks on disk and 8,671 in
+the live index, **0 TOC-shaped by the current rule**, and indexed chunk-type
+counts sum to exactly the 38,483 documented below. Regression tests cover
+the 10-K shape, the 10-Q "Item 1." shape, and a real GBCI en-dash variant
+(`tests/test_chunk_tables.py::TestTableOfContentsExclusion`). No further
+ingestion or re-index is needed — a stale version of this note previously
+said otherwise and caused a ticket to be opened for work already done.
 
 **SEC's `fy`/`fp` fields identify the filing, not the fact — this produced
 wrong answers.** Columbia's FY2023 10-K reports 2021, 2022 and 2023 net
@@ -216,15 +225,17 @@ sections — exact matches. See `results/extraction/report.json`.
 | 8 FastAPI serving layer | **Done** — /ask, /search, /route, /healthz, /readyz, /metrics |
 | 9 Docker + local OpenSearch | **Done** — compose (OpenSearch + api profile), two-stage Dockerfile |
 | 10 Kubernetes + observability | **Done** — StatefulSet/Deployment/HPA + Prometheus metrics |
-| 11 CI/CD | **Workflow written, never run on GitHub** — no remote exists yet |
+| 11 CI/CD | **Done and verified green on GitHub** — all five jobs pass on `main` |
 | 12 Terraform + real AWS OpenSearch demo (money-gated) | **Written + validated, never applied** — see terraform/README.md |
 | 13 README + claim-to-artifact mapping | **Done** — README.md |
 
-161 tests pass; `ruff check` clean.
+209 tests pass; `ruff check` clean.
 
 ### Retrieval numbers (real, from `results/retrieval/report.json`)
 
-101 questions, 38,483 indexed chunks, **0 human-verified so far**:
+101 questions, 38,483 indexed chunks, **70 human-verified**. The table below
+predates that verification — it was produced at 0 verified and has not been
+re-run. Re-run before quoting these numbers anywhere:
 
 | retriever | recall@1 | recall@5 | recall@10 | MRR | nDCG@10 | ms |
 |---|---|---|---|---|---|---|
@@ -277,20 +288,30 @@ set, not the absolute level.
 
 ## Remaining work (all phases built; these are the honest gaps)
 
-1. **Eval-set verification — needs the user.** All 101 retrieval entries and
-   all 36 routing entries are `verified: false`. See the section below.
-2. **Generation numbers.** `python -m duediligence.eval.run_groundedness_eval
+1. **Generation numbers.** `python -m duediligence.eval.run_groundedness_eval
    --limit 15` — resumable, skips completed questions, 20 Gemini
    requests/day. `results/generation/report.json` currently records 0
-   answers because the quota was exhausted on the day it was built.
-3. **A real green CI run.** `.github/workflows/ci.yml` exists but this repo
-   has no remote. Create one, push, and confirm the run passes — CLAUDE.md's
-   standing rule is that CI counts only when verified green on GitHub, not
-   locally.
-4. **Fix the 10-Q table-of-contents leak** (53/8,740 table chunks). Needs an
-   ingestion re-run and a re-index afterwards.
-5. **Terraform apply** — money-gated, never without explicit real-time
+   answers because the quota was exhausted on the day it was built. The
+   generation-backend seam now allows a locally-served model to generate
+   with no quota ceiling while Gemini judges independently, which is what
+   makes a full 101-question pass possible (issues #3, #4).
+2. **Terraform apply** — money-gated, never without explicit real-time
    go-ahead. `terraform/README.md` has the cost breakdown.
+
+**Closed since this list was written** (do not re-open these as work):
+
+- *Eval-set verification.* 70 of 101 retrieval entries are now human-verified.
+  A follow-on pass to widen single-chunk labels into all co-valid chunks was
+  scoped and then **explicitly ruled out of scope** (issue #5). Tooling for it
+  is merged and unused: `scripts/draft_covalidity_review.py`,
+  `scripts/apply_covalidity_review.py`, `data/eval_covalidity_review.md`.
+  Consequence: labels stay a mean of 1.02 chunks/question, so reported recall
+  is a **floor, not an estimate**, and every report must keep saying so.
+- *A real green CI run.* CI has run on GitHub and passed **all five jobs** —
+  lint/unit, integration against a real OpenSearch container, serving-image
+  build and boot, kind-cluster manifest validation, and Terraform validate.
+- *The 10-Q TOC leak.* Fixed, tested, re-ingested and re-indexed — see the
+  established-findings entry above.
 
 ## Previous next step: finish Phase 4, then Phase 5
 
@@ -333,21 +354,28 @@ duediligence/
                     chunk_tables.py (pandas.read_html extraction)
                     chunk_xbrl.py (structured financial facts)
                     chunk_charts.py (Gemini Vision chart understanding)
-  generate/         gemini_client.py (shared client, text + vision)
   eval/             run_extraction_eval.py · run_chart_eval.py
                     retrieval_metrics.py (recall@k, MRR, nDCG, MAP, hit-rate)
                     run_retrieval_eval.py (dense + BM25 baselines)
   index/            embed.py (bge-small-en-v1.5, query-prefix + normalization)
                     enrich.py (index-time rollup of placeholder doc/section chunks)
                     opensearch_client.py (two backends, mapping, k-NN + BM25)
-                    (hybrid_search.py, rerank.py — Phase 5, not built yet)
-  route/            (Phase 6 — not built yet: query_router.py)
-  api/              (Phase 8 — not built yet: FastAPI app)
+                    hybrid_search.py (RRF fusion) · rerank.py (cross-encoder)
+  route/            query_router.py (deterministic) · structured_lookup.py
+  api/              app.py (FastAPI: /ask /search /route /healthz /readyz /metrics)
+  generate/         gemini_client.py · backends.py (injected text-generation
+                    backends; keeps the groundedness judge separable from
+                    the generator) · answer.py
+  track/            experiment.py (W&B run logging; no-op without a key)
 config/config.yaml  companies, filing types, date range, EDGAR settings, model names
 docker/             docker-compose.yml (local OpenSearch 2.19.1, k-NN enabled)
 scripts/            fetch_filings.py · run_ingestion.py · run_chart_extraction.py
                     build_index.py (embed + index the corpus)
                     sample_eval_candidates.py · draft_eval_set.py (eval-set curation)
+                    run_ablations.py (fusion weight, chunk levels, rerank depth)
+                    draft_covalidity_review.py · apply_covalidity_review.py
+                    (label-widening tooling — built, deliberately unused, see
+                    the eval-set note under Remaining work)
 data/
   manifest.json         real provenance: accession numbers per filing
   filings/<TICKER>/     downloaded HTML + companyfacts.json (large, gitignored)
@@ -379,3 +407,17 @@ tests/              45 tests, one file per ingest/eval module
 - Resume bullets are deferred — focus on project quality, metrics, and
   breadth. Bullets come later, at the end, and only when asked.
 - Every retrieval/extraction claim needs a real report.json, not a vibe.
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in this repo's GitHub Issues (`Dayallenr/RAG`), managed with the
+`gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` and `docs/adr/` at the repo root, both created
+lazily — their absence is not a problem to flag. See `docs/agents/domain.md`.
