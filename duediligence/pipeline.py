@@ -38,6 +38,7 @@ from duediligence.index.hybrid_search import hybrid_search
 from duediligence.index.opensearch_client import build_client
 from duediligence.route.query_router import Route, classify_query
 from duediligence.route.structured_lookup import lookup_fact
+from duediligence.tracing import span
 
 logger = logging.getLogger(__name__)
 
@@ -81,18 +82,29 @@ class DueDiligencePipeline:
         self, question: str, *, k: int = _CONTEXT_PASSAGES, filters: dict[str, Any] | None = None
     ) -> list[dict[str, Any]]:
         """Hybrid retrieval, then reranking if enabled."""
-        vector = self.embedder.embed_query(question)
-        if self.reranker is None:
-            return hybrid_search(
-                self.client, self.index_name, question, vector, k=k,
-                candidate_k=_CANDIDATE_K, filters=filters,
-            )
+        with span("retrieve", k=k, reranked=self.reranker is not None) as retrieval:
+            with span("embed.query", model=self.embedder.model_name):
+                vector = self.embedder.embed_query(question)
 
-        candidates = hybrid_search(
-            self.client, self.index_name, question, vector,
-            k=_CANDIDATE_K, candidate_k=_CANDIDATE_K, filters=filters,
-        )
-        return self.reranker.rerank(question, candidates, top_k=k)
+            if self.reranker is None:
+                hits = hybrid_search(
+                    self.client, self.index_name, question, vector, k=k,
+                    candidate_k=_CANDIDATE_K, filters=filters,
+                )
+                retrieval.set_attribute("hits", len(hits))
+                return hits
+
+            candidates = hybrid_search(
+                self.client, self.index_name, question, vector,
+                k=_CANDIDATE_K, candidate_k=_CANDIDATE_K, filters=filters,
+            )
+            # Recorded because rerank cost scales with this, and the
+            # ablation already found depth 100 *worse* than 50 at 70% more
+            # latency — a trace should show which depth actually ran.
+            with span("rerank", candidates=len(candidates), top_k=k):
+                hits = self.reranker.rerank(question, candidates, top_k=k)
+            retrieval.set_attribute("hits", len(hits))
+            return hits
 
     def answer(
         self,
@@ -102,68 +114,94 @@ class DueDiligencePipeline:
         filters: dict[str, Any] | None = None,
     ) -> PipelineResult:
         started = time.perf_counter()
-        decision = classify_query(question)
 
-        if decision.route is Route.STRUCTURED:
-            fact = lookup_fact(decision.concept, decision.company, decision.fiscal_year)
-            if fact is not None:
-                return PipelineResult(
-                    question=question,
-                    route="structured",
-                    routing_reasons=decision.reasons,
-                    answer=(
-                        f"{fact.company} {decision.concept} for fiscal year "
-                        f"{fact.fiscal_year} was {fact.formatted_value()}."
-                    ),
-                    structured_fact=fact.to_dict(),
-                    citations=[{
-                        "accession_number": fact.accession_number,
-                        "source_url": fact.source_url,
-                        "company": fact.company,
-                    }],
-                    passages=[],
-                    refused=False,
-                    latency_ms=round((time.perf_counter() - started) * 1000, 1),
+        with span("duediligence.answer", question_chars=len(question)) as root:
+            with span("route.classify"):
+                decision = classify_query(question)
+            root.set_attribute("route", decision.route.value)
+
+            if decision.route is Route.STRUCTURED:
+                with span(
+                    "route.structured_lookup",
+                    concept=decision.concept,
+                    company=decision.company,
+                    fiscal_year=decision.fiscal_year,
+                ) as lookup:
+                    fact = lookup_fact(
+                        decision.concept, decision.company, decision.fiscal_year
+                    )
+                    lookup.set_attribute("found", fact is not None)
+                if fact is not None:
+                    # No model call on this path at all, which a trace makes
+                    # obvious: a structured answer has no generate span.
+                    root.set_attribute("answered_by", "structured")
+                    return PipelineResult(
+                        question=question,
+                        route="structured",
+                        routing_reasons=decision.reasons,
+                        answer=(
+                            f"{fact.company} {decision.concept} for fiscal year "
+                            f"{fact.fiscal_year} was {fact.formatted_value()}."
+                        ),
+                        structured_fact=fact.to_dict(),
+                        citations=[{
+                            "accession_number": fact.accession_number,
+                            "source_url": fact.source_url,
+                            "company": fact.company,
+                        }],
+                        passages=[],
+                        refused=False,
+                        latency_ms=round((time.perf_counter() - started) * 1000, 1),
+                    )
+                # The corpus has no row for this key. Falling through to search
+                # is better than reporting "no data": the figure may well be
+                # stated in prose the retriever can find.
+                logger.info(
+                    "structured route found no fact for %s/%s/%s — falling back to semantic",
+                    decision.company, decision.concept, decision.fiscal_year,
                 )
-            # The corpus has no row for this key. Falling through to search
-            # is better than reporting "no data": the figure may well be
-            # stated in prose the retriever can find.
-            logger.info(
-                "structured route found no fact for %s/%s/%s — falling back to semantic",
-                decision.company, decision.concept, decision.fiscal_year,
+                decision.reasons.append("no matching XBRL fact — fell back to semantic search")
+
+            passages = self.retrieve(question, k=k, filters=filters)
+
+            generated: GeneratedAnswer | None = None
+            if self.enable_generation:
+                with span(
+                    "generate",
+                    backend=self.generation_backend.name,
+                    model=self.generation_backend.model,
+                    passages=len(passages),
+                ) as generation:
+                    generated = generate_answer(
+                        question, passages,
+                        backend=self.generation_backend,
+                        max_passages=k,
+                    )
+                    generation.set_attribute("refused", generated.refused)
+                    generation.set_attribute("citations", len(generated.citations))
+
+            root.set_attribute("answered_by", "semantic")
+
+            return PipelineResult(
+                question=question,
+                route="semantic",
+                routing_reasons=decision.reasons,
+                answer=generated.answer if generated else None,
+                structured_fact=None,
+                citations=generated.citations if generated else [],
+                passages=[
+                    {
+                        "chunk_id": p.get("chunk_id"),
+                        "company": p.get("company"),
+                        "filing_type": p.get("filing_type"),
+                        "filing_date": p.get("filing_date"),
+                        "section": p.get("section"),
+                        "source_url": p.get("source_url"),
+                        "score": p.get("score"),
+                        "text": p.get("text"),
+                    }
+                    for p in passages
+                ],
+                refused=generated.refused if generated else False,
+                latency_ms=round((time.perf_counter() - started) * 1000, 1),
             )
-            decision.reasons.append("no matching XBRL fact — fell back to semantic search")
-
-        passages = self.retrieve(question, k=k, filters=filters)
-
-        generated: GeneratedAnswer | None = None
-        if self.enable_generation:
-            generated = generate_answer(
-                question, passages,
-                backend=self.generation_backend,
-                max_passages=k,
-            )
-
-        return PipelineResult(
-            question=question,
-            route="semantic",
-            routing_reasons=decision.reasons,
-            answer=generated.answer if generated else None,
-            structured_fact=None,
-            citations=generated.citations if generated else [],
-            passages=[
-                {
-                    "chunk_id": p.get("chunk_id"),
-                    "company": p.get("company"),
-                    "filing_type": p.get("filing_type"),
-                    "filing_date": p.get("filing_date"),
-                    "section": p.get("section"),
-                    "source_url": p.get("source_url"),
-                    "score": p.get("score"),
-                    "text": p.get("text"),
-                }
-                for p in passages
-            ],
-            refused=generated.refused if generated else False,
-            latency_ms=round((time.perf_counter() - started) * 1000, 1),
-        )
