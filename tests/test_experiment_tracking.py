@@ -7,6 +7,8 @@ telemetry outage would be an absurd trade.
 """
 from __future__ import annotations
 
+import pytest
+
 from duediligence.track import flatten_metrics, log_run, tracking_enabled
 
 
@@ -110,6 +112,22 @@ class TestLogRun:
 
 
 class TestTrackingEnabled:
+    """``tracking_enabled()`` reads a local ``.env`` at call time, so these
+    tests must neutralise that too.
+
+    Deleting the environment variable alone is not enough: ``load_dotenv``
+    would put it straight back from the developer's real ``.env``, and these
+    tests would then pass in CI (no ``.env``) while failing on any machine
+    that has a key configured. That is the failure mode where a broken test
+    hides instead of announcing itself.
+    """
+
+    @pytest.fixture(autouse=True)
+    def _no_dotenv(self, monkeypatch):
+        import dotenv
+
+        monkeypatch.setattr(dotenv, "load_dotenv", lambda *args, **kwargs: False)
+
     def test_disabled_without_an_api_key(self, monkeypatch):
         monkeypatch.delenv("WANDB_API_KEY", raising=False)
         monkeypatch.delenv("DUEDILIGENCE_TRACKING", raising=False)

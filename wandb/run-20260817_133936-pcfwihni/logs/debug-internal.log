@@ -1,0 +1,18 @@
+{"time":"2026-08-17T13:39:36.568741-07:00","level":"INFO","msg":"wandb-core"}
+{"time":"2026-08-17T13:39:36.573387-07:00","level":"INFO","msg":"stream: starting","core version":"0.28.2"}
+{"time":"2026-08-17T13:39:36.689093-07:00","level":"INFO","msg":"stream: created new stream","id":"pcfwihni"}
+{"time":"2026-08-17T13:39:36.690048-07:00","level":"INFO","msg":"handler: started"}
+{"time":"2026-08-17T13:39:36.690057-07:00","level":"INFO","msg":"writer: started","stream_id":"pcfwihni"}
+{"time":"2026-08-17T13:39:36.690056-07:00","level":"INFO","msg":"stream: started"}
+{"time":"2026-08-17T13:39:36.690489-07:00","level":"INFO","msg":"sender: started"}
+{"time":"2026-08-17T13:39:37.328865-07:00","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":1}
+{"time":"2026-08-17T13:39:37.538178-07:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-08-17T13:39:38.016346-07:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-08-17T13:39:38.016652-07:00","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":0,"history_lines":1,"console_offset":1,"console_lines":2,"uploaded_len":5,"complete":true,"exit_code":0}
+{"time":"2026-08-17T13:39:38.556277-07:00","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-08-17T13:39:38.559444-07:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2026-08-17T13:39:38.564749-07:00","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-08-17T13:39:38.564777-07:00","level":"INFO","msg":"handler: closed"}
+{"time":"2026-08-17T13:39:38.565031-07:00","level":"INFO","msg":"sender: closed"}
+{"time":"2026-08-17T13:39:38.565056-07:00","level":"INFO","msg":"stream: all finished"}
+{"time":"2026-08-17T13:39:40.566494-07:00","level":"ERROR","msg":"stream: failed to shut down analytics","error":"shutdown errors: [failed to upload metrics: context deadline exceeded: retry-able request failure: Post \"https://api.wandb.ai/sdk/otel/v1/metrics\": net/http: request canceled (Client.Timeout exceeded while awaiting headers) context deadline exceeded]"}

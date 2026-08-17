@@ -1,0 +1,46 @@
+_wandb:
+    value:
+        cli_version: 0.28.2
+        e:
+            537bvkivxusht6yugkigis9gnnhd2pg6:
+                args:
+                    - --limit
+                    - "20"
+                codePath: scripts/judge_answers.py
+                codePathLocal: scripts/judge_answers.py
+                email: dayallenr30@gmail.com
+                executable: /Users/dayallenragunathan/CodingProjects/RAG/.venv/bin/python
+                git:
+                    commit: 444d669451de9d6375796066bdc2e4484e07adf9
+                    remote: https://github.com/Dayallenr/RAG.git
+                host: Dayallens-MacBook-Pro.local
+                os: macOS-15.3.1-arm64-arm-64bit-Mach-O
+                program: /Users/dayallenragunathan/CodingProjects/RAG/scripts/judge_answers.py
+                python: CPython 3.13.5
+                root: /Users/dayallenragunathan/CodingProjects/RAG
+                startedAt: "2026-08-17T20:37:17.314936Z"
+                writerId: 537bvkivxusht6yugkigis9gnnhd2pg6
+        m: []
+        python_version: 3.13.5
+        t:
+            "3":
+                - 2
+                - 13
+                - 15
+                - 16
+            "4": 3.13.5
+            "5": 0.28.2
+            "8":
+                - 2
+            "10":
+                - 20
+            "12": 0.28.2
+            "13": darwin-arm64
+generation_model:
+    value: qwen3:8b
+independent_judge:
+    value: true
+judge_model:
+    value: gemini-flash-latest
+judged:
+    value: 9

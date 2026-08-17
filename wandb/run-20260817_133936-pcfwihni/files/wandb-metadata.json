@@ -1,0 +1,18 @@
+{
+  "os":  "macOS-15.3.1-arm64-arm-64bit-Mach-O",
+  "python":  "CPython 3.13.5",
+  "startedAt":  "2026-08-17T20:39:36.561117Z",
+  "args":  [
+    "-q"
+  ],
+  "program":  "-m pytest.__main__",
+  "git":  {
+    "remote":  "https://github.com/Dayallenr/RAG.git",
+    "commit":  "01f767383dfc395e1ae1d2e3d33a32e96c1b5ac9"
+  },
+  "email":  "dayallenr30@gmail.com",
+  "root":  "/Users/dayallenragunathan/CodingProjects/RAG",
+  "host":  "Dayallens-MacBook-Pro.local",
+  "executable":  "/Users/dayallenragunathan/CodingProjects/RAG/.venv/bin/python",
+  "writerId":  "w51hc4ax2a790u3acypt7pixsp67fwu5"
+}
