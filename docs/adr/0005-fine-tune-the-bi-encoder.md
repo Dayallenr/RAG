@@ -23,10 +23,12 @@ Two things then changed.
    fusion weights; it is a domain-adaptation gap, and adapting the encoder
    is the direct answer to it.
 
-   Figures from `results/retrieval/report.json`. That report was produced
-   when **0** of the 101 eval entries were human-verified; 70 are verified
-   now, and it has not been re-run since. Treat these as the numbers that
-   motivated the decision, not as current.
+   Figures from `results/retrieval/report.json`, re-run against the eval set
+   with **101 of 101** entries human-verified. The figures above originally
+   came from a run made when **0** were verified; verification corrected no
+   labels, so every quality metric reproduced bit-identically and these
+   numbers stand as current rather than as merely motivating. Only the
+   latencies moved, and for a reason unrelated to the labels (see ADR 0001).
 2. **A CUDA machine became available** — a Windows PC with an RTX 5070. The
    GPU-independence constraint that made the original rule necessary stopped
    applying, because training can happen on a machine that is not the

@@ -22,10 +22,11 @@ FastAPI over HTTP/JSON.
   request into a terminal and read the answer has been worth more during
   development than the latency saving. Second, the numbers say serialization
   is not where the time goes: in `results/retrieval/report.json` the hybrid
-  path averages 359 ms and hybrid-plus-rerank 905 ms, so the cross-encoder
-  alone costs roughly 546 ms per query. Protobuf would save single-digit
-  milliseconds against that. Optimising a fraction of a percent while a
-  model forward pass owns the rest is the wrong end of the problem.
+  path averages 53 ms and hybrid-plus-rerank 342 ms, so the cross-encoder
+  alone costs roughly 289 ms per query — 85% of the request. Protobuf would
+  save single-digit milliseconds against that. Optimising a fraction of a
+  percent while a model forward pass owns the rest is the wrong end of the
+  problem.
 - **A plain ASGI app without FastAPI.** Rejected: Pydantic request/response
   models and the generated OpenAPI schema are most of why this endpoint is
   documented at all.

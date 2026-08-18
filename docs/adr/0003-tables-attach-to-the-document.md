@@ -43,6 +43,7 @@ up to its surrounding narrative. Both are things I would want eventually.
 **Why it costs less than it looks.** Table chunks carry the company, filing
 type, filing date and accession number, so the metadata filtering that
 actually gets used still works. And measured recall@10 on table-ground-truth
-questions is 0.425 for BM25 (`results/retrieval/report.json`) — the binding constraint there is that serialized
+questions is 0.425 for BM25 (`results/retrieval/report.json`, 101 of 101
+questions human-verified) — the binding constraint there is that serialized
 financial tables are numeric soup for a 384-dimensional embedding, not that
 their parent pointer is coarse.

@@ -1,7 +1,7 @@
 {
   "eval_set": "data/eval_set.jsonl",
   "queries": 101,
-  "human_verified_queries": 0,
+  "human_verified_queries": 101,
   "index": "duediligence-chunks",
   "embedding_model": "BAAI/bge-small-en-v1.5",
   "reranker_model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
@@ -31,7 +31,7 @@
         "mrr": 0.20763337322743264,
         "map": 0.20766873390635768
       },
-      "latency_ms_mean": 208.14254494069985,
+      "latency_ms_mean": 35.76055028571489,
       "by_question_type": {
         "chart": {
           "queries": 5.0,
@@ -185,7 +185,7 @@
         "mrr": 0.39932332518966185,
         "map": 0.398498242681411
       },
-      "latency_ms_mean": 89.05519222771365,
+      "latency_ms_mean": 17.83823515899424,
       "by_question_type": {
         "chart": {
           "queries": 5.0,
@@ -339,7 +339,7 @@
         "mrr": 0.36051614270738813,
         "map": 0.35754584567768516
       },
-      "latency_ms_mean": 359.0641806930771,
+      "latency_ms_mean": 52.58004867476365,
       "by_question_type": {
         "chart": {
           "queries": 5.0,
@@ -493,7 +493,7 @@
         "mrr": 0.4353983048680808,
         "map": 0.43251051608920293
       },
-      "latency_ms_mean": 904.7208276038368,
+      "latency_ms_mean": 342.0281814870028,
       "by_question_type": {
         "chart": {
           "queries": 5.0,
@@ -636,7 +636,7 @@
       "relevant_chunk_ids": [
         "59a1307879d0d11a"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "1de1044c619fd796",
         "2061749573f03287",
@@ -739,7 +739,7 @@
       "relevant_chunk_ids": [
         "ea09c398f64fcce7"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "11a014112428e399",
         "ca8dc8cc9fc3c255",
@@ -842,7 +842,7 @@
       "relevant_chunk_ids": [
         "be715618af2bf86d"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "903a5bceff21c4f1",
         "e64df8f852c4c6fc",
@@ -945,7 +945,7 @@
       "relevant_chunk_ids": [
         "a305b271220dc13e"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "0360dd3704e7fcba",
         "452422b6a7629f67",
@@ -1048,7 +1048,7 @@
       "relevant_chunk_ids": [
         "679857067625598b"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "2430abce172ad5bc",
         "64aa865b206fc9d8",
@@ -1151,7 +1151,7 @@
       "relevant_chunk_ids": [
         "a6fb2164e49a434c"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "b5bb019143c02800",
         "fb9a2347a24a84b0",
@@ -1254,7 +1254,7 @@
       "relevant_chunk_ids": [
         "ad3270e258b8ce65"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "a5cdaf8a42e803d2",
         "b3284110b23aac3a",
@@ -1357,7 +1357,7 @@
       "relevant_chunk_ids": [
         "6a64cbef33fafeaf"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "7dcbcb30e9741e55",
         "e7932d0e6363158b",
@@ -1460,7 +1460,7 @@
       "relevant_chunk_ids": [
         "fc9665ce205873b1"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "a6ab366cb48580bd",
         "6cee4c0b00d48b48",
@@ -1563,7 +1563,7 @@
       "relevant_chunk_ids": [
         "31b9af98d512182c"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "60c9f384d0ec15d7",
         "aaac535a39bec25c",
@@ -1666,7 +1666,7 @@
       "relevant_chunk_ids": [
         "05be2f020253fbd0"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "ce41a71e2a050bb3",
         "05be2f020253fbd0",
@@ -1769,7 +1769,7 @@
       "relevant_chunk_ids": [
         "da9a01e4dfe0d897"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "d3d4d5aa06a23156",
         "499ef02b2ee53f63",
@@ -1872,7 +1872,7 @@
       "relevant_chunk_ids": [
         "48e57e3168103922"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "216b61e350b46605",
         "6ab5eb6802aa225e",
@@ -1975,7 +1975,7 @@
       "relevant_chunk_ids": [
         "6715f2203c1b83b4"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "216b61e350b46605",
         "d4d31821c9e5b881",
@@ -2078,7 +2078,7 @@
       "relevant_chunk_ids": [
         "b9ffca301705a075"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "debe586e1a414d60",
         "aab192645f8f0047",
@@ -2181,7 +2181,7 @@
       "relevant_chunk_ids": [
         "bb1e9fa059314a47"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "14c6bc6aef081f11",
         "07edfb3adf4c48e4",
@@ -2284,7 +2284,7 @@
       "relevant_chunk_ids": [
         "15ef55e673d4b42f"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "1f76c6b05166338e",
         "173daf03ee5b186e",
@@ -2387,7 +2387,7 @@
       "relevant_chunk_ids": [
         "775105dbe0a986fc"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "775105dbe0a986fc",
         "59a1307879d0d11a",
@@ -2490,7 +2490,7 @@
       "relevant_chunk_ids": [
         "541ebb8c9300e53a"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5692d6eba7616db6",
         "edb12ebe1836920a",
@@ -2593,7 +2593,7 @@
       "relevant_chunk_ids": [
         "eb382b5245e950d6"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "0d062177d4e21adb",
         "32269f798793e57b",
@@ -2696,7 +2696,7 @@
       "relevant_chunk_ids": [
         "774bc0ac5ad6820f"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "a44bb5cf05b0ffb2",
         "02d0c917fbf7b541",
@@ -2799,7 +2799,7 @@
       "relevant_chunk_ids": [
         "1a5161e301841e45"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "4e4a7c3c23165400",
         "b213dfceab33d6ed",
@@ -2902,7 +2902,7 @@
       "relevant_chunk_ids": [
         "438a8cc7fce5a114"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "438a8cc7fce5a114",
         "7428862ba83dd113",
@@ -3005,7 +3005,7 @@
       "relevant_chunk_ids": [
         "4fceae56931a7839"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "7b45fca333169dcf",
         "175d621ee86a09a7",
@@ -3108,7 +3108,7 @@
       "relevant_chunk_ids": [
         "071238bfd78723eb"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "071238bfd78723eb",
         "105f35f7ceb555e0",
@@ -3211,7 +3211,7 @@
       "relevant_chunk_ids": [
         "92ee45a79deb1dd6"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5abdb471045b90b3",
         "9515070d750219e8",
@@ -3314,7 +3314,7 @@
       "relevant_chunk_ids": [
         "b85093b7ca29cd6f"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "b85093b7ca29cd6f",
         "a2a2649bcb3a5173",
@@ -3417,7 +3417,7 @@
       "relevant_chunk_ids": [
         "5bde0b18d3a15523"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5bde0b18d3a15523",
         "48cc9623371fe04c",
@@ -3520,7 +3520,7 @@
       "relevant_chunk_ids": [
         "7ed219856bdcc648"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "9e117c49d7a41c4c",
         "4baf94c45255ae46",
@@ -3623,7 +3623,7 @@
       "relevant_chunk_ids": [
         "a16048239bd3b1a2"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "bbadb4497cdfe00c",
         "48eeb9b8b9d0f9da",
@@ -3726,7 +3726,7 @@
       "relevant_chunk_ids": [
         "e1bc973d830ac939"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "4a1da5aff0213027",
         "e68c4150d360dddb",
@@ -3829,7 +3829,7 @@
       "relevant_chunk_ids": [
         "e0f461f72072811e"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "40ed7cc2bb57d77d",
         "cde3e002ab2aeb4c",
@@ -3932,7 +3932,7 @@
       "relevant_chunk_ids": [
         "291cbc9e70a675f7"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "291cbc9e70a675f7",
         "53dd179fc7455dea",
@@ -4035,7 +4035,7 @@
       "relevant_chunk_ids": [
         "8a198aafacc6ffda"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "8a198aafacc6ffda",
         "af7d6cae4c6868eb",
@@ -4138,7 +4138,7 @@
       "relevant_chunk_ids": [
         "0da02638bdec3648"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "81e5d22e60229a66",
         "1648510b8258d413",
@@ -4241,7 +4241,7 @@
       "relevant_chunk_ids": [
         "e58bd8eb75027bae"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "08f6affa6f3ae60b",
         "f137dc7a82cbc216",
@@ -4344,7 +4344,7 @@
       "relevant_chunk_ids": [
         "40b6b1e5e8236628"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "9b629e926c013260",
         "64d915ac9cbc6173",
@@ -4447,7 +4447,7 @@
       "relevant_chunk_ids": [
         "d7f57026eca01ff6"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "6854300956e6980c",
         "bbadb4497cdfe00c",
@@ -4550,7 +4550,7 @@
       "relevant_chunk_ids": [
         "5f3bc95110eb8f00"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5f3f884c0a813722",
         "788f3e79b2459c7a",
@@ -4653,7 +4653,7 @@
       "relevant_chunk_ids": [
         "455e45e6775ea677"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "455e45e6775ea677",
         "352edbf341a0686f",
@@ -4756,7 +4756,7 @@
       "relevant_chunk_ids": [
         "b6fe2e7a89e3adce"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "d5b60f2b0100fe9f",
         "404462df0b17d834",
@@ -4859,7 +4859,7 @@
       "relevant_chunk_ids": [
         "4854ee251b4443dd"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "155e60a6db3de632",
         "e4ba416fb0b1bf20",
@@ -4962,7 +4962,7 @@
       "relevant_chunk_ids": [
         "105f35f7ceb555e0"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "105f35f7ceb555e0",
         "6394518a352b48ff",
@@ -5065,7 +5065,7 @@
       "relevant_chunk_ids": [
         "80d25e010d82ded2"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5f9b580a692e02a0",
         "4fc1a53e18ffbe44",
@@ -5168,7 +5168,7 @@
       "relevant_chunk_ids": [
         "7b4c57a6fded64c0"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "a966736b686adc6e",
         "1608c7c8cbb94e7b",
@@ -5271,7 +5271,7 @@
       "relevant_chunk_ids": [
         "0969c8ea648ce008"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "e5f082f3f8a65c2b",
         "32bb2c5e866d4d2e",
@@ -5374,7 +5374,7 @@
       "relevant_chunk_ids": [
         "4bac33ac25f5ab0f"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "41bae02627b50a15",
         "0fde61e05bb4a848",
@@ -5477,7 +5477,7 @@
       "relevant_chunk_ids": [
         "3c74b1e25d60cbee"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "9eb04e706972b081",
         "52944d43db0ab266",
@@ -5580,7 +5580,7 @@
       "relevant_chunk_ids": [
         "a6fc97690207f016"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "6fc4c91fb369ab84",
         "c76cd6f80420dc94",
@@ -5684,7 +5684,7 @@
         "921727a311922498",
         "320e062da1c1c211"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "aeff3f7af4add5e1",
         "60d59771aa57e36a",
@@ -5787,7 +5787,7 @@
       "relevant_chunk_ids": [
         "b74adb06f33ca42d"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "aeff3f7af4add5e1",
         "dea0733456e61f11",
@@ -5890,7 +5890,7 @@
       "relevant_chunk_ids": [
         "483f1dec6b2b94ac"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "29acca3226b24997",
         "aeff3f7af4add5e1",
@@ -5993,7 +5993,7 @@
       "relevant_chunk_ids": [
         "1d812e2e97b23dba"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "1d812e2e97b23dba",
         "01ed1c2d075d9949",
@@ -6096,7 +6096,7 @@
       "relevant_chunk_ids": [
         "c060e1336a90f3ca"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "c060e1336a90f3ca",
         "e1525c9910ed29ee",
@@ -6199,7 +6199,7 @@
       "relevant_chunk_ids": [
         "481bf644e4bcd45d"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "1e8689fe60efda7f",
         "40edaa3a313a051c",
@@ -6302,7 +6302,7 @@
       "relevant_chunk_ids": [
         "5d01303506cd6332"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "69050b00c2cfc0aa",
         "4c63ab96a7a30e59",
@@ -6405,7 +6405,7 @@
       "relevant_chunk_ids": [
         "a3cea989f6f95fda"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "4de1a4e47fb2a96e",
         "7f9e6607b0d2cf9d",
@@ -6508,7 +6508,7 @@
       "relevant_chunk_ids": [
         "9447976527f12da8"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "39b28c084f70c6ae",
         "94d150c294e7c67a",
@@ -6611,7 +6611,7 @@
       "relevant_chunk_ids": [
         "582144c24aa5cfbe"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "142d0f0f48b4fdea",
         "a2124f88c617210b",
@@ -6714,7 +6714,7 @@
       "relevant_chunk_ids": [
         "cd2fa31369158fb5"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "0fde61e05bb4a848",
         "b4d447a86c5a767b",
@@ -6817,7 +6817,7 @@
       "relevant_chunk_ids": [
         "5c54ffc337310d44"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "a4c627071cd51674",
         "10f49037d7df0141",
@@ -6920,7 +6920,7 @@
       "relevant_chunk_ids": [
         "784e33d052cabbd1"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "29fda6eea1eefadf",
         "26f4e8064b3d90c1",
@@ -7023,7 +7023,7 @@
       "relevant_chunk_ids": [
         "6af6dd2ddee7b381"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5ee562182e5e9634",
         "e14e25ba14dc6d7b",
@@ -7126,7 +7126,7 @@
       "relevant_chunk_ids": [
         "a7de6504370458e2"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "125b6aef862e6a78",
         "c4edc76030269286",
@@ -7229,7 +7229,7 @@
       "relevant_chunk_ids": [
         "1da1c38ba18769a8"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "bbe4929c3a4785e6",
         "3247672e055c1be4",
@@ -7332,7 +7332,7 @@
       "relevant_chunk_ids": [
         "b8f4e4b85a8bc50d"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5816993c9eb3514b",
         "5a4f0d16ce4bb2c8",
@@ -7435,7 +7435,7 @@
       "relevant_chunk_ids": [
         "92c64321311afb9c"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "4ce7dedc2fe46b96",
         "214e65a938f62bf9",
@@ -7538,7 +7538,7 @@
       "relevant_chunk_ids": [
         "82dcb0fdb5ed03c3"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "b046041080d0c2bf",
         "615c5c32ae0a37d2",
@@ -7641,7 +7641,7 @@
       "relevant_chunk_ids": [
         "25d63f441b0d1250"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "0c0aeb9c1df23f18",
         "25d63f441b0d1250",
@@ -7744,7 +7744,7 @@
       "relevant_chunk_ids": [
         "0497993c455328fe"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "dac553a9703f1d60",
         "3ff9fc192cb67e5f",
@@ -7847,7 +7847,7 @@
       "relevant_chunk_ids": [
         "52c9dc6b7b8c2bb7"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "faecf4f914dbe7a4",
         "10524cb8a122fd6c",
@@ -7950,7 +7950,7 @@
       "relevant_chunk_ids": [
         "374bfd8a6032ad16"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "39529302d4abb565",
         "17dbc21325ee53fc",
@@ -8053,7 +8053,7 @@
       "relevant_chunk_ids": [
         "399151ac2e44c7d9"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "3247672e055c1be4",
         "2c35b9a75930062c",
@@ -8156,7 +8156,7 @@
       "relevant_chunk_ids": [
         "fd4eb4800a94f44c"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "fd4eb4800a94f44c",
         "ae3ad2942d375b26",
@@ -8259,7 +8259,7 @@
       "relevant_chunk_ids": [
         "d867995477a0da74"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "39d7b723fef8c6a6",
         "356efb03a023a9f5",
@@ -8362,7 +8362,7 @@
       "relevant_chunk_ids": [
         "069ecda7dcbdb5b9"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "fd11845a7ed24d70",
         "0fa4ee539376f28e",
@@ -8465,7 +8465,7 @@
       "relevant_chunk_ids": [
         "1a72819bc31cd4ac"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "899b13ad33f32912",
         "0041e961369b57bd",
@@ -8568,7 +8568,7 @@
       "relevant_chunk_ids": [
         "0c0aeb9c1df23f18"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "0c0aeb9c1df23f18",
         "a53da5de52d5928e",
@@ -8671,7 +8671,7 @@
       "relevant_chunk_ids": [
         "dc444707e09d057b"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "dc444707e09d057b",
         "0c0aeb9c1df23f18",
@@ -8774,7 +8774,7 @@
       "relevant_chunk_ids": [
         "9ae59799c979d946"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "678a520c72d41a86",
         "526a6300a67fbf3b",
@@ -8877,7 +8877,7 @@
       "relevant_chunk_ids": [
         "1d9e0b0f03d3498c"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "1d9e0b0f03d3498c",
         "29cf6ba5e3eeb3d2",
@@ -8980,7 +8980,7 @@
       "relevant_chunk_ids": [
         "be0078f8a26dbe21"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "be0078f8a26dbe21",
         "c751b8c450409bbe",
@@ -9083,7 +9083,7 @@
       "relevant_chunk_ids": [
         "906c37ba858a0b38"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "4e23bc23d4c85101",
         "3c1054c8585c4221",
@@ -9186,7 +9186,7 @@
       "relevant_chunk_ids": [
         "25c9e2c76807d3bf"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "bbd02e51cc8c3489",
         "6ed59f6f2a6cf153",
@@ -9289,7 +9289,7 @@
       "relevant_chunk_ids": [
         "43a803e68782bf39"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "3bf1c2fc9f3c16ff",
         "3830064a616cb20b",
@@ -9392,7 +9392,7 @@
       "relevant_chunk_ids": [
         "1ecdd81ee461021d"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "37f40c3d5239f12a",
         "39ce096936ee0cb1",
@@ -9496,7 +9496,7 @@
         "952d9eac0ebaac18",
         "fe3fdbf5dff8b83c"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "3cd1dab9032da0df",
         "28f9472d15b2192a",
@@ -9599,7 +9599,7 @@
       "relevant_chunk_ids": [
         "10d9ad7fb4af02ee"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "8ff0c85f897a7ab2",
         "88c8072fc9f8fff8",
@@ -9702,7 +9702,7 @@
       "relevant_chunk_ids": [
         "b0f859014a686b58"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "88c8072fc9f8fff8",
         "06ce02885156cd7e",
@@ -9805,7 +9805,7 @@
       "relevant_chunk_ids": [
         "9ee51e2ddc5fc3c1"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "caa6d0ba4a7bbec8",
         "072ed3e6714841c0",
@@ -9908,7 +9908,7 @@
       "relevant_chunk_ids": [
         "60f616db479c4d32"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "83bd8b56c60caf14",
         "d30f1f295b810c3e",
@@ -10011,7 +10011,7 @@
       "relevant_chunk_ids": [
         "a4ccb3fb5b9c2fd2"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "4d18c3ab5fb94f63",
         "91a9dc962d2c1a29",
@@ -10114,7 +10114,7 @@
       "relevant_chunk_ids": [
         "322a8b27dd5366af"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "aeb5ce02e769e391",
         "322a8b27dd5366af",
@@ -10217,7 +10217,7 @@
       "relevant_chunk_ids": [
         "31420ba07d2c7ed9"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "e19c86a9cf2fc286",
         "758a56f954d882d7",
@@ -10320,7 +10320,7 @@
       "relevant_chunk_ids": [
         "3fc8ee3194a488c3"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "107808c04c5a5885",
         "d8d85e939de52a4f",
@@ -10423,7 +10423,7 @@
       "relevant_chunk_ids": [
         "2a7ee9c59b6797ad"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "5772739df7e8d37c",
         "818ad792edf4d616",
@@ -10526,7 +10526,7 @@
       "relevant_chunk_ids": [
         "a6e658af7d8dcbb6"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "dab446a87983de15",
         "3f499548fe924412",
@@ -10629,7 +10629,7 @@
       "relevant_chunk_ids": [
         "7628adf55ea44e8c"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "4bbb488a19fc9fd3",
         "29129d7a75c05ea2",
@@ -10732,7 +10732,7 @@
       "relevant_chunk_ids": [
         "0d8e043af363aa4e"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "cac0ad1a842808df",
         "0d8e043af363aa4e",
@@ -10835,7 +10835,7 @@
       "relevant_chunk_ids": [
         "95848ab0852babad"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "dab446a87983de15",
         "f14ef4f542354339",
@@ -10938,7 +10938,7 @@
       "relevant_chunk_ids": [
         "7fd61bd6f7f3f7aa"
       ],
-      "verified": false,
+      "verified": true,
       "dense_retrieved": [
         "8f3e5fcdb6153979",
         "0f75be3016301e3f",

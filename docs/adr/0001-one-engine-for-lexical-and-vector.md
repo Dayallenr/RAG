@@ -31,14 +31,21 @@ holds both, and fusion happens over two queries against the same documents.
 ## Consequences
 
 **Accepted downside, and it shows up in the numbers.** OpenSearch's k-NN is
-not best-in-class. In the eval run (`results/retrieval/report.json`) the
-k-NN path averages **208 ms** per query at k=20 against BM25's **89 ms** on
-the same index — so the vector side is the slower of the two retrievers a
-dedicated store would most plausibly beat. It is not the binding
-constraint: the full hybrid-plus-rerank path averages **905 ms**, of which
-the cross-encoder is the clear majority. Sweeping the ANN parameters into a
-recall-latency curve is tracked separately (#14) and would tell us how much
-of the 208 ms is tuning rather than engine choice.
+not best-in-class. In the eval run (`results/retrieval/report.json`, 101 of
+101 questions human-verified) the k-NN path averages **36 ms** per query at
+k=20 against BM25's **18 ms** on the same index — so the vector side is the
+slower of the two retrievers a dedicated store would most plausibly beat. It
+is not the binding constraint: the full hybrid-plus-rerank path averages
+**342 ms**, of which the cross-encoder is the clear majority. Sweeping the
+ANN parameters into a recall-latency curve is tracked separately (#14) and
+would tell us how much of the 36 ms is tuning rather than engine choice.
+
+**Read the ratio, not the absolute figures.** An earlier run of the same
+eval recorded 208 ms and 89 ms for the same two paths — 6x these numbers,
+on the same code and the same index, because that run shared the machine
+with other work (this is an 8 GB laptop that also hosts OpenSearch; see
+`docs/engineering-notes.md` on CPU contention). The 2x k-NN-to-BM25 ratio
+held across both runs, and it is the ratio this decision rests on.
 
 **Second accepted downside.** It couples the two retrievers' availability:
 when OpenSearch is down, neither works. With separate stores one path could
