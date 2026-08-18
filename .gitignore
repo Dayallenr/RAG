@@ -45,3 +45,25 @@ terraform/*.tfvars
 
 # Secrets — never commit API keys
 .env
+
+# Local working plan (see GitHub Issues for the authoritative tickets)
+ticket.md
+
+# Experiment-tracking run directories. Local mirrors of runs that live on
+# Weights & Biases — the hosted run is the artifact worth citing (it is
+# third-party and cannot be edited after the fact), and committed
+# debug-internal.log files read as a repository nobody is curating.
+wandb/
+
+# Generated fine-tuning splits (~27MB), deterministic output of
+# scripts/mine_hard_negatives.py from tracked inputs. A 200-row sample of
+# each stays tracked so the schema is inspectable without a rebuild —
+# see data/training/README.md for the exact command.
+data/training/train.jsonl
+data/training/val.jsonl
+
+# Local working notes for the coding-assistant session. They stay on this
+# machine: the engineering findings that matter to a reader live in
+# docs/engineering-notes.md and docs/adr/, written to be read.
+CLAUDE.md
+docs/agents/
