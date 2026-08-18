@@ -261,7 +261,36 @@ partial, or a lower bound, it says so.
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
 | CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
-| 358 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| 381 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| Every eval above also logged to a public tracker: **679/679 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
+
+### The same numbers, hosted where this repository cannot edit them
+
+Every evaluation and ablation run is also logged to a public Weights & Biases
+project:
+
+**<https://wandb.ai/dayallenr30-university-of-california/duediligence-rag>**
+
+A report file is only as trustworthy as whoever committed it. The hosted runs
+are a different *kind* of evidence: they carry their own timestamps, they are
+not writable from this repository, and they show the evaluation was executed
+rather than that a number was typed.
+
+That is worth nothing unless the hosted numbers are the same numbers, so it is
+checked instead of asserted. `python scripts/verify_wandb_runs.py` reads the
+project **with no credentials** — the same anonymous read a stranger gets,
+which is also how it establishes the project really is public, since a private
+one returns nothing to an anonymous caller — and compares every hosted metric
+against its report file on disk, using the same flattening that produced the
+hosted keys. **679 of 679 match** across the four runs
+(`results/tracking/report.json`). It exits non-zero if a report is ever
+regenerated without tracking on, which is exactly how a link like this goes
+quietly stale.
+
+The project keeps superseded runs — earlier passes of the retrieval eval and
+ablations, and the groundedness runs from before any answer had been judged. A
+run history with only the good runs left in it is not a run history. The
+verification only ever cites the newest finished run of each name.
 
 ### What is *not* on that list, and why that matters
 
