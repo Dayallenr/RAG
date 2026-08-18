@@ -62,13 +62,6 @@ terraform/*.tfvars
 # debug-internal.log files read as a repository nobody is curating.
 wandb/
 
-# Generated fine-tuning splits (~27MB), deterministic output of
-# scripts/mine_hard_negatives.py from tracked inputs. A 200-row sample of
-# each stays tracked so the schema is inspectable without a rebuild —
-# see data/training/README.md for the exact command.
-data/training/train.jsonl
-data/training/val.jsonl
-
 # Local working notes for the coding-assistant session. They stay on this
 # machine: the engineering findings that matter to a reader live in
 # docs/engineering-notes.md and docs/adr/, written to be read.
