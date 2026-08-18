@@ -32,10 +32,11 @@ partial, or a lower bound, it says so.
 | XBRL extraction accuracy **3/3 (100%)** | `results/extraction/report.json` | `python -m duediligence.eval.run_extraction_eval` |
 | Chart understanding **3/3** hand-graded | `results/charts/report.json` | `python -m duediligence.eval.run_chart_eval` |
 | Retrieval: dense / BM25 / hybrid / +rerank | `results/retrieval/report.json` | `python -m duediligence.eval.run_retrieval_eval` |
-| Fusion-weight, chunk-level, rerank-depth ablations | `results/ablations/report.json` | `python scripts/run_ablations.py` |
+| Fusion-weight, chunk-level, rerank-depth ablations (development split) | `results/ablations/report.json` | `python scripts/run_ablations.py` |
+| Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
 | Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
-| 317 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| 358 passing tests, ruff clean | — | `pytest -q && ruff check .` |
 
 ### What is *not* on that list, and why that matters
 
@@ -77,8 +78,8 @@ cannot be mistaken for a curated one.
 | hybrid (RRF, dense weight 0.25) | 0.218 | 0.485 | 0.663 | 0.361 | 0.424 |
 | **hybrid + cross-encoder rerank** | **0.302** | **0.579** | **0.703** | **0.435** | **0.493** |
 
-**+0.099 recall@10 over the strongest single retriever**, at 19x the
-latency (342 ms against BM25's 18 ms). Latencies in
+**+0.099 recall@10 over the strongest single retriever**, at 24x the
+latency (346 ms against BM25's 14 ms). Latencies in
 `results/retrieval/report.json` are machine-dependent — this is an 8 GB
 laptop also running OpenSearch, and an earlier run of the identical code
 recorded figures 6x higher because it shared the machine with other work —
@@ -95,26 +96,26 @@ it. Dense is only competitive on chart descriptions (0.60 here, 1.00 for BM25), 
 one part of the corpus written as natural prose.
 
 **2. Naive RRF fusion made things worse, and the ablation shows the fix.**
-Equal-weight fusion scored *below* BM25 alone on precision (recall@1 0.183
-vs 0.282). Sweeping the dense weight from 0 to 1 (`results/ablations`)
+Equal-weight fusion scored *below* BM25 alone on precision (recall@1 0.148
+vs 0.275). Sweeping the dense weight from 0 to 1 (`results/ablations`)
 showed why — the weaker retriever pollutes the top ranks — and that 0.25 is
-the best setting, recovering recall@10 0.663.
+the best setting, recovering recall@10 0.662.
 
 **3. The chunk hierarchy helps as context but crowds the top ranks.** On
-the 35 questions whose answer is a paragraph, restricting the searchable
-pool to paragraphs only moves recall@1 from 0.314 to **0.400** and nDCG@10
-from 0.570 to **0.612** against searching every level. It costs a little
-recall@10 — 0.829 to 0.814, one question — so the other levels are not
-useless; they occasionally carry the answer. But they are distractors where
-it matters most, at the top of the ranking. This is what motivates the
-router.
+the 25 development-split questions whose answer is a paragraph, restricting
+the searchable pool to paragraphs only moves recall@1 from 0.320 to
+**0.440** and nDCG@10 from 0.588 to **0.646** against searching every level.
+It costs a little recall@10 — 0.880 to 0.860, half a question — so the other
+levels are not useless; they occasionally carry the answer. But they are
+distractors where it matters most, at the top of the ranking. This is what
+motivates the router.
 
 Reranking depth was also swept, and returns stop early: recall@10 peaks at
-**25** candidates (0.713), and 100 is worse than both 25 and 50 (0.693) at
-**604 ms** against 222 ms. A deeper pool gives the cross-encoder more
+**25** candidates (0.732), and 100 is worse than both 25 and 50 (0.704) at
+**596 ms** against 216 ms. A deeper pool gives the cross-encoder more
 chances to promote a distractor. The configured depth of 50 sits between
 them deliberately — it buys back the precision that depth 25 gives up
-(recall@1 0.302 against 0.292) at the same nDCG@10.
+(recall@1 0.303 against 0.289) at the same recall@5.
 
 ### Two caveats that belong next to those numbers
 
@@ -128,8 +129,33 @@ them deliberately — it buys back the precision that depth 25 gives up
   share vocabulary with them, which structurally favours lexical matching.
   The dense-vs-BM25 gap is real but is probably overstated by this eval set.
 
+- **The fusion weight was tuned on these questions.** Every table above is
+  scored on all 101, and the 0.25 dense weight was selected by sweeping
+  against them, so recall@10 0.663 for hybrid is optimistically biased. The
+  size of that bias is bounded — one parameter, five values — but it is not
+  zero.
+
 Comparisons *between* retrievers on this fixed set remain sound, which is
 why the reranking delta is the headline rather than the absolute level.
+
+### The held-out split
+
+Every eval row carries a `split`: 71 development, 30 test, stratified across
+question type and chunk type, drawn only from human-verified rows and frozen
+once written. Re-running the assignment leaves existing rows alone, so a
+later verification pass can extend the set without re-drawing the partition
+into a more favourable one.
+
+The ablation sweep asks for the development split *explicitly*, so no tuning
+decision can reach the test questions by omission. The test split has never
+been swept against, and exists so the fine-tune delta can be reported on
+questions no tuning decision has touched. The comparison table above is
+still scored on all 101 — it predates the split and reproduces exactly, which
+is why it is presented as-is rather than silently restated on a subset.
+
+Thirty questions is a small test set, and a delta measured on it will have
+correspondingly wide error bars. That is a real limit on the resolution of
+any future claim, and stating it is cheaper than a contaminated 101.
 
 ---
 
@@ -312,8 +338,9 @@ than from two live indices A/B'd against each other, so read them as a
 before-and-after, not a controlled experiment. The ablation report was also
 stale against this fix — it had never been re-run — and its all-levels
 configuration did not reproduce the contemporaneous retrieval eval on
-identical settings. It has been re-run; the two now agree exactly (0.8286),
-and finding 3 above is stated from the re-run.
+identical settings. It has been re-run; the two agree exactly on the same
+questions (0.88 on the 25 development-split paragraph questions), and
+finding 3 above is stated from the re-run.
 
 ---
 

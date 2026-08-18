@@ -41,8 +41,10 @@ from pathlib import Path
 from duediligence.config import load_config
 from duediligence.eval.eval_set import (
     DEFAULT_EVAL_SET_PATH,
+    SPLITS,
     human_verified_count,
     load_eval_set,
+    split_counts,
 )
 from duediligence.eval.retrieval_metrics import aggregate_metrics
 from duediligence.index.embed import ChunkEmbedder
@@ -96,8 +98,12 @@ def run_retrieval_eval(
     k: int = 20,
     rerank: bool = True,
     config_path: str = "config/config.yaml",
+    split: str | None = None,
 ) -> dict:
-    entries = load_eval_set(eval_set_path)
+    # ``split=None`` scores every question, which is what reproduces the
+    # published comparison table. The headline fine-tune delta is reported on
+    # ``split="test"``, which no tuning sweep is allowed to touch.
+    entries = load_eval_set(eval_set_path, split=split)
     config = load_config(config_path)
     client = build_client(config.opensearch)
     index_name = config.opensearch.index_name
@@ -186,6 +192,8 @@ def run_retrieval_eval(
     baseline = _metrics("bm25")
     report = {
         "eval_set": eval_set_path,
+        "split": split or "all",
+        "split_sizes": split_counts(load_eval_set(eval_set_path)),
         "queries": len(per_query),
         "human_verified_queries": human_verified_count(per_query),
         "index": index_name,
@@ -243,13 +251,21 @@ def _print_table(report: dict) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--eval-set", default=DEFAULT_EVAL_SET_PATH)
+    parser.add_argument(
+        "--split",
+        choices=SPLITS,
+        default=None,
+        help="score one split only; omit to score every question (the published table)",
+    )
     parser.add_argument("--k", type=int, default=20)
     parser.add_argument("--no-rerank", action="store_true", help="skip cross-encoder reranking")
     parser.add_argument("--out", default="results/retrieval/report.json")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
-    report = run_retrieval_eval(args.eval_set, k=args.k, rerank=not args.no_rerank)
+    report = run_retrieval_eval(
+        args.eval_set, k=args.k, rerank=not args.no_rerank, split=args.split
+    )
 
     output_path = Path(args.out)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -268,6 +284,9 @@ def main() -> None:
             "k": report["k"],
             "candidate_k": report["candidate_k"],
             "queries": report["queries"],
+            # Which questions produced these numbers. A tracked run that does
+            # not say so is indistinguishable from one scored on everything.
+            "split": report["split"],
             # Logged as configuration rather than as a metric: how much of
             # the eval set a human has checked is a property of the run, and
             # every reported number should be read against it.
@@ -277,6 +296,7 @@ def main() -> None:
     )
 
     print(f"retrieval eval over {report['queries']} queries "
+          f"from the {report['split']} split "
           f"({report['human_verified_queries']} human-verified)\n")
     if run_url:
         print(f"tracked: {run_url}\n")

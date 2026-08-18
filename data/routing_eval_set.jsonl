@@ -1,36 +1,36 @@
-{"eval_id": "rt001", "question": "What was Columbia's net income for 2023?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt002", "question": "What were COLB's total deposits in 2023?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt003", "question": "What was Glacier's net income in 2023?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt004", "question": "What were Wesbanco's total assets in 2022?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt005", "question": "What was SouthState's total deposits in 2021?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt006", "question": "What was Umpqua's net income in 2021?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt007", "question": "What was GBCI's stockholders equity in 2022?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt008", "question": "What was Columbia's diluted earnings per share in 2023?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt009", "question": "What were WSBC's total liabilities in 2023?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt010", "question": "What was South State's net income in 2022?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt011", "question": "What was Umpqua's provision for loan losses in 2020?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt012", "question": "What was Glacier's interest income in 2021?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt013", "question": "COLB total assets 2022", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt014", "question": "Wesbanco basic EPS 2021", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt015", "question": "What was Columbia's net interest income in 2023?", "expected_route": "structured", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt016", "question": "Why did Columbia's net income fall in 2023?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt017", "question": "How did Glacier's total deposits change in 2022 and what drove it?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt018", "question": "Explain the movement in Wesbanco's net income in 2023.", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt019", "question": "Compare Columbia's and Umpqua's total assets in 2021.", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt020", "question": "What caused the change in SouthState's deposits in 2022?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt021", "question": "Discuss the drivers of Umpqua's net income in 2021.", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt022", "question": "What was net income?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt023", "question": "What were total deposits in 2023?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt024", "question": "What was Columbia's net income?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt025", "question": "How much did the bank earn?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt026", "question": "What are the risks of the merger with Umpqua?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt027", "question": "What did Columbia disclose about interest rate risk?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt028", "question": "Who became Executive Chair after the Umpqua merger?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt029", "question": "What share repurchase program did Umpqua announce in July 2021?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt030", "question": "How does Glacier determine its 401(k) discretionary contribution?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt031", "question": "What is Wesbanco's policy limit on interest rate risk exposure?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt032", "question": "Describe SouthState's stock repurchase activity.", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt033", "question": "What were the terms of the Aaron Deer letter agreement?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt034", "question": "Which state's law governs indemnification of Glacier's directors?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt035", "question": "What did the chart show about Columbia's total return performance?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
-{"eval_id": "rt036", "question": "What is the outlook for credit losses?", "expected_route": "semantic", "drafted_by": "claude", "verified": false, "verification_note": ""}
+{"eval_id": "rt001", "question": "What was Columbia's net income for 2023?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt002", "question": "What were COLB's total deposits in 2023?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt003", "question": "What was Glacier's net income in 2023?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt004", "question": "What were Wesbanco's total assets in 2022?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt005", "question": "What was SouthState's total deposits in 2021?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt006", "question": "What was Umpqua's net income in 2021?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt007", "question": "What was GBCI's stockholders equity in 2022?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt008", "question": "What was Columbia's diluted earnings per share in 2023?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt009", "question": "What were WSBC's total liabilities in 2023?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt010", "question": "What was South State's net income in 2022?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt011", "question": "What was Umpqua's provision for loan losses in 2020?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt012", "question": "What was Glacier's interest income in 2021?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt013", "question": "COLB total assets 2022", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt014", "question": "Wesbanco basic EPS 2021", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt015", "question": "What was Columbia's net interest income in 2023?", "expected_route": "structured", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt016", "question": "Why did Columbia's net income fall in 2023?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt017", "question": "How did Glacier's total deposits change in 2022 and what drove it?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt018", "question": "Explain the movement in Wesbanco's net income in 2023.", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt019", "question": "Compare Columbia's and Umpqua's total assets in 2021.", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt020", "question": "What caused the change in SouthState's deposits in 2022?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt021", "question": "Discuss the drivers of Umpqua's net income in 2021.", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt022", "question": "What was net income?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt023", "question": "What were total deposits in 2023?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt024", "question": "What was Columbia's net income?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt025", "question": "How much did the bank earn?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt026", "question": "What are the risks of the merger with Umpqua?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt027", "question": "What did Columbia disclose about interest rate risk?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt028", "question": "Who became Executive Chair after the Umpqua merger?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt029", "question": "What share repurchase program did Umpqua announce in July 2021?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt030", "question": "How does Glacier determine its 401(k) discretionary contribution?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt031", "question": "What is Wesbanco's policy limit on interest rate risk exposure?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt032", "question": "Describe SouthState's stock repurchase activity.", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt033", "question": "What were the terms of the Aaron Deer letter agreement?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt034", "question": "Which state's law governs indemnification of Glacier's directors?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt035", "question": "What did the chart show about Columbia's total return performance?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}
+{"eval_id": "rt036", "question": "What is the outlook for credit losses?", "expected_route": "semantic", "drafted_by": "written to exercise both router paths", "verified": false, "verification_note": ""}

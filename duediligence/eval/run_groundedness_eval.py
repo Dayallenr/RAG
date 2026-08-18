@@ -47,6 +47,7 @@ from pathlib import Path
 from typing import Any
 
 from duediligence.config import load_config
+from duediligence.eval.eval_set import DEFAULT_EVAL_SET_PATH, SPLITS, load_eval_set
 from duediligence.generate.backends import (
     TextGenerationBackend,
     backends_are_independent,
@@ -133,7 +134,7 @@ def judge_groundedness(
 
 
 def run_groundedness_eval(
-    eval_set_path: str = "data/eval_set.jsonl",
+    eval_set_path: str = DEFAULT_EVAL_SET_PATH,
     output_path: str = "results/generation/answers.jsonl",
     *,
     limit: int | None = None,
@@ -141,6 +142,7 @@ def run_groundedness_eval(
     generation_backend: TextGenerationBackend | None = None,
     judge_backend: TextGenerationBackend | None = None,
     pipeline: Any | None = None,
+    split: str | None = None,
 ) -> dict:
     """Generate answers for the eval set and judge how grounded they are.
 
@@ -159,11 +161,10 @@ def run_groundedness_eval(
     generation_backend = generation_backend or default_generation_backend(config)
     judge_backend = judge_backend or default_generation_backend(config)
 
-    entries = [
-        json.loads(line)
-        for line in Path(eval_set_path).read_text().splitlines()
-        if line.strip()
-    ]
+    # Read through the shared loader, like every other consumer. A private
+    # copy of this three-line comprehension is how two evals end up scoring
+    # different question sets while both reports look clean.
+    entries = load_eval_set(eval_set_path, split=split)
 
     answers_path = Path(output_path)
     answers_path.parent.mkdir(parents=True, exist_ok=True)
@@ -209,7 +210,7 @@ def run_groundedness_eval(
                     logger.error("stopping at %s: %s", entry["eval_id"], error)
                     break
 
-    report = summarize(_load_jsonl(answers_path), total_questions=len(entries))
+    report = summarize(_load_jsonl(answers_path), total_questions=len(entries), split=split)
     # Report the backend the pipeline *actually* generated with, not the one
     # defaulted here. An injected pipeline carries its own, and naming the
     # wrong model would turn this provenance block into the thing it exists
@@ -223,7 +224,7 @@ def run_groundedness_eval(
     return report
 
 
-def summarize(rows: list[dict], *, total_questions: int) -> dict:
+def summarize(rows: list[dict], *, total_questions: int, split: str | None = None) -> dict:
     semantic = [r for r in rows if r.get("route") == "semantic"]
     answered = [r for r in semantic if not r.get("refused")]
     judged = [r for r in answered if isinstance(r.get("judge"), dict) and "support_rate" in r["judge"]]
@@ -232,6 +233,7 @@ def summarize(rows: list[dict], *, total_questions: int) -> dict:
     support_rates = [r["judge"]["support_rate"] for r in judged if r["judge"]["support_rate"] is not None]
 
     return {
+        "split": split or "all",
         "questions_in_eval_set": total_questions,
         "answers_generated": len(rows),
         "coverage": len(rows) / total_questions if total_questions else 0.0,
@@ -257,7 +259,11 @@ def summarize(rows: list[dict], *, total_questions: int) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--eval-set", default="data/eval_set.jsonl")
+    parser.add_argument("--eval-set", default=DEFAULT_EVAL_SET_PATH)
+    parser.add_argument(
+        "--split", choices=SPLITS, default=None,
+        help="answer one split only; omit to answer every question",
+    )
     parser.add_argument("--answers", default="results/generation/answers.jsonl")
     parser.add_argument("--out", default="results/generation/report.json")
     parser.add_argument(
@@ -272,7 +278,8 @@ def main() -> None:
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
     report = run_groundedness_eval(
-        args.eval_set, args.answers, limit=args.limit, judge=not args.no_judge
+        args.eval_set, args.answers, limit=args.limit, judge=not args.no_judge,
+        split=args.split,
     )
 
     output = Path(args.out)
@@ -285,6 +292,7 @@ def main() -> None:
         tags=["generation", "eval"],
         config={
             "eval_set": args.eval_set,
+            "split": report["split"],
             "generation_model": judging["generation"]["model"],
             "judge_model": judging["judge"]["model"],
             # Config, not a metric: whether the judge was independent

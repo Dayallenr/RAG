@@ -1,5 +1,10 @@
 {
   "eval_set": "data/eval_set.jsonl",
+  "split": "all",
+  "split_sizes": {
+    "dev": 71,
+    "test": 30
+  },
   "queries": 101,
   "human_verified_queries": 101,
   "index": "duediligence-chunks",
@@ -31,7 +36,7 @@
         "mrr": 0.20763337322743264,
         "map": 0.20766873390635768
       },
-      "latency_ms_mean": 35.76055028571489,
+      "latency_ms_mean": 23.238242188028273,
       "by_question_type": {
         "chart": {
           "queries": 5.0,
@@ -185,7 +190,7 @@
         "mrr": 0.39932332518966185,
         "map": 0.398498242681411
       },
-      "latency_ms_mean": 17.83823515899424,
+      "latency_ms_mean": 14.324693068041292,
       "by_question_type": {
         "chart": {
           "queries": 5.0,
@@ -339,7 +344,7 @@
         "mrr": 0.36051614270738813,
         "map": 0.35754584567768516
       },
-      "latency_ms_mean": 52.58004867476365,
+      "latency_ms_mean": 39.331015217864866,
       "by_question_type": {
         "chart": {
           "queries": 5.0,
@@ -493,7 +498,7 @@
         "mrr": 0.4353983048680808,
         "map": 0.43251051608920293
       },
-      "latency_ms_mean": 342.0281814870028,
+      "latency_ms_mean": 346.42051902022166,
       "by_question_type": {
         "chart": {
           "queries": 5.0,

@@ -39,6 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from duediligence.config import load_config
 from duediligence.eval.eval_set import (
     DEFAULT_EVAL_SET_PATH,
+    DEV,
     human_verified_count,
     load_eval_set,
 )
@@ -161,7 +162,12 @@ def main() -> None:
     index = config.opensearch.index_name
     embedder = ChunkEmbedder(config.models.embedding_model)
 
-    entries = load_eval_set()
+    # Explicitly the development split, never "whatever the loader returns".
+    # Every sweep below picks a parameter by looking at the score it produces,
+    # which is exactly the operation the test split has to be protected from —
+    # a fusion weight chosen on the test questions would make the headline
+    # delta a number that had been optimised against twice.
+    entries = load_eval_set(split=DEV)
     vectors = embedder.embed_queries([e["question"] for e in entries])
 
     # Single-retriever reference rows, so the ablation report stands alone.
@@ -178,6 +184,7 @@ def main() -> None:
 
     report = {
         "eval_set": DEFAULT_EVAL_SET_PATH,
+        "split": DEV,
         "queries": len(entries),
         "human_verified_queries": human_verified_count(entries),
         "baselines": baselines,
@@ -205,6 +212,7 @@ def main() -> None:
         tags=["ablation", "eval"],
         config={
             "eval_set": report["eval_set"],
+            "split": report["split"],
             "queries": report["queries"],
             "human_verified_queries": report["human_verified_queries"],
             "rerank": not args.skip_rerank,

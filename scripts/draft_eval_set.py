@@ -174,7 +174,13 @@ def main() -> None:
                 "filing_date": primary["filing_date"],
                 "chunk_type": primary["chunk_type"],
                 "source_url": primary["source_url"],
-                "drafted_by": "claude",
+                # How the questions were written, recorded because it is a real
+                # confound on every metric scored against them: each question was
+                # written while reading the chunk it is labelled against, so it
+                # reuses that chunk's vocabulary and structurally favours lexical
+                # matching over semantic. A user asking in their own words would
+                # not hand BM25 the same advantage.
+                "drafted_by": "written from the source chunk's text",
                 "verified": False,
                 "verification_note": "",
             }

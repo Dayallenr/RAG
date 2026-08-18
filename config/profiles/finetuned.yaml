@@ -1,0 +1,17 @@
+# The fine-tuned bi-encoder, and the index built with it.
+#
+# Model and index name change together, and the loader refuses a profile that
+# changes one without the other. An index holds exactly one model's vectors:
+# querying it with a different model scores cosine similarity across two
+# incompatible spaces, which produces plausible-looking rankings rather than
+# an error, and the only way back is re-embedding all 38,483 chunks.
+#
+# The checkpoint path is the default output of
+# `scripts/finetune_biencoder.py --out`. Weights are not tracked in this
+# repository (see the model card); this profile names where a local training
+# run puts them.
+models:
+  embedding_model: "models/bge-small-duediligence"
+
+opensearch:
+  index_name: "duediligence-chunks-finetuned"
