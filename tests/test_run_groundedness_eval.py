@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import time
+from pathlib import Path
 
 import pytest
 
@@ -258,3 +259,87 @@ class TestJudgmentRegressionGuard:
         target = tmp_path / "report.json"
         target.write_text("{ this is not json")
         guard_judgment_regression(self._report(0), target)
+
+
+class TestGuardIsWiredIntoMain:
+    """The guard must run on the real command path, not merely exist.
+
+    Deleting the ``guard_judgment_regression(...)`` call from ``main`` leaves
+    every test in ``TestJudgmentRegressionGuard`` green — verified by doing
+    it — while the actual command overwrites a 14-judgment report with a
+    0-judgment one and exits 0. That is the same class of gap the #11 code
+    review caught in ``tests/test_finetune_args.py``: asserting on the
+    parsed arguments rather than on what reaches the trainer. These tests
+    drive ``main`` itself.
+    """
+
+    def _run_main(self, monkeypatch, tmp_path, *, report: dict, out: Path):
+        import duediligence.eval.run_groundedness_eval as module
+
+        logged: list = []
+        monkeypatch.setattr(module, "run_groundedness_eval", lambda *a, **k: dict(report))
+        monkeypatch.setattr(module, "log_run", lambda **k: logged.append(k))
+        monkeypatch.setattr(
+            "sys.argv", ["run_groundedness_eval", "--out", str(out), "--answers", str(tmp_path / "a.jsonl")],
+        )
+        module.main()
+        return logged
+
+    def _stub(self, judged: int) -> dict:
+        # Carries every field main() prints, so a passing test means main()
+        # actually ran to completion rather than dying on a missing key.
+        return {
+            "judged_answers": judged,
+            "split": "all",
+            "questions_in_eval_set": 101,
+            "answers_generated": 101,
+            "coverage": 1.0,
+            "structured_route": 12,
+            "semantic_route": 89,
+            "refusals": 21,
+            "refusal_rate": 0.236,
+            "answers_with_valid_citations": 68,
+            "citation_coverage": 1.0,
+            "mean_claim_support_rate": 0.786 if judged else None,
+            "fully_supported_answers": 11 if judged else 0,
+            "judging": {
+                "generation": {"backend": "x", "model": "m"},
+                "judge": {"backend": "y", "model": "n"},
+                "independent_judge": True,
+            },
+        }
+
+    def test_main_refuses_and_leaves_the_existing_report_untouched(
+        self, monkeypatch, tmp_path
+    ):
+        out = tmp_path / "report.json"
+        original = json.dumps(self._stub(14), indent=2)
+        out.write_text(original)
+
+        with pytest.raises(SystemExit):
+            self._run_main(monkeypatch, tmp_path, report=self._stub(0), out=out)
+
+        # The file on disk is the thing being protected.
+        assert out.read_text() == original
+
+    def test_main_does_not_log_a_regressed_run_to_the_tracker(
+        self, monkeypatch, tmp_path
+    ):
+        out = tmp_path / "report.json"
+        out.write_text(json.dumps(self._stub(14)))
+
+        logged = []
+        with pytest.raises(SystemExit):
+            logged = self._run_main(monkeypatch, tmp_path, report=self._stub(0), out=out)
+
+        # A stub reaching the tracker becomes the newest run of its name and
+        # is what verify_wandb_runs.py would then cite.
+        assert logged == []
+
+    def test_main_still_writes_when_the_count_grows(self, monkeypatch, tmp_path):
+        out = tmp_path / "report.json"
+        out.write_text(json.dumps(self._stub(9)))
+
+        self._run_main(monkeypatch, tmp_path, report=self._stub(14), out=out)
+
+        assert json.loads(out.read_text())["judged_answers"] == 14
