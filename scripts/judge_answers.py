@@ -36,6 +36,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from duediligence.config import load_config  # noqa: E402
 from duediligence.eval.run_groundedness_eval import (  # noqa: E402
     describe_judging,
+    guard_judgment_regression,
     judge_groundedness,
     summarize,
 )
@@ -136,10 +137,20 @@ def main() -> None:
     judgments = {r["eval_id"]: r["judge"] for r in _load(args.judgments)}
 
     # The generator is recorded from the data rather than assumed — the
-    # answers say which model wrote them.
-    generator_model = next(
-        (r["generated_by"] for r in answers if r.get("generated_by")), "unknown"
-    )
+    # answers say which model wrote them. Taking the *first* labelled row and
+    # applying it to the whole file is only sound while the file has one
+    # generator, so that is checked rather than hoped for: a mixed file would
+    # otherwise let an answer written by the judge itself be reported as
+    # independently judged, which is the one claim this report exists to make.
+    generators = sorted({r["generated_by"] for r in answers if r.get("generated_by")})
+    if len(generators) > 1:
+        raise SystemExit(
+            f"{args.answers} has answers from more than one generator "
+            f"({', '.join(generators)}), so a single independence verdict "
+            "cannot describe them. Judge each generator's answers into its "
+            "own report, or regenerate the file with one model."
+        )
+    generator_model = generators[0] if generators else "unknown"
     generation_backend = OllamaBackend(generator_model)
     judge_backend = GeminiBackend(config.models.generation_model)
 
@@ -192,6 +203,10 @@ def main() -> None:
     }
 
     output = Path(args.out)
+    # Same protection the module-level entry point gets. This script is the
+    # recommended writer of this file, and it regresses it just as silently
+    # when --judgments points somewhere empty or the verdicts are lost.
+    guard_judgment_regression(report, output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n")
 

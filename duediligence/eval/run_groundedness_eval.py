@@ -68,45 +68,54 @@ __all__ = [
 def guard_judgment_regression(report: dict, output_path: Path) -> None:
     """Refuse to replace a report with one that judged strictly fewer answers.
 
-    This module judges an answer only in the same pass that *generates* it.
-    Once all 101 answers exist, ``pending`` is empty, nothing is judged, and
-    the report it writes records ``judged_answers: 0`` — silently replacing
-    one that recorded real verdicts, and being logged to the tracker as the
-    newest run of that name.
+    ``run_groundedness_eval`` judges an answer only in the same pass that
+    *generates* it. Once all 101 answers exist, ``pending`` is empty, nothing
+    is judged, and the report it writes records ``judged_answers: 0`` —
+    silently replacing one that recorded real verdicts, and being logged to
+    the tracker as the newest run of that name.
 
     It happened on 2026-08-18. Ollama is not installed on the serving Mac, so
     ``default_generation_backend`` returned Gemini for the generator as well
     as the judge, ``backends_are_independent`` was correctly False, judging
-    was skipped, and a 9-judgment report became a 0-judgment one with a
-    zero exit code.
+    was skipped, and a 9-judgment report became a 0-judgment one with a zero
+    exit code. ``scripts/judge_answers.py`` calls this too: it can regress the
+    same file whenever ``judgments.jsonl`` is missing, rotated, or pointed
+    elsewhere.
 
-    Resumable judging of already-generated answers is
-    ``scripts/judge_answers.py``, which keeps verdicts in their own
-    ``judgments.jsonl`` and reads each answer's recorded ``generated_by``
-    rather than inferring the generator from whatever backend this machine
-    happens to construct.
+    Only reports of the *same scope* are compared. A ``--split dev`` run
+    legitimately covers fewer questions than an ``all`` run, so comparing
+    their judged counts is meaningless in both directions — it would refuse a
+    valid dev report and wave through a full report replacing a dev one.
 
-    A missing or unreadable existing report is not a regression: there is no
-    count to lose, and failing on unparseable JSON would block the very run
-    that would repair it.
+    A missing, unreadable, or structurally unexpected existing report is not a
+    regression: there is no trustworthy count to lose, and failing here would
+    block the very run that would repair it.
     """
     output_path = Path(output_path)
     if not output_path.exists():
         return
     try:
         previous = json.loads(output_path.read_text())
-    except (json.JSONDecodeError, OSError):
+        if not isinstance(previous, dict):
+            return
+        if previous.get("split") != report.get("split"):
+            return
+        before = int(previous.get("judged_answers") or 0)
+        after = int(report.get("judged_answers") or 0)
+    except (json.JSONDecodeError, OSError, TypeError, ValueError, AttributeError):
         return
 
-    before = previous.get("judged_answers") or 0
-    after = report.get("judged_answers") or 0
     if after < before:
         raise SystemExit(
             f"refusing to overwrite {output_path}: it records {before} judged "
-            f"answers and this run produced {after}. This module judges only "
-            "the answers it generates in the same pass, so it cannot add "
-            "verdicts to answers that already exist. Use "
-            "`python scripts/judge_answers.py --limit 20` instead."
+            f"answers and this run produced {after}.\n"
+            "Any answers generated this run were already appended to the "
+            "answers file, so nothing is lost.\n"
+            "To add verdicts to answers that already exist, run:\n"
+            "    python scripts/judge_answers.py --limit 20\n"
+            "To rebuild the report from the verdicts already on disk without "
+            "spending quota, run:\n"
+            "    python scripts/judge_answers.py --report-only"
         )
 
 _JUDGE_PROMPT = """\
@@ -245,6 +254,18 @@ def run_groundedness_eval(
                         "citations": result["citations"],
                         "n_passages": len(result["passages"]),
                         "passage_chunk_ids": [p["chunk_id"] for p in result["passages"]],
+                        # Provenance per row, matching what
+                        # scripts/generate_answers_locally.py writes. Without
+                        # it, judge_answers.py attributes this answer to
+                        # whichever model wrote the *first* labelled row in the
+                        # file — so a Gemini answer appended here would be
+                        # reported as written by qwen3:8b and judged
+                        # "independently" by Gemini. None on the structured
+                        # route, which calls no model at all.
+                        "generated_by": (
+                            pipeline.generation_backend.model
+                            if result["route"] == "semantic" else None
+                        ),
                     }
                     if judge and result["route"] == "semantic" and not result["refused"]:
                         row["judge"] = judge_groundedness(

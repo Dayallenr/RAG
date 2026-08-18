@@ -186,6 +186,27 @@ class TestBackendWiring:
         assert len(pipeline.questions) == 1
         assert len(answers.read_text().strip().splitlines()) == 1
 
+    def test_every_written_row_records_which_model_wrote_it(self, tmp_path, monkeypatch):
+        """Provenance belongs on the row, not on the run.
+
+        ``scripts/judge_answers.py`` derives the whole file's generator from
+        the first row that names one. A row appended here without
+        ``generated_by`` therefore inherits some other model's name — and if
+        this module ran with the hosted backend (which is what happens on a
+        machine with no Ollama), that answer would be reported as locally
+        generated and independently judged when the judge in fact wrote it.
+        """
+        monkeypatch.setattr(time, "sleep", lambda *_args, **_kw: None)
+        eval_set, answers = self._eval_set(tmp_path), tmp_path / "answers.jsonl"
+        pipeline = FakePipeline(FakeBackend(name="ollama", model="local-8b"))
+
+        run_groundedness_eval(str(eval_set), str(answers),
+                              judge_backend=FakeBackend(_verdict()), pipeline=pipeline)
+
+        rows = [json.loads(line) for line in answers.read_text().splitlines() if line.strip()]
+        assert rows, "expected at least one answer row"
+        assert all(r["generated_by"] == "local-8b" for r in rows)
+
 
 class TestGroundednessSummary:
     def test_summary_counts_routes_refusals_and_citations(self):
@@ -259,6 +280,48 @@ class TestJudgmentRegressionGuard:
         target = tmp_path / "report.json"
         target.write_text("{ this is not json")
         guard_judgment_regression(self._report(0), target)
+
+    @pytest.mark.parametrize("content", ["null", "[]", '"a string"', "42"])
+    def test_a_report_that_is_not_an_object_does_not_crash_the_guard(
+        self, tmp_path, content
+    ):
+        # Valid JSON, wrong shape. `.get` on a list raises AttributeError, and
+        # dying here would waste the quota the run just spent.
+        target = tmp_path / "report.json"
+        target.write_text(content)
+        guard_judgment_regression(self._report(0), target)
+
+    def test_a_non_numeric_judged_count_does_not_crash_the_guard(self, tmp_path):
+        target = tmp_path / "report.json"
+        target.write_text(json.dumps({"judged_answers": "nine"}))
+        guard_judgment_regression(self._report(0), target)
+
+    def test_a_different_split_is_not_compared(self, tmp_path):
+        """A dev-split run covers fewer questions by design.
+
+        Comparing its judged count against an all-questions report is
+        meaningless, and refusing it would block legitimate work.
+        """
+        target = tmp_path / "report.json"
+        target.write_text(json.dumps({"judged_answers": 14, "split": "all"}))
+        guard_judgment_regression({"judged_answers": 2, "split": "dev"}, target)
+
+    def test_the_same_split_is_still_compared(self, tmp_path):
+        target = tmp_path / "report.json"
+        target.write_text(json.dumps({"judged_answers": 14, "split": "dev"}))
+        with pytest.raises(SystemExit):
+            guard_judgment_regression({"judged_answers": 2, "split": "dev"}, target)
+
+    def test_the_message_offers_a_no_quota_way_to_rebuild_the_report(self, tmp_path):
+        target = tmp_path / "report.json"
+        target.write_text(json.dumps(self._report(14)))
+        with pytest.raises(SystemExit) as excinfo:
+            guard_judgment_regression(self._report(0), target)
+        message = str(excinfo.value)
+        # Without this the guard is a dead end: the module can never satisfy
+        # it on the default path, so the user needs the way out.
+        assert "--report-only" in message
+        assert "nothing is lost" in message
 
 
 class TestGuardIsWiredIntoMain:
