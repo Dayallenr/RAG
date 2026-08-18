@@ -16,52 +16,100 @@ generation.
 
 ---
 
-## Every claim below maps to an artifact you can re-run
+## Architecture
 
-This project's rule is that no number appears in this README unless a script
-produced it and a report file records it. Where something is unverified,
-partial, or a lower bound, it says so.
+```mermaid
+flowchart TB
+    subgraph build ["Build time — four extraction paths over 502 real filings"]
+        direction LR
+        EDGAR["SEC EDGAR"]
+        EDGAR --> NAR["narrative HTML<br>doc → section → paragraph<br>30,088 chunks"]
+        EDGAR --> TAB["tables<br>pandas.read_html, exact cells<br>8,671 chunks"]
+        EDGAR --> CHT["chart images<br>Gemini Vision<br>11 chunks"]
+        EDGAR --> FAC["XBRL company facts<br>10,416 facts"]
+    end
 
-| Claim | Artifact | How to reproduce |
+    NAR --> IDX
+    TAB --> IDX
+    CHT --> IDX
+    FAC --> STORE
+
+    IDX[("OpenSearch — 38,483 chunks<br>BM25 + k-NN in one engine")]
+    STORE[("structured facts<br>never embedded")]
+
+    subgraph serve ["Query time — the router picks the path"]
+        direction TB
+        Q(["question"]) --> ROUTER{"router<br>deterministic rules, no LLM"}
+        ROUTER -->|"concept + company + period"| LOOKUP["exact XBRL lookup"]
+        ROUTER -->|"otherwise"| HYBRID["hybrid search<br>RRF, dense weight 0.25"]
+    end
+
+    LOOKUP --> STORE
+    HYBRID --> IDX
+    IDX --> RERANK["cross-encoder rerank<br>50 candidates"]
+    RERANK --> GEN["generation with citations"]
+
+    STORE --> OUT1["figure + accession number<br>~10 ms · no model call"]
+    GEN --> OUT2["cited answer<br>seconds · 1 model call"]
+
+    classDef node fill:#eef2ff,stroke:#5c6bc0,stroke-width:1px,color:#1a237e
+    classDef store fill:#dfe4f7,stroke:#3f51b5,stroke-width:2px,color:#1a237e
+    classDef out fill:#e3f6e5,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    class EDGAR,NAR,TAB,CHT,FAC,Q,ROUTER,LOOKUP,HYBRID,RERANK,GEN node
+    class IDX,STORE store
+    class OUT1,OUT2 out
+    style build fill:#fafafa,stroke:#bdbdbd,color:#424242
+    style serve fill:#fafafa,stroke:#bdbdbd,color:#424242
+```
+
+XBRL facts are deliberately **never embedded**. `NetIncomeLoss = 348715000
+USD CY2023` has no useful semantic neighbourhood; it is answered by lookup.
+
+| Component | Choice | Why |
 |---|---|---|
-| 502 filings, 5 companies, real accession numbers | `data/manifest.json` | `python scripts/fetch_filings.py` |
-| 30,088 narrative chunks (502 doc / 1,442 section / 28,144 paragraph) | `data/chunks/*.jsonl` | `python scripts/run_ingestion.py` |
-| 8,671 table chunks with exact cell values (69 tables of contents excluded) | `data/tables/*.jsonl` | same |
-| 10,416 XBRL structured facts | `data/facts/*.jsonl` | same |
-| 11 chart descriptions (Gemini Vision) | `data/chunks_charts/*.jsonl` | `python scripts/run_chart_extraction.py` |
-| XBRL extraction accuracy **3/3 (100%)** | `results/extraction/report.json` | `python -m duediligence.eval.run_extraction_eval` |
-| Chart understanding **3/3** hand-graded | `results/charts/report.json` | `python -m duediligence.eval.run_chart_eval` |
-| Retrieval: dense / BM25 / hybrid / +rerank | `results/retrieval/report.json` | `python -m duediligence.eval.run_retrieval_eval` |
-| Fusion-weight, chunk-level, rerank-depth ablations (development split) | `results/ablations/report.json` | `python scripts/run_ablations.py` |
-| Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
-| Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
-| Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
-| 358 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| Store | OpenSearch 2.19.1 | One engine for BM25 *and* k-NN — hybrid search is one query, not a cross-system fan-out |
+| Embeddings | `BAAI/bge-small-en-v1.5` (384d) | Self-hosted, inference-only, small enough to embed 38k chunks on a laptop |
+| Reranker | `ms-marco-MiniLM-L-6-v2` | Cross-encoder over 50 candidates; the single biggest quality win |
+| Generation | Gemini free tier | Multimodal (also drives chart understanding), no card required |
+| API | FastAPI | Deliberately different from this author's other project's gRPC stack |
 
-### What is *not* on that list, and why that matters
+---
 
-Everything above was produced by running the thing and is backed by a file
-you can open. Two parts of this project are **not** on that list, and the
-distinction is deliberate — reading code is not evidence that the code was
-ever executed:
+## Seeing it work
 
-- **The AWS infrastructure has never been applied.** `terraform/` defines an
-  OpenSearch domain and, behind an opt-in flag, a VPC/EKS/ECR stack. It
-  passes `fmt` and `validate`, and CI enforces both — but validation proves
-  the configuration is well-formed and nothing more. No AWS resource has
-  ever been created from it, and the SigV4 signing path it would exercise in
-  `duediligence/index/opensearch_client.py` has never run against a real
-  domain.
-- **Groundedness is measured on 9 of 101 answers.** All 101 answers are
-  generated and recorded, but each independent judgment costs a request
-  against a 20/day Gemini quota, so `results/generation/report.json` reports
-  a claim-support rate over 9 judgments — real, and too few to quote as a
-  system-level number.
+Both query paths, against the live API and the real 38,483-chunk index.
+Reproduce it with `./scripts/demo.sh`; the raw asciicast is
+[`docs/assets/demo.cast`](docs/assets/demo.cast).
 
-If either of those later becomes verified, it gets an artifact in the table
-above and a line here — not a quiet edit to a sentence elsewhere. That has
-already happened once: the evaluation set used to be listed here as
-unverified, and it now has an artifact instead (see below).
+![Terminal recording: a factual question answered by exact XBRL lookup in about a millisecond with its accession number, then a narrative question answered by hybrid search, cross-encoder reranking and cited generation.](docs/assets/demo.gif)
+
+The factual question resolves to `NetIncomeLoss` for `COLB` in fiscal 2023,
+returns **$348,715,000** and the accession number of the filing that
+reported it — `0000887343-24-000089` — and does so having retrieved zero
+passages and called zero models. The narrative question has no complete
+`(concept, company, period)` key, so it falls through to hybrid search,
+reranking and generation, and its `[n]` markers resolve to real filings
+listed beneath the answer with their SEC URLs.
+
+One wrinkle, stated rather than cropped out: the committed recording lists
+four of the five sources its answer cites. `scripts/demo_format.py` was
+truncating the citation block, which is now fixed — it prints every
+citation, sorted — but re-recording costs a generation call and the free
+tier's twenty a day were spent, so the asset still shows the old behaviour.
+It is a stale screenshot of a fixed bug, not a live one.
+
+The timings on screen are one call each on one 8 GB laptop, and no report
+file records them: `results/retrieval/report.json` measures the *retrieval*
+stage in isolation (BM25 14 ms, dense 23 ms, hybrid 39 ms, hybrid+rerank
+346 ms, means over 101 questions), not end-to-end `/ask`, and the seconds in
+the semantic path are dominated by the generation call those figures exclude.
+Read the recording as a demonstration of the two paths, and the table below
+as the measurement.
+
+The demo spends its warmup request on camera rather than off it: the first
+`/ask` after process start has been traced at 2,995 ms, almost all of it MPS
+kernel warmup and cold OpenSearch query caches, and quietly excluding it
+would flatter the system.
 
 ---
 
@@ -96,10 +144,11 @@ it. Dense is only competitive on chart descriptions (0.60 here, 1.00 for BM25), 
 one part of the corpus written as natural prose.
 
 **2. Naive RRF fusion made things worse, and the ablation shows the fix.**
-Equal-weight fusion scored *below* BM25 alone on precision (recall@1 0.148
-vs 0.275). Sweeping the dense weight from 0 to 1 (`results/ablations`)
-showed why — the weaker retriever pollutes the top ranks — and that 0.25 is
-the best setting, recovering recall@10 0.662.
+Equal-weight fusion scored *below* BM25 alone on precision (recall@1 0.183
+vs 0.275), and weighting dense higher was worse still (0.148 at dense-only).
+Sweeping the dense weight from 0 to 1 (`results/ablations`) showed why — the
+weaker retriever pollutes the top ranks — and that 0.25 is the best setting,
+recovering recall@10 0.662.
 
 **3. The chunk hierarchy helps as context but crowds the top ranks.** On
 the 25 development-split questions whose answer is a paragraph, restricting
@@ -117,7 +166,7 @@ chances to promote a distractor. The configured depth of 50 sits between
 them deliberately — it buys back the precision that depth 25 gives up
 (recall@1 0.303 against 0.289) at the same recall@5.
 
-### Two caveats that belong next to those numbers
+### Three caveats that belong next to those numbers
 
 - **The absolute values are a lower bound.** Relevance labels come from a
   stratified sample of 163 chunks, not exhaustive judgments over all 38,483.
@@ -128,7 +177,6 @@ them deliberately — it buys back the precision that depth 25 gives up
 - **The questions were written by reading the labelled chunks**, so they
   share vocabulary with them, which structurally favours lexical matching.
   The dense-vs-BM25 gap is real but is probably overstated by this eval set.
-
 - **The fusion weight was tuned on these questions.** Every table above is
   scored on all 101, and the 0.25 dense weight was selected by sweeping
   against them, so recall@10 0.663 for hybrid is optimistically biased. The
@@ -191,29 +239,55 @@ not evidence: the rules and the test cases share an author.
 
 ---
 
-## Architecture
+## Every number above maps to an artifact you can re-run
 
-```
-SEC EDGAR ──► ingest ──► 4 extraction paths        ──► OpenSearch (BM25 + k-NN)
-                          ├─ narrative HTML (doc→section→paragraph)
-                          ├─ tables (pandas.read_html + exact cells)
-                          ├─ XBRL facts ─────────────► exact lookup (not embedded)
-                          └─ chart images (Gemini Vision)
+This project's rule is that no number appears in this README unless a script
+produced it and a report file records it. Where something is unverified,
+partial, or a lower bound, it says so.
 
-query ──► router ──┬── STRUCTURED: XBRL lookup ──► figure + accession number
-                   └── SEMANTIC:   hybrid RRF ──► rerank ──► cited generation
-```
-
-XBRL facts are deliberately **never embedded**. `NetIncomeLoss = 348715000
-USD CY2023` has no useful semantic neighbourhood; it is answered by lookup.
-
-| Component | Choice | Why |
+| Claim | Artifact | How to reproduce |
 |---|---|---|
-| Store | OpenSearch 2.19.1 | One engine for BM25 *and* k-NN — hybrid search is one query, not a cross-system fan-out |
-| Embeddings | `BAAI/bge-small-en-v1.5` (384d) | Self-hosted, inference-only, small enough to embed 38k chunks on a laptop |
-| Reranker | `ms-marco-MiniLM-L-6-v2` | Cross-encoder over 50 candidates; the single biggest quality win |
-| Generation | Gemini free tier | Multimodal (also drives chart understanding), no card required |
-| API | FastAPI | Deliberately different from this author's other project's gRPC stack |
+| 502 filings, 5 companies, real accession numbers | `data/manifest.json` | `python scripts/fetch_filings.py` |
+| 30,088 narrative chunks (502 doc / 1,442 section / 28,144 paragraph) | `data/chunks/*.jsonl` | `python scripts/run_ingestion.py` |
+| 8,671 table chunks with exact cell values (69 tables of contents excluded) | `data/tables/*.jsonl` | same |
+| 10,416 XBRL structured facts | `data/facts/*.jsonl` | same |
+| 11 chart descriptions (Gemini Vision) | `data/chunks_charts/*.jsonl` | `python scripts/run_chart_extraction.py` |
+| XBRL extraction accuracy **3/3 (100%)** | `results/extraction/report.json` | `python -m duediligence.eval.run_extraction_eval` |
+| Chart understanding **3/3** hand-graded | `results/charts/report.json` | `python -m duediligence.eval.run_chart_eval` |
+| Retrieval: dense / BM25 / hybrid / +rerank | `results/retrieval/report.json` | `python -m duediligence.eval.run_retrieval_eval` |
+| Fusion-weight, chunk-level, rerank-depth ablations (development split) | `results/ablations/report.json` | `python scripts/run_ablations.py` |
+| Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
+| Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
+| Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
+| Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
+| CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
+| 358 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+
+### What is *not* on that list, and why that matters
+
+Everything above was produced by running the thing and is backed by a file
+you can open. Two parts of this project are **not** on that list, and the
+distinction is deliberate — reading code is not evidence that the code was
+ever executed:
+
+- **The AWS infrastructure has never been applied.** `terraform/` defines an
+  OpenSearch domain and, behind an opt-in flag, a VPC/EKS/ECR stack. It
+  passes `fmt` and `validate`, and CI enforces both — but validation proves
+  the configuration is well-formed and nothing more. No AWS resource has
+  ever been created from it, and the SigV4 signing path it would exercise in
+  `duediligence/index/opensearch_client.py` has never run against a real
+  domain.
+- **Groundedness is measured on 9 of 101 answers.** All 101 answers are
+  generated and recorded, but each independent judgment costs a request
+  against a 20/day Gemini quota, so `results/generation/report.json` reports
+  a claim-support rate over 9 judgments — real, and too few to quote as a
+  system-level number.
+
+If either of those later becomes verified, it gets an artifact in the table
+above and a line here — not a quiet edit to a sentence elsewhere. That has
+already happened once: the evaluation set used to be listed here as
+unverified, and it now has an artifact instead (see the held-out split
+above).
 
 ---
 
@@ -232,6 +306,20 @@ docker compose -f docker/docker-compose.yml --profile api up -d
 curl -X POST localhost:8000/ask -H 'content-type: application/json' \
   -d '{"question": "What are the risks of the Umpqua merger?"}'
 ```
+
+`./scripts/demo.sh` runs both query paths against a serving API and prints
+what the recording above shows. The recording is that script under
+`asciinema`, so re-recording it is one command:
+
+```bash
+asciinema rec docs/assets/demo.cast --overwrite --window-size 84x40 -c ./scripts/demo.sh
+agg --theme asciinema --font-size 16 --speed 1.4 --rows 28 \
+  docs/assets/demo.cast docs/assets/demo.gif
+```
+
+Nothing enforces that the committed recording matches the current code — no
+test compares them — so treat it as a snapshot that has to be re-run by hand
+when the output changes.
 
 `/healthz` is liveness and never touches OpenSearch — a search blip must not
 trigger pod restarts. `/readyz` is readiness and does check it. `/metrics`
