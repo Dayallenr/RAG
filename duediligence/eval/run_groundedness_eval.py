@@ -57,7 +57,57 @@ from duediligence.track import flatten_metrics, log_run
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["describe_judging", "judge_groundedness", "run_groundedness_eval"]
+__all__ = [
+    "describe_judging",
+    "guard_judgment_regression",
+    "judge_groundedness",
+    "run_groundedness_eval",
+]
+
+
+def guard_judgment_regression(report: dict, output_path: Path) -> None:
+    """Refuse to replace a report with one that judged strictly fewer answers.
+
+    This module judges an answer only in the same pass that *generates* it.
+    Once all 101 answers exist, ``pending`` is empty, nothing is judged, and
+    the report it writes records ``judged_answers: 0`` — silently replacing
+    one that recorded real verdicts, and being logged to the tracker as the
+    newest run of that name.
+
+    It happened on 2026-08-18. Ollama is not installed on the serving Mac, so
+    ``default_generation_backend`` returned Gemini for the generator as well
+    as the judge, ``backends_are_independent`` was correctly False, judging
+    was skipped, and a 9-judgment report became a 0-judgment one with a
+    zero exit code.
+
+    Resumable judging of already-generated answers is
+    ``scripts/judge_answers.py``, which keeps verdicts in their own
+    ``judgments.jsonl`` and reads each answer's recorded ``generated_by``
+    rather than inferring the generator from whatever backend this machine
+    happens to construct.
+
+    A missing or unreadable existing report is not a regression: there is no
+    count to lose, and failing on unparseable JSON would block the very run
+    that would repair it.
+    """
+    output_path = Path(output_path)
+    if not output_path.exists():
+        return
+    try:
+        previous = json.loads(output_path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return
+
+    before = previous.get("judged_answers") or 0
+    after = report.get("judged_answers") or 0
+    if after < before:
+        raise SystemExit(
+            f"refusing to overwrite {output_path}: it records {before} judged "
+            f"answers and this run produced {after}. This module judges only "
+            "the answers it generates in the same pass, so it cannot add "
+            "verdicts to answers that already exist. Use "
+            "`python scripts/judge_answers.py --limit 20` instead."
+        )
 
 _JUDGE_PROMPT = """\
 You are grading whether an ANSWER is fully supported by the PASSAGES it was \
@@ -283,6 +333,9 @@ def main() -> None:
     )
 
     output = Path(args.out)
+    # Before the file is touched and before anything is logged to the
+    # tracker: a regressed report that reaches either is the failure.
+    guard_judgment_regression(report, output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2) + "\n")
 

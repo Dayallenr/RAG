@@ -300,11 +300,12 @@ ever executed:
   ever been created from it, and the SigV4 signing path it would exercise in
   `duediligence/index/opensearch_client.py` has never run against a real
   domain.
-- **Groundedness is measured on 9 of 101 answers.** All 101 answers are
-  generated and recorded, but each independent judgment costs a request
+- **Groundedness is measured on 14 of 68 eligible answers.** All 101 answers
+  are generated and recorded, but each independent judgment costs a request
   against a 20/day Gemini quota, so `results/generation/report.json` reports
-  a claim-support rate over 9 judgments — real, and too few to quote as a
-  system-level number.
+  a claim-support rate over 14 judgments — real, and too few to quote as a
+  system-level number. (68 of the 101 are eligible: the 12 structured-route
+  answers cite no passages and the 21 refusals assert no claim to support.)
 - **The bi-encoder fine-tune has not been run.** What exists is the training
   path: 4,776 synthetic queries generated locally, hard-negative triplets mined
   from the live index and split by query rather than by row, a guard that drops
@@ -414,12 +415,12 @@ probes and routing — not retrieval quality in-cluster.
 
 **Not yet verified, and stated as such:**
 
-- **Groundedness is judged on 9 of 101 answers.** All 101 answers are
-  generated and recorded (`results/generation/answers.jsonl`), but judging
+- **Groundedness is judged on 14 of 68 eligible answers.** All 101 answers
+  are generated and recorded (`results/generation/answers.jsonl`), but judging
   them costs a request against a 20/day Gemini quota, so
-  `results/generation/report.json` reports a claim-support rate over **9**
-  judgments — too few to quote as a system-level number. The harness is
-  resumable and continues where it left off.
+  `results/generation/report.json` reports a claim-support rate over **14**
+  judgments — too few to quote as a system-level number. The harness
+  (`scripts/judge_answers.py`) is resumable and continues where it left off.
 - **Terraform has never been applied.** It passes `fmt` and `validate`, and
   CI enforces both, but no AWS resource has been created. Validation proves
   the configuration is well-formed and nothing more. See

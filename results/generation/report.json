@@ -1,4 +1,5 @@
 {
+  "split": "all",
   "questions_in_eval_set": 101,
   "answers_generated": 101,
   "coverage": 1.0,
@@ -8,9 +9,9 @@
   "refusal_rate": 0.23595505617977527,
   "answers_with_valid_citations": 68,
   "citation_coverage": 1.0,
-  "judged_answers": 9,
-  "mean_claim_support_rate": 0.6666666666666666,
-  "fully_supported_answers": 6,
+  "judged_answers": 14,
+  "mean_claim_support_rate": 0.7857142857142857,
+  "fully_supported_answers": 11,
   "judging": {
     "generation": {
       "backend": "ollama",
@@ -23,7 +24,7 @@
     "independent_judge": true
   },
   "judged_subset": {
-    "judged": 9,
+    "judged": 14,
     "eligible": 68,
     "note": "A stratified subset, not the full set: the hosted judge is capped at 20 requests/day. Refusals are excluded from judging because they make no factual claim to support."
   }

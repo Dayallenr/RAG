@@ -3,9 +3,9 @@
   "project": "duediligence-rag",
   "project_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag",
   "fetched_anonymously": true,
-  "access": "USER_WRITE",
-  "access_note": "open \u2014 anyone can view it, and anyone signed in to Weights & Biases can also submit runs to it",
-  "accepts_public_writes": true,
+  "access": "USER_READ",
+  "access_note": "public \u2014 anyone can view it, nobody else can write to it",
+  "accepts_public_writes": false,
   "tolerance": 1e-09,
   "metrics_compared": 679,
   "metrics_matched": 679,
@@ -53,9 +53,9 @@
     {
       "display_name": "groundedness-eval",
       "report": "results/generation/report.json",
-      "run_id": "ysht673s",
-      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/ysht673s",
-      "created_at": "2026-08-17T20:37:17Z",
+      "run_id": "by3533l3",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/by3533l3",
+      "created_at": "2026-08-18T18:13:01Z",
       "compared": 14,
       "matched": 14,
       "mismatched": [],
@@ -64,6 +64,6 @@
       "ok": true
     }
   ],
-  "runs_on_server": 10,
+  "runs_on_server": 13,
   "caveat": "Metrics are compared key for key against the report files in results/, using the same flattening that produced the hosted keys. The comparison says the hosted runs and the local reports agree; it does not re-derive the numbers from the corpus, and it inherits every caveat those reports state \u2014 most importantly that relevance labels are a floor, not an estimate."
 }

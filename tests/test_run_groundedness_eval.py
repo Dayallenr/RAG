@@ -14,6 +14,7 @@ import time
 import pytest
 
 from duediligence.eval.run_groundedness_eval import (
+    guard_judgment_regression,
     judge_groundedness,
     run_groundedness_eval,
     summarize,
@@ -209,3 +210,51 @@ class TestGroundednessSummary:
         summary = summarize([], total_questions=10)
         assert summary["answers_generated"] == 0
         assert summary["mean_claim_support_rate"] is None
+
+
+class TestJudgmentRegressionGuard:
+    """A run that judges nothing must not overwrite a report that judged
+    something.
+
+    This is not hypothetical. On 2026-08-18 this module was run on the Mac,
+    where Ollama is not installed, so ``default_generation_backend`` returned
+    Gemini for *both* roles, ``backends_are_independent`` was False, judging
+    was skipped — and the resulting ``judged_answers: 0`` report overwrote one
+    recording 9 judgments and was logged to the experiment tracker as the
+    newest run. Nothing errored. The guard turns that silent regression into
+    a stop.
+    """
+
+    def _report(self, judged: int) -> dict:
+        return {"judged_answers": judged, "mean_claim_support_rate": None}
+
+    def test_missing_report_is_not_a_regression(self, tmp_path):
+        target = tmp_path / "report.json"
+        guard_judgment_regression(self._report(0), target)
+
+    def test_writing_more_judgments_is_allowed(self, tmp_path):
+        target = tmp_path / "report.json"
+        target.write_text(json.dumps(self._report(9)))
+        guard_judgment_regression(self._report(14), target)
+
+    def test_writing_the_same_count_is_allowed(self, tmp_path):
+        target = tmp_path / "report.json"
+        target.write_text(json.dumps(self._report(9)))
+        guard_judgment_regression(self._report(9), target)
+
+    def test_dropping_judgments_raises_and_names_the_right_script(self, tmp_path):
+        target = tmp_path / "report.json"
+        target.write_text(json.dumps(self._report(9)))
+
+        with pytest.raises(SystemExit) as excinfo:
+            guard_judgment_regression(self._report(0), target)
+
+        message = str(excinfo.value)
+        assert "9" in message and "0" in message
+        # The whole point of stopping is to send the reader somewhere that works.
+        assert "judge_answers.py" in message
+
+    def test_an_unreadable_existing_report_does_not_block_the_write(self, tmp_path):
+        target = tmp_path / "report.json"
+        target.write_text("{ this is not json")
+        guard_judgment_regression(self._report(0), target)
