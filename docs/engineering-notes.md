@@ -231,8 +231,21 @@ shorter length would be a train/serve skew of exactly the same class as
 training without the query prefix, and is not available as a way out.
 
 At 512 tokens, `MultipleNegativesRankingLoss` puts `3 × batch_size` sequences
-through the encoder per step, and the attention weights alone come to roughly
-7 GB at batch 32. On an 8 GB unified-memory machine:
+through the encoder per step, and MPS materialises the full attention matrix
+rather than streaming it — a 24-sequence forward pass failed asking for exactly
+288 MiB, which is `24 × 12 heads × 512² × 4 bytes` to the byte. At batch 32
+that is 96 sequences, so 1.125 GiB of attention weights per layer, kept across
+all 12 layers for the backward pass. The arithmetic is derived from that one
+measured allocation, not separately measured, but it does not need to be
+precise to settle the question: the ceiling is 9.07 GiB.
+
+(An earlier version of this note said "roughly 7 GB". That is the figure at
+2 bytes per element — i.e. fp16, which this script explicitly refuses off CUDA,
+so it was the one precision the run could not use. Corrected rather than
+quietly dropped, because it is the same mistake as quoting a warmup latency as
+steady state: a number carried over from the wrong condition.)
+
+On an 8 GB unified-memory machine:
 
 | batch | outcome |
 |---|---|
@@ -258,9 +271,12 @@ when it made the training run conditional on a CUDA machine being available,
 and the measurement is a vindication of that decision rather than a problem
 to solve. Two things changed as a result. `--gradient-checkpointing` is now
 wired through the script, because activation memory is the binding constraint
-and trading compute for it is the standard fix; it is unit-tested at the
-argument seam but has **never completed a training step**, here or anywhere,
-and is recorded that way rather than as a solution. And the constraint is
+and trading compute for it is the standard fix; it is tested at the
+wiring seam — the test asserts the flag reaches the trainer's arguments, and
+was checked by deleting the wiring and watching it fail — but it has **never
+been run at the corpus's real sequence length or on a GPU**. It trains a toy
+batch, which proves only that gradients flow, and it is recorded as the first
+thing to try on the 5070 rather than as a solution. And the constraint is
 written into the script's own docstring, so the next person to read
 `resolve_device()` returning `mps` does not spend an afternoon rediscovering
 it.

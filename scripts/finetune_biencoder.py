@@ -34,8 +34,8 @@ At 512 tokens the attention activations dominate: batch 32 and batch 16 both
 die with an MPS out-of-memory, and batch 8 survives only by swapping, at
 roughly 710 s/step — about 13 days for one epoch. ``--gradient-checkpointing``
 is wired up because activation memory is the binding constraint and trading
-compute for it is the standard fix, but it has never completed a step on this
-machine either. Train on the CUDA box (ADR 0005); this script picks the device
+compute for it is the standard fix, but it has never been run at the corpus's
+real sequence length or on a GPU — only proved to train on a toy batch. Train on the CUDA box (ADR 0005); this script picks the device
 itself, so nothing here needs changing to do that.
 
     python scripts/finetune_biencoder.py --epochs 1
@@ -94,6 +94,36 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def build_training_arguments(args, *, output, fp16: bool, report_to: list[str]):
+    """Assemble the trainer's arguments.
+
+    Split out from ``main`` so a test can assert that a flag actually reaches
+    the trainer. Reading the flag back off ``args`` proves only that argparse
+    parsed it; the failure worth guarding is the wiring in *this* function
+    going missing, which trains without the setting and reports success.
+    """
+    from sentence_transformers import SentenceTransformerTrainingArguments
+
+    return SentenceTransformerTrainingArguments(
+        output_dir=str(output / "checkpoints"),
+        num_train_epochs=args.epochs,
+        max_steps=args.max_steps,
+        per_device_train_batch_size=args.batch_size,
+        per_device_eval_batch_size=args.batch_size,
+        learning_rate=args.lr,
+        warmup_ratio=args.warmup_ratio,
+        eval_strategy="steps",
+        eval_steps=100,
+        save_strategy="no",
+        logging_steps=25,
+        report_to=report_to,
+        run_name="finetune-bge-small",
+        seed=17,
+        fp16=fp16,
+        gradient_checkpointing=args.gradient_checkpointing,
+    )
+
+
 def main() -> None:
     args = build_parser().parse_args()
 
@@ -103,7 +133,6 @@ def main() -> None:
     from sentence_transformers import (
         SentenceTransformer,
         SentenceTransformerTrainer,
-        SentenceTransformerTrainingArguments,
     )
     from sentence_transformers.losses import MultipleNegativesRankingLoss
 
@@ -119,9 +148,12 @@ def main() -> None:
 
     device = resolve_device()
 
-    # fp16 is a CUDA path. On MPS or CPU the flag is silently ignored by the
-    # trainer, so it is refused loudly here instead — a run that quietly did
-    # not do what was asked is worse than one that stopped.
+    # fp16 is a CUDA path. On MPS or CPU the trainer would drop it silently, so
+    # it is downgraded loudly here instead and the report records the value the
+    # trainer actually received. The run continues: mixed precision is a speed
+    # optimisation, and losing it changes how long training takes, not what it
+    # produces. (Contrast the query prefix, which would change the result and
+    # is therefore not optional anywhere.)
     fp16 = args.fp16
     if fp16 and device != "cuda":
         logger.warning("--fp16 ignored: mixed precision needs CUDA, running on %s", device)
@@ -144,23 +176,8 @@ def main() -> None:
     output = Path(args.out)
     output.parent.mkdir(parents=True, exist_ok=True)
 
-    training_args = SentenceTransformerTrainingArguments(
-        output_dir=str(output / "checkpoints"),
-        num_train_epochs=args.epochs,
-        max_steps=args.max_steps,
-        per_device_train_batch_size=args.batch_size,
-        per_device_eval_batch_size=args.batch_size,
-        learning_rate=args.lr,
-        warmup_ratio=args.warmup_ratio,
-        eval_strategy="steps",
-        eval_steps=100,
-        save_strategy="no",
-        logging_steps=25,
-        report_to=["wandb"] if _wandb_enabled() else [],
-        run_name="finetune-bge-small",
-        seed=17,
-        fp16=fp16,
-        gradient_checkpointing=args.gradient_checkpointing,
+    training_args = build_training_arguments(
+        args, output=output, fp16=fp16, report_to=["wandb"] if _wandb_enabled() else []
     )
 
     trainer = SentenceTransformerTrainer(
@@ -187,8 +204,11 @@ def main() -> None:
         "batch_size": args.batch_size,
         "learning_rate": args.lr,
         "device": device,
-        "fp16": fp16,
-        "gradient_checkpointing": args.gradient_checkpointing,
+        # Read off the trainer, not off ``args``: if the wiring in
+        # ``build_training_arguments`` were ever dropped, reporting the parsed
+        # flag would record a setting the run did not actually use.
+        "fp16": training_args.fp16,
+        "gradient_checkpointing": training_args.gradient_checkpointing,
         "train_seconds": round(elapsed, 1),
         "final_train_loss": next(
             (h["loss"] for h in reversed(history) if "loss" in h), None

@@ -27,10 +27,12 @@ data/filings/
 # Fine-tuned checkpoints. `scripts/finetune_biencoder.py --out` writes here,
 # and config/profiles/finetuned.yaml names the path. The weights are not
 # tracked (see the model card, #25): a checkpoint is ~130MB of derived
-# output, and the claim rests on the training script, the tracked sample
-# splits, the hosted run, and results/training/report.json — all of which
-# are committed.
-models/
+# output. Once a training run happens, the claim will rest on the training
+# script, the tracked sample splits, the hosted run and
+# results/training/report.json — none of which exist yet, because no run has
+# completed. Anchored to the repository root so it cannot silently swallow a
+# `models/` directory somewhere else in the tree.
+/models/
 
 # Docker / local OpenSearch data volume
 docker/opensearch-data/
