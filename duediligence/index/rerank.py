@@ -15,12 +15,12 @@ model. Cost is bounded by the candidate count, not the corpus size.
 
 **Memory note, learned the hard way on this machine.** This is an 8 GB Mac
 that already swaps with OpenSearch's JVM and the embedding model resident
-(see CLAUDE.md's embedding-throughput finding). ``ms-marco-MiniLM-L-6-v2``
-is a small cross-encoder (~22M parameters) chosen for that reason, it is
-loaded lazily so importing this module costs nothing, and scoring is
-batched. Reranking 50 candidates is one forward pass over 50 pairs — the
-per-query cost is real but bounded, and it is measured in the eval report
-rather than assumed.
+(see the MPS/CPU-time entry in docs/engineering-notes.md).
+``ms-marco-MiniLM-L-6-v2`` is a small cross-encoder (~22M parameters)
+chosen for that reason, it is loaded lazily so importing this module costs
+nothing, and scoring is batched. Reranking 50 candidates is one forward pass
+over 50 pairs — the per-query cost is real but bounded, and it is measured
+in the eval report rather than assumed.
 """
 from __future__ import annotations
 

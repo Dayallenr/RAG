@@ -11,7 +11,8 @@ is make independence arrangeable, and make it visible in the report instead
 of leaving it as an assumption a reader has to take on trust.
 
 The second reason this exists is quota. The hosted free tier allows a
-verified 20 requests/day on this key (CLAUDE.md), which is not enough to
+verified 20 requests/day on this key — confirmed by an actual 429, not by
+documentation (see docs/local-generation.md) — which is not enough to
 generate answers for a 101-question eval set — one pass would take five days
 of wall-clock. A locally-served model has no such ceiling. Swapping one in
 should be a constructor argument, not a rewrite of the generation path, and

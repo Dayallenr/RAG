@@ -6,7 +6,7 @@ cannot answer *where the time went*, and this project has already been
 burned once by guessing at that: a throughput collapse was attributed to
 blocking on OpenSearch because ``ps`` showed 2.7% CPU, when the real cause
 was MPS work running on the GPU — which does not register as process CPU
-time at all (CLAUDE.md's embedding-throughput finding). A latency
+time at all (see the MPS/CPU-time entry in docs/engineering-notes.md). A latency
 breakdown is not a nice-to-have here; the absence of one has already
 produced a wrong diagnosis.
 

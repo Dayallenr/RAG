@@ -5,8 +5,8 @@ FastAPI serving layer.
 cross-encoder, and the OpenSearch connection each cost real seconds to
 construct; building them per request would also mean holding several copies
 resident, which on the 8 GB machine this runs on is the difference between
-responsive and swapping (see CLAUDE.md). The pipeline is therefore built in
-the lifespan handler and shared.
+responsive and swapping (see docs/engineering-notes.md). The pipeline is
+therefore built in the lifespan handler and shared.
 
 **Readiness and liveness are different checks, deliberately.** ``/healthz``
 answers "is this process alive" — it must not touch OpenSearch, or a

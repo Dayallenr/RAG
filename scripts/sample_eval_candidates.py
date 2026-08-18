@@ -2,9 +2,9 @@
 Sample candidate chunks to draft retrieval eval questions from.
 
 This does not write questions — it surfaces a diverse, information-dense
-slice of the corpus for a human (or Claude) to read and write questions
-against, so the eval set is grounded in text someone actually looked at
-rather than generated from the corpus statistics.
+slice of the corpus to read and write questions against, so the eval set is
+grounded in text someone actually looked at rather than generated from the
+corpus statistics.
 
 Stratified across company x filing_type x chunk_type so the eval set can't
 end up accidentally measuring "retrieval on COLB 10-K risk factors" and

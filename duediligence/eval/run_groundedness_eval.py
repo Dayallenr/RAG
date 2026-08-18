@@ -22,9 +22,10 @@ Three things are checked, and only one of them needs a model:
 
 **Quota discipline: this script is resumable and must stay that way.** The
 verified free-tier limit on this key is 20 requests/day for the flash model
-(CLAUDE.md), and a full pass over the eval set needs one generation call per
-question plus one judging call. Completed questions are keyed by
-``eval_id`` in the output file and skipped on re-run, the same pattern
+(confirmed by an actual 429; see docs/local-generation.md), and a full pass
+over the eval set needs one generation call per question plus one judging
+call. Completed questions are
+keyed by ``eval_id`` in the output file and skipped on re-run, the same pattern
 ``scripts/run_chart_extraction.py`` uses. Re-running after a 429 resumes
 rather than restarting, so a day's quota is never spent redoing finished
 work. ``--limit`` bounds a single session's spend.

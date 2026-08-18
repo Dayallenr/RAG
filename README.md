@@ -306,4 +306,5 @@ the list of things that were wrong:
 Earlier findings — the table of contents duplicating every heading, filers
 splitting words across `<span>` runs, `pandas.read_html` requiring bytes not
 `str`, 140 layout tables per 10-K, and only 11 genuine charts among 894
-`<img>` tags — are documented in `CLAUDE.md`.
+`<img>` tags — are documented in
+[`docs/engineering-notes.md`](docs/engineering-notes.md).

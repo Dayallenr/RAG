@@ -9,7 +9,7 @@ that property awkward to test, which is the property most worth testing.
 Nothing here touches the network. That is not just hermeticity for its own
 sake: the hosted model's free tier allows 20 requests per day, and a suite
 that spent them would make the groundedness eval unrunnable for the rest of
-the day (see CLAUDE.md).
+the day (see docs/local-generation.md).
 """
 from __future__ import annotations
 

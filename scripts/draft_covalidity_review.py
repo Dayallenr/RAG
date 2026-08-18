@@ -3,8 +3,8 @@ Draft a co-validity review sheet for the verified eval questions.
 
 The eval set labels one chunk per question, but the corpus frequently
 contains several chunks that answer a question equally well. Every unlabelled
-one of those scores as a *miss*, which is why CLAUDE.md records the retrieval
-numbers as a floor rather than an estimate. Verifying that a label is correct
+one of those scores as a *miss*, which is why the retrieval numbers are
+recorded as a floor rather than an estimate. Verifying that a label is correct
 does not fix this — the label was already scoring as a hit. Only *adding* the
 co-valid ids converts those false misses into hits.
 
@@ -14,9 +14,9 @@ is left into a review sheet with a checkbox per candidate. A human ticks the
 ones that also answer the question; ``apply_covalidity_review.py`` folds the
 ticks back into the eval set.
 
-Deliberately no automatic judgement. An agent deciding which chunks are
-co-valid and then scoring retrieval against its own decisions is the
-self-graded eval this whole exercise exists to escape.
+Deliberately no automatic judgement. Deciding which chunks are co-valid and
+then scoring retrieval against those same decisions is the self-graded eval
+this whole exercise exists to escape, so the ticking is a human's job.
 """
 from __future__ import annotations
 

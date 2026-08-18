@@ -1,6 +1,7 @@
 """
 Dense embeddings for chunk text and queries — BAAI/bge-small-en-v1.5,
-self-hosted and inference-only (no fine-tuning, see CLAUDE.md).
+self-hosted. The model name comes from config, so a fine-tuned
+checkpoint can be swapped in without touching this module.
 
 Two details that are easy to get wrong and silently cost retrieval quality
 rather than raising an error:

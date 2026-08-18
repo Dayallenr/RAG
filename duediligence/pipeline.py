@@ -22,7 +22,7 @@ Models are loaded once and held on the instance. The embedding model, the
 cross-encoder, and an OpenSearch connection all cost real seconds to
 construct, and on the 8 GB machine this project runs on, constructing them
 per request is what makes the difference between a responsive API and one
-that swaps (see CLAUDE.md's embedding-throughput finding).
+that swaps (see the MPS/CPU-time entry in docs/engineering-notes.md).
 """
 from __future__ import annotations
 

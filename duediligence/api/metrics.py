@@ -15,8 +15,9 @@ debugged with:
 * ``duediligence_retrieval_latency_seconds`` — retrieval alone, so a
   slowdown can be attributed to search versus generation without guessing.
   This project has already been bitten once by attributing a slowdown to the
-  wrong component (see CLAUDE.md's embedding-throughput finding), which is
-  the reason this is split out rather than folded into the request timer.
+  wrong component (see the MPS/CPU-time entry in
+  docs/engineering-notes.md), which is the reason this is split out rather
+  than folded into the request timer.
 * ``duediligence_route_total`` — structured vs semantic split, which is the
   headline behavioural claim of the router and should be observable in
   production, not just in an eval.
