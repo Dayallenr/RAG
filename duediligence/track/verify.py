@@ -67,6 +67,7 @@ DEFAULT_TOLERANCE = 1e-9
 # than inferred so a renamed run fails loudly instead of quietly dropping a
 # report from the check.
 RUN_REPORTS: dict[str, str] = {
+    "training": "results/training/report.json",
     "retrieval-eval": "results/retrieval/report.json",
     "ablations": "results/ablations/report.json",
     "routing-eval": "results/routing/report.json",

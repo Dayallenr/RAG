@@ -38,7 +38,20 @@ compute for it is the standard fix, but it has never been run at the corpus's
 real sequence length or on a GPU — only proved to train on a toy batch. Train on the CUDA box (ADR 0005); this script picks the device
 itself, so nothing here needs changing to do that.
 
+**The run is logged through this repository's own ``log_run``, not through the
+trainer's callback.** Hugging Face's wandb integration takes its project from
+``WANDB_PROJECT`` and defaults to one named "huggingface", so ``report_to``
+sent this run somewhere ``scripts/verify_wandb_runs.py`` does not look — which
+is how the 2026-08-18 run left no trace in the project the README links.
+Logging the report instead means the hosted summary mirrors the report file key
+for key, which is what the verifier diffs.
+
     python scripts/finetune_biencoder.py --epochs 1
+
+A run performed on another machine travels back as its report. Log it without
+retraining:
+
+    python scripts/finetune_biencoder.py --log-report-only
 """
 from __future__ import annotations
 
@@ -52,12 +65,20 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from duediligence.index.embed import QUERY_INSTRUCTION, resolve_device  # noqa: E402
+from duediligence.track import flatten_metrics, log_run, tracking_enabled  # noqa: E402
 from duediligence.train.synthetic import (  # noqa: E402
     EvalLeakageError,
     assert_no_eval_leakage,
 )
 
 logger = logging.getLogger("finetune")
+
+DEFAULT_REPORT = "results/training/report.json"
+
+# The name the hosted run must carry. ``duediligence.track.verify.RUN_REPORTS``
+# maps it to the report file, and a test asserts the two agree — a renamed run
+# would otherwise make the verifier report a missing run rather than a rename.
+RUN_NAME = "training"
 
 
 def load_split(path: str) -> list[dict]:
@@ -91,7 +112,119 @@ def build_parser() -> argparse.ArgumentParser:
         help="recompute activations in the backward pass instead of storing them "
              "(much less memory, roughly 30%% more compute) — see the module docstring",
     )
+    parser.add_argument("--report", default=DEFAULT_REPORT)
+    parser.add_argument(
+        "--log-report-only", action="store_true",
+        help="log an existing training report to the experiment tracker and exit, "
+             "training nothing — for a run performed on another machine whose "
+             "report is the artifact that travelled back",
+    )
     return parser
+
+
+def build_training_run_payload(report: dict) -> dict:
+    """What reaches ``log_run`` for a training report.
+
+    The metrics are ``flatten_metrics`` of the report and nothing else, because
+    that is exactly what ``verify.compare_run`` diffs the hosted summary
+    against — it fails on a single extra or missing key, so anything added here
+    would turn a correct run into a red verification. Run configuration goes in
+    ``config``, where it is recorded without being mistaken for a measurement.
+    """
+    return {
+        "name": RUN_NAME,
+        "tags": ["training", "bi-encoder"],
+        "config": {
+            "base_model": report.get("base_model"),
+            # Which machine produced these losses. The training run happens on
+            # a CUDA box that is not the machine holding the index (ADR 0005),
+            # and a hosted run that does not say so invites the reader to
+            # assume otherwise.
+            "device": report.get("device"),
+            "epochs": report.get("epochs"),
+            "batch_size": report.get("batch_size"),
+            "learning_rate": report.get("learning_rate"),
+            "fp16": report.get("fp16"),
+            "gradient_checkpointing": report.get("gradient_checkpointing"),
+            "train_triplets": report.get("train_triplets"),
+            "val_triplets": report.get("val_triplets"),
+        },
+        "metrics": flatten_metrics(report),
+    }
+
+
+def log_training_run(report: dict) -> str | None:
+    """Log one training report. Returns the run URL, or ``None`` if tracking is off."""
+    return log_run(**build_training_run_payload(report))
+
+
+def is_the_run_of_record(args) -> bool:
+    """Should this run become the hosted run the project cites?
+
+    ``verify.latest_finished_runs`` cites the newest *finished* run of each
+    name, so a hosted run named ``training`` is not additive — it replaces the
+    one the README's link resolves to. A five-step smoke run would therefore
+    become the published evidence for the fine-tune while
+    ``results/training/report.json`` still held the real one, and verification
+    would flip to 107 mismatches with no way to retract the hosted run.
+
+    Two things disqualify a run, both meaning "this is not the run of record":
+    a step cap, which is what a quick check looks like, and a report path other
+    than the one ``RUN_REPORTS`` maps the hosted name to — the hosted summary
+    has to mirror *that* file or the verifier is comparing two different runs.
+    """
+    return args.max_steps <= 0 and args.report == DEFAULT_REPORT
+
+
+def looks_like_a_training_report(payload: object) -> bool:
+    """Cheap shape check before anything is published.
+
+    Logging ``results/retrieval/report.json`` under the name ``training``
+    succeeds, and then fails verification permanently: a hosted run cannot be
+    retracted. Wrong input is worth catching before the network call, not
+    after.
+    """
+    return isinstance(payload, dict) and "base_model" in payload and "final_eval_loss" in payload
+
+
+def log_existing_report(path: str) -> int:
+    """Log a report produced by an earlier run. Returns a process exit code."""
+    report_path = Path(path)
+    if not report_path.exists():
+        print(f"no training report at {path} — nothing to log", file=sys.stderr)
+        return 1
+
+    payload = json.loads(report_path.read_text())
+    if not looks_like_a_training_report(payload):
+        print(
+            f"{path} is not a training report (expected base_model and final_eval_loss) — "
+            f"refusing to publish it as the run {RUN_NAME!r}, which cannot be retracted",
+            file=sys.stderr,
+        )
+        return 1
+
+    # Checked before the call rather than inferred from its return value: a
+    # ``None`` URL means "tracking off" and "logged but no URL came back"
+    # equally, and those two need opposite advice.
+    if not tracking_enabled():
+        print(
+            f"nothing was logged for {path} — tracking is off. Set WANDB_API_KEY, and "
+            "check DUEDILIGENCE_TRACKING is not set to 0.",
+            file=sys.stderr,
+        )
+        return 1
+
+    url = log_training_run(payload)
+    if url is None:
+        print(
+            f"tracking is on but no run URL came back for {path}. The run may still have "
+            "been created — check the project before re-running, because a second attempt "
+            "publishes a duplicate rather than replacing it.",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"tracked: {url}")
+    return 0
 
 
 def build_training_arguments(args, *, output, fp16: bool, report_to: list[str]):
@@ -128,6 +261,10 @@ def main() -> None:
     args = build_parser().parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+    # Before the heavy imports: this path trains nothing.
+    if args.log_report_only:
+        raise SystemExit(log_existing_report(args.report))
 
     from datasets import Dataset
     from sentence_transformers import (
@@ -176,8 +313,16 @@ def main() -> None:
     output = Path(args.out)
     output.parent.mkdir(parents=True, exist_ok=True)
 
+    # No trainer-side tracking callback on purpose. Hugging Face's wandb
+    # integration takes its project from ``WANDB_PROJECT`` and defaults to a
+    # project literally named "huggingface", so ``report_to=["wandb"]`` sent
+    # this run somewhere ``scripts/verify_wandb_runs.py`` never looks — which
+    # is why the 2026-08-18 run left no trace in the project the README links.
+    # The run is logged below instead, through the same ``log_run`` every other
+    # report in this repository uses, so the hosted summary mirrors the report
+    # file key for key and the verifier can diff the two.
     training_args = build_training_arguments(
-        args, output=output, fp16=fp16, report_to=["wandb"] if _wandb_enabled() else []
+        args, output=output, fp16=fp16, report_to=[]
     )
 
     trainer = SentenceTransformerTrainer(
@@ -218,9 +363,27 @@ def main() -> None:
         ),
         "log_history": history,
     }
-    report = Path("results/training/report.json")
+    report = Path(args.report)
     report.parent.mkdir(parents=True, exist_ok=True)
     report.write_text(json.dumps(metrics, indent=2) + "\n")
+
+    # A no-op without a key: the report file stays the source of truth. If this
+    # is skipped, re-run with --log-report-only rather than retraining — the
+    # losses are already on disk.
+    if not is_the_run_of_record(args):
+        logger.warning(
+            "not tracked: a step cap or a non-default --report means this is not the "
+            "run of record, and publishing it would replace the hosted run the README "
+            "cites. Log it deliberately with --log-report-only --report %s",
+            args.report,
+        )
+    elif run_url := log_training_run(metrics):
+        print(f"\ntracked: {run_url}")
+    else:
+        logger.warning(
+            "not tracked — run with --log-report-only --report %s once WANDB_API_KEY is set",
+            args.report,
+        )
 
     print(f"\ntrained in {elapsed / 60:.1f} min on {device}")
     print(f"  final train loss: {metrics['final_train_loss']}")
@@ -228,12 +391,6 @@ def main() -> None:
     print(f"\nmodel: {output}")
     print(f"report: {report}")
     print("\nnext: rebuild the index with this model and re-run the retrieval eval")
-
-
-def _wandb_enabled() -> bool:
-    from duediligence.track import tracking_enabled
-
-    return tracking_enabled()
 
 
 if __name__ == "__main__":

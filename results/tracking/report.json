@@ -7,10 +7,23 @@
   "access_note": "public \u2014 anyone can view it, nobody else can write to it",
   "accepts_public_writes": false,
   "tolerance": 1e-09,
-  "metrics_compared": 679,
-  "metrics_matched": 679,
+  "metrics_compared": 786,
+  "metrics_matched": 786,
   "verified": true,
   "runs": [
+    {
+      "display_name": "training",
+      "report": "results/training/report.json",
+      "run_id": "50l6w8a5",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/50l6w8a5",
+      "created_at": "2026-08-18T20:55:25Z",
+      "compared": 107,
+      "matched": 107,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
     {
       "display_name": "retrieval-eval",
       "report": "results/retrieval/report.json",
@@ -64,6 +77,6 @@
       "ok": true
     }
   ],
-  "runs_on_server": 13,
+  "runs_on_server": 14,
   "caveat": "Metrics are compared key for key against the report files in results/, using the same flattening that produced the hosted keys. The comparison says the hosted runs and the local reports agree; it does not re-derive the numbers from the corpus, and it inherits every caveat those reports state \u2014 most importantly that relevance labels are a floor, not an estimate."
 }
