@@ -206,3 +206,61 @@ and may kill the pod.
 with no `retrieve` span and no `generate` span at all — which is the
 "no model call on the structured path" claim made visible rather than
 asserted.
+
+## The fine-tune does not fit on the machine that serves it
+
+**What I saw.** `scripts/finetune_biencoder.py` calls `resolve_device()`,
+which returns `mps` on this Mac, so the script starts and trains without
+complaint on Apple Silicon. I took that as evidence the training run could
+happen here rather than on the CUDA box, and started it.
+
+**What I first concluded, wrongly.** That the only thing standing between
+this repository and a fine-tuned checkpoint was which machine I happened to
+be sitting at. The script running is not the same as the run finishing, and
+device support says nothing about whether the working set fits.
+
+**Actual cause** (measurements below are ad-hoc runs on this machine, not a
+report file — there is no `results/training/report.json`, because no run
+completed). The binding constraint is attention activation memory at full
+sequence length, not the model. bge-small is 33M parameters, but the mined
+passages are long: measured over 1,500 training rows, positives run to a mean
+of 217 tokens with p90 at 441, and **6.8% exceed the model's 512-token
+window**. `ChunkEmbedder` never lowers `max_seq_length`, so passages are
+truncated at 512 when the corpus is indexed — which means training at a
+shorter length would be a train/serve skew of exactly the same class as
+training without the query prefix, and is not available as a way out.
+
+At 512 tokens, `MultipleNegativesRankingLoss` puts `3 × batch_size` sequences
+through the encoder per step, and the attention weights alone come to roughly
+7 GB at batch 32. On an 8 GB unified-memory machine:
+
+| batch | outcome |
+|---|---|
+| 32 | MPS out of memory (8.84 GiB allocated, 9.07 GiB ceiling) |
+| 16 | MPS out of memory (9.06 GiB allocated) |
+| 8 | runs, by swapping — ~710 s/step |
+
+Batch 8 is the misleading one, because it does not fail. It just goes slowly
+enough to be useless: step 1 took 600 s and step 2 took 786 s, so it is
+degrading rather than warming up, and 12,758 triplets at batch 8 is 1,595
+steps — **about 13 days for a single epoch**. `vm.swapusage` reported 11.2 GB
+of a 12 GB swap file in use with 13% of memory free, which is the real story
+behind the step times. Batch 8 also costs what the loss is for: in-batch
+negatives scale with batch size, so it weakens the contrastive signal at the
+same time as it wrecks the throughput.
+
+I had already been warned about this and did not connect it. The note above
+about MPS contention, and the 8 GB ceiling flagged for re-embedding and
+reranking, are the same machine limit showing up in a third place.
+
+**Fix.** None available here — this is the constraint ADR 0005 anticipated
+when it made the training run conditional on a CUDA machine being available,
+and the measurement is a vindication of that decision rather than a problem
+to solve. Two things changed as a result. `--gradient-checkpointing` is now
+wired through the script, because activation memory is the binding constraint
+and trading compute for it is the standard fix; it is unit-tested at the
+argument seam but has **never completed a training step**, here or anywhere,
+and is recorded that way rather than as a solution. And the constraint is
+written into the script's own docstring, so the next person to read
+`resolve_device()` returning `mps` does not spend an afternoon rediscovering
+it.

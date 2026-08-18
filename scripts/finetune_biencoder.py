@@ -26,6 +26,18 @@ query produces several triplets; splitting by row would leak. See
 The 101 human-written eval questions appear in neither split. They are the
 test set, and the delta against them is the only number this run is for.
 
+**This does not fit on the 8 GB Mac, measured rather than assumed.** Passages
+run to the model's full 512-token window (6.8% of mined positives exceed it,
+and ``ChunkEmbedder`` never lowers ``max_seq_length``, so shortening sequences
+here would be a train/serve skew of the same class as dropping the prefix).
+At 512 tokens the attention activations dominate: batch 32 and batch 16 both
+die with an MPS out-of-memory, and batch 8 survives only by swapping, at
+roughly 710 s/step — about 13 days for one epoch. ``--gradient-checkpointing``
+is wired up because activation memory is the binding constraint and trading
+compute for it is the standard fix, but it has never completed a step on this
+machine either. Train on the CUDA box (ADR 0005); this script picks the device
+itself, so nothing here needs changing to do that.
+
     python scripts/finetune_biencoder.py --epochs 1
 """
 from __future__ import annotations
@@ -56,7 +68,9 @@ def load_split(path: str) -> list[dict]:
     ]
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
+    """Split out from ``main`` so the flags can be tested without importing
+    torch — everything below this function's return is a training run."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--train", default="data/training/train.jsonl")
     parser.add_argument("--val", default="data/training/val.jsonl")
@@ -72,7 +86,16 @@ def main() -> None:
         "--fp16", action="store_true",
         help="mixed-precision training (CUDA only; ignored with a warning elsewhere)",
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "--gradient-checkpointing", action="store_true",
+        help="recompute activations in the backward pass instead of storing them "
+             "(much less memory, roughly 30%% more compute) — see the module docstring",
+    )
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -137,6 +160,7 @@ def main() -> None:
         run_name="finetune-bge-small",
         seed=17,
         fp16=fp16,
+        gradient_checkpointing=args.gradient_checkpointing,
     )
 
     trainer = SentenceTransformerTrainer(
@@ -164,6 +188,7 @@ def main() -> None:
         "learning_rate": args.lr,
         "device": device,
         "fp16": fp16,
+        "gradient_checkpointing": args.gradient_checkpointing,
         "train_seconds": round(elapsed, 1),
         "final_train_loss": next(
             (h["loss"] for h in reversed(history) if "loss" in h), None
