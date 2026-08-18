@@ -91,13 +91,6 @@ passages and called zero models. The narrative question has no complete
 reranking and generation, and its `[n]` markers resolve to real filings
 listed beneath the answer with their SEC URLs.
 
-One wrinkle, stated rather than cropped out: the committed recording lists
-four of the five sources its answer cites. `scripts/demo_format.py` was
-truncating the citation block, which is now fixed — it prints every
-citation, sorted — but re-recording costs a generation call and the free
-tier's twenty a day were spent, so the asset still shows the old behaviour.
-It is a stale screenshot of a fixed bug, not a live one.
-
 The timings on screen are one call each on one 8 GB laptop, and no report
 file records them: `results/retrieval/report.json` measures the *retrieval*
 stage in isolation (BM25 14 ms, dense 23 ms, hybrid 39 ms, hybrid+rerank
