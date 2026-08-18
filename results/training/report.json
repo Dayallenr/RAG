@@ -1,0 +1,153 @@
+{
+  "base_model": "BAAI/bge-small-en-v1.5",
+  "train_triplets": 12758,
+  "val_triplets": 1429,
+  "epochs": 1.0,
+  "batch_size": 32,
+  "learning_rate": 2e-05,
+  "device": "cuda",
+  "fp16": true,
+  "gradient_checkpointing": false,
+  "train_seconds": 121.0,
+  "final_train_loss": 0.5379423904418945,
+  "final_eval_loss": 0.5198092460632324,
+  "log_history": [
+    {
+      "loss": 1.7607052612304688,
+      "grad_norm": 6.405307769775391,
+      "learning_rate": 1.2e-05,
+      "epoch": 0.06265664160401002,
+      "step": 25
+    },
+    {
+      "loss": 1.0968597412109375,
+      "grad_norm": 5.49723482131958,
+      "learning_rate": 1.9498607242339835e-05,
+      "epoch": 0.12531328320802004,
+      "step": 50
+    },
+    {
+      "loss": 0.8830228424072266,
+      "grad_norm": 5.983035564422607,
+      "learning_rate": 1.8105849582172703e-05,
+      "epoch": 0.18796992481203006,
+      "step": 75
+    },
+    {
+      "loss": 0.7508980560302735,
+      "grad_norm": 6.472723484039307,
+      "learning_rate": 1.6713091922005575e-05,
+      "epoch": 0.2506265664160401,
+      "step": 100
+    },
+    {
+      "eval_loss": 0.6521207094192505,
+      "eval_runtime": 3.9639,
+      "eval_samples_per_second": 360.505,
+      "eval_steps_per_second": 11.352,
+      "epoch": 0.2506265664160401,
+      "step": 100
+    },
+    {
+      "loss": 0.7022667694091796,
+      "grad_norm": 6.332552433013916,
+      "learning_rate": 1.5320334261838443e-05,
+      "epoch": 0.3132832080200501,
+      "step": 125
+    },
+    {
+      "loss": 0.6976200866699219,
+      "grad_norm": 5.153319835662842,
+      "learning_rate": 1.392757660167131e-05,
+      "epoch": 0.37593984962406013,
+      "step": 150
+    },
+    {
+      "loss": 0.6337357711791992,
+      "grad_norm": 5.308257579803467,
+      "learning_rate": 1.2534818941504178e-05,
+      "epoch": 0.43859649122807015,
+      "step": 175
+    },
+    {
+      "loss": 0.6485333251953125,
+      "grad_norm": 6.2405781745910645,
+      "learning_rate": 1.1142061281337048e-05,
+      "epoch": 0.5012531328320802,
+      "step": 200
+    },
+    {
+      "eval_loss": 0.5668139457702637,
+      "eval_runtime": 3.98,
+      "eval_samples_per_second": 359.042,
+      "eval_steps_per_second": 11.306,
+      "epoch": 0.5012531328320802,
+      "step": 200
+    },
+    {
+      "loss": 0.6186148834228515,
+      "grad_norm": 4.950265407562256,
+      "learning_rate": 9.749303621169918e-06,
+      "epoch": 0.5639097744360902,
+      "step": 225
+    },
+    {
+      "loss": 0.6290376281738281,
+      "grad_norm": 6.802957057952881,
+      "learning_rate": 8.356545961002787e-06,
+      "epoch": 0.6265664160401002,
+      "step": 250
+    },
+    {
+      "loss": 0.5865440368652344,
+      "grad_norm": 5.545446395874023,
+      "learning_rate": 6.963788300835655e-06,
+      "epoch": 0.6892230576441103,
+      "step": 275
+    },
+    {
+      "loss": 0.5703835296630859,
+      "grad_norm": 7.28761625289917,
+      "learning_rate": 5.571030640668524e-06,
+      "epoch": 0.7518796992481203,
+      "step": 300
+    },
+    {
+      "eval_loss": 0.5287613272666931,
+      "eval_runtime": 3.9594,
+      "eval_samples_per_second": 360.913,
+      "eval_steps_per_second": 11.365,
+      "epoch": 0.7518796992481203,
+      "step": 300
+    },
+    {
+      "loss": 0.5494999694824219,
+      "grad_norm": 5.835546493530273,
+      "learning_rate": 4.178272980501394e-06,
+      "epoch": 0.8145363408521303,
+      "step": 325
+    },
+    {
+      "loss": 0.5927857971191406,
+      "grad_norm": 6.729060649871826,
+      "learning_rate": 2.785515320334262e-06,
+      "epoch": 0.8771929824561403,
+      "step": 350
+    },
+    {
+      "loss": 0.5379423904418945,
+      "grad_norm": 7.691098690032959,
+      "learning_rate": 1.392757660167131e-06,
+      "epoch": 0.9398496240601504,
+      "step": 375
+    },
+    {
+      "eval_loss": 0.5198092460632324,
+      "eval_runtime": 3.9724,
+      "eval_samples_per_second": 359.729,
+      "eval_steps_per_second": 11.328,
+      "epoch": 1.0,
+      "step": 399
+    }
+  ]
+}
