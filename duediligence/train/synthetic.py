@@ -26,11 +26,12 @@ neutral sample of how a real user would ask.
 """
 from __future__ import annotations
 
-import json
 import logging
 import re
 from collections.abc import Iterable
 from pathlib import Path
+
+from duediligence.eval.eval_set import load_eval_set
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +97,20 @@ def normalize_question(question: str) -> frozenset[str]:
     return frozenset(_WORD_RE.findall(question.lower()))
 
 
+def _require_eval_set(eval_set_path: str | Path, why: str) -> list[dict]:
+    """Load the eval set, or fail loudly saying which guard cannot run.
+
+    A missing eval set must never degrade into "generate anyway with no
+    contamination check" — that silently produces training data drawn from
+    the test set, and the resulting delta measures memorisation. Parsing is
+    delegated so this module reads the same file, the same way, as the
+    evaluation that scores against it.
+    """
+    if not Path(eval_set_path).exists():
+        raise FileNotFoundError(f"{eval_set_path} not found — {why}")
+    return load_eval_set(str(eval_set_path))
+
+
 def eval_chunk_ids(eval_set_path: str | Path) -> set[str]:
     """Every chunk id any eval question is labelled against.
 
@@ -103,32 +118,25 @@ def eval_chunk_ids(eval_set_path: str | Path) -> set[str]:
     queries from them would put the test set's own evidence into training,
     which is the contamination this module exists to prevent.
     """
-    path = Path(eval_set_path)
-    if not path.exists():
-        raise FileNotFoundError(
-            f"{path} not found — refusing to generate training data without the "
-            "eval set, because the contamination guard cannot run without it."
-        )
+    entries = _require_eval_set(
+        eval_set_path,
+        "refusing to generate training data without the eval set, because the "
+        "contamination guard cannot run without it.",
+    )
     ids: set[str] = set()
-    for line in path.read_text().splitlines():
-        if line.strip():
-            ids.update(json.loads(line).get("relevant_chunk_ids", []))
+    for entry in entries:
+        ids.update(entry.get("relevant_chunk_ids", []))
     return ids
 
 
 def eval_question_keys(eval_set_path: str | Path) -> list[frozenset[str]]:
     """Every held-out question, reduced to the form comparisons use."""
-    path = Path(eval_set_path)
-    if not path.exists():
-        raise FileNotFoundError(
-            f"{path} not found — refusing to proceed without the eval set, "
-            "because the contamination guard cannot run without it."
-        )
-    return [
-        normalize_question(json.loads(line)["question"])
-        for line in path.read_text().splitlines()
-        if line.strip()
-    ]
+    entries = _require_eval_set(
+        eval_set_path,
+        "refusing to proceed without the eval set, because the contamination "
+        "guard cannot run without it.",
+    )
+    return [normalize_question(entry["question"]) for entry in entries]
 
 
 def assert_no_eval_leakage(queries: Iterable[str], eval_set_path: str | Path) -> int:

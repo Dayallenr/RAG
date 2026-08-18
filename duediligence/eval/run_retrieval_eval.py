@@ -39,6 +39,11 @@ from collections import defaultdict
 from pathlib import Path
 
 from duediligence.config import load_config
+from duediligence.eval.eval_set import (
+    DEFAULT_EVAL_SET_PATH,
+    human_verified_count,
+    load_eval_set,
+)
 from duediligence.eval.retrieval_metrics import aggregate_metrics
 from duediligence.index.embed import ChunkEmbedder
 from duediligence.index.hybrid_search import hybrid_search
@@ -47,7 +52,7 @@ from duediligence.track import flatten_metrics, log_run
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["run_retrieval_eval"]
+__all__ = ["run_retrieval_eval", "verification_note"]
 
 _K_VALUES = (1, 3, 5, 10, 20)
 _CANDIDATE_K = 50
@@ -60,18 +65,39 @@ _RETRIEVER_DESCRIPTIONS = {
 }
 
 
-def _load_eval_set(path: str) -> list[dict]:
-    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+def verification_note(*, verified: int, total: int) -> str | None:
+    """The disclosure printed under every retrieval report, or ``None``.
+
+    Relevance labels were drafted mechanically, by sampling chunks and
+    writing a question for each. Until a human has read a question and
+    confirmed its label, every number scored against it is self-graded.
+    That is a legitimate thing to publish and an illegitimate thing to
+    publish silently, so the count travels with the metrics and an
+    incomplete count says out loud that it is incomplete.
+    """
+    if total and verified >= total:
+        return None
+    if verified == 0:
+        return (
+            "NOTE: no eval entries are human-verified — every question was "
+            "drafted automatically from a sampled chunk. Numbers are "
+            "provisional until a sample is checked."
+        )
+    return (
+        f"NOTE: {verified} of {total} eval entries are human-verified; the "
+        "rest were drafted automatically from sampled chunks. Numbers over "
+        "the unverified remainder are provisional."
+    )
 
 
 def run_retrieval_eval(
-    eval_set_path: str = "data/eval_set.jsonl",
+    eval_set_path: str = DEFAULT_EVAL_SET_PATH,
     *,
     k: int = 20,
     rerank: bool = True,
     config_path: str = "config/config.yaml",
 ) -> dict:
-    entries = _load_eval_set(eval_set_path)
+    entries = load_eval_set(eval_set_path)
     config = load_config(config_path)
     client = build_client(config.opensearch)
     index_name = config.opensearch.index_name
@@ -161,7 +187,7 @@ def run_retrieval_eval(
     report = {
         "eval_set": eval_set_path,
         "queries": len(per_query),
-        "human_verified_queries": sum(1 for row in per_query if row["verified"]),
+        "human_verified_queries": human_verified_count(per_query),
         "index": index_name,
         "embedding_model": config.models.embedding_model,
         "reranker_model": config.models.reranker_model if reranker else None,
@@ -216,7 +242,7 @@ def _print_table(report: dict) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--eval-set", default="data/eval_set.jsonl")
+    parser.add_argument("--eval-set", default=DEFAULT_EVAL_SET_PATH)
     parser.add_argument("--k", type=int, default=20)
     parser.add_argument("--no-rerank", action="store_true", help="skip cross-encoder reranking")
     parser.add_argument("--out", default="results/retrieval/report.json")
@@ -269,9 +295,11 @@ def main() -> None:
         rendered = "  ".join(f"{metric}={value:+.3f}" for metric, value in deltas.items())
         print(f"  {name:<14} {rendered}")
 
-    if report["human_verified_queries"] == 0:
-        print("\nNOTE: no eval entries are human-verified yet — every question is "
-              "Claude-drafted. Numbers are provisional until a sample is checked.")
+    note = verification_note(
+        verified=report["human_verified_queries"], total=report["queries"]
+    )
+    if note:
+        print(f"\n{note}")
     print(f"\nwrote {output_path}")
 
 

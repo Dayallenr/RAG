@@ -37,7 +37,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from duediligence.config import load_config
+from duediligence.eval.eval_set import (
+    DEFAULT_EVAL_SET_PATH,
+    human_verified_count,
+    load_eval_set,
+)
 from duediligence.eval.retrieval_metrics import aggregate_metrics
+from duediligence.eval.run_retrieval_eval import verification_note
 from duediligence.index.embed import ChunkEmbedder
 from duediligence.index.hybrid_search import hybrid_search
 from duediligence.index.opensearch_client import bm25_search, build_client, knn_search
@@ -47,10 +53,6 @@ logger = logging.getLogger("ablations")
 
 _METRICS = ("recall@1", "recall@5", "recall@10", "mrr", "ndcg@10")
 _K = 20
-
-
-def _load_eval_set(path: str = "data/eval_set.jsonl") -> list[dict]:
-    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
 
 
 def _score(pairs: list[tuple[list[str], set[str]]]) -> dict[str, float]:
@@ -159,7 +161,7 @@ def main() -> None:
     index = config.opensearch.index_name
     embedder = ChunkEmbedder(config.models.embedding_model)
 
-    entries = _load_eval_set()
+    entries = load_eval_set()
     vectors = embedder.embed_queries([e["question"] for e in entries])
 
     # Single-retriever reference rows, so the ablation report stands alone.
@@ -175,9 +177,9 @@ def main() -> None:
         baselines[name] = _score(pairs)
 
     report = {
-        "eval_set": "data/eval_set.jsonl",
+        "eval_set": DEFAULT_EVAL_SET_PATH,
         "queries": len(entries),
-        "human_verified_queries": sum(1 for e in entries if e.get("verified")),
+        "human_verified_queries": human_verified_count(entries),
         "baselines": baselines,
         "ablation_a_fusion_weight": ablate_fusion_weight(client, index, embedder, entries, vectors),
         "ablation_b_chunk_levels": ablate_chunk_levels(client, index, embedder, entries, vectors),
@@ -211,6 +213,12 @@ def main() -> None:
     )
     if run_url:
         print(f"\ntracked: {run_url}")
+
+    note = verification_note(
+        verified=report["human_verified_queries"], total=report["queries"]
+    )
+    if note:
+        print(f"\n{note}")
 
     print("\n=== A. RRF dense weight (1.0 = equal weighting) ===")
     print(f"{'dense_w':>8}" + "".join(f"{m:>12}" for m in _METRICS))
