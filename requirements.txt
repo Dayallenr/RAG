@@ -50,3 +50,8 @@ wandb>=0.18.0
 opentelemetry-api>=1.27.0
 opentelemetry-sdk>=1.27.0
 opentelemetry-exporter-otlp-proto-http>=1.27.0
+
+# Used directly by scripts/transfer_checkpoint.py to move the fine-tuned
+# checkpoint between the training machine and the machine that serves; also
+# arrives transitively via sentence-transformers.
+huggingface-hub>=0.34.0

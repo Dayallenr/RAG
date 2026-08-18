@@ -255,7 +255,7 @@ partial, or a lower bound, it says so.
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
 | CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
-| 427 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| 447 passing tests, ruff clean | — | `pytest -q && ruff check .` |
 | Every eval above also logged to a public tracker: **786/786 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
 
 ### The same numbers, hosted where this repository cannot edit them
