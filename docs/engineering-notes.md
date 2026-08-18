@@ -114,6 +114,31 @@ it; I have not gone back through the extra 16 individually. Regression tests cov
 10-Q `Item 1.` shape, and a real Glacier en-dash variant
 (`tests/test_chunk_tables.py::TestTableOfContentsExclusion`).
 
+## A stale report sat next to the eval it contradicted for six days
+
+**What I saw.** After re-running the retrieval eval against the fully verified
+eval set, the ablation report disagreed with it on settings that were supposed
+to be identical. Its all-levels configuration should have reproduced the
+hybrid retriever's paragraph recall@10 exactly, and did not.
+
+**Cause.** Nothing was wrong with either script. The ablation report had simply
+never been re-run after the 10-Q table-of-contents fix changed the corpus
+underneath it, so it was scored against an index that no longer existed. It had
+been stale for six days, sitting in `results/` next to a report it silently
+contradicted, and nothing in the repository could notice: each script writes its
+own report and neither reads the other's.
+
+**Fix.** Re-ran it; the two agree exactly (all-levels 0.8286 == hybrid paragraph
+recall@10 0.8286). Two findings changed as a result — the chunk hierarchy
+crowds the *top ranks* rather than costing recall (recall@1 0.314 -> 0.400
+paragraphs-only), and rerank depth peaks at **25** (0.713), not the configured
+50.
+
+**The rule this leaves behind:** when the index changes, re-run *every* report
+that reads it, not just the headline one. `results/retrieval/report.json` and
+`results/ablations/report.json` are both downstream of the corpus, and only one
+of them was on anybody's mind.
+
 ## Real filing HTML is messier than any parser I would have written for it
 
 None of these were guesses. Each came from opening a filing that had

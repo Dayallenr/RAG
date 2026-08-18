@@ -56,9 +56,6 @@ terraform/*.tfvars
 # Secrets — never commit API keys
 .env
 
-# Local working plan (see GitHub Issues for the authoritative tickets)
-ticket.md
-
 # Experiment-tracking run directories. Local mirrors of runs that live on
 # Weights & Biases — the hosted run is the artifact worth citing (it is
 # third-party and cannot be edited after the fact), and committed
@@ -77,3 +74,4 @@ data/training/val.jsonl
 # docs/engineering-notes.md and docs/adr/, written to be read.
 CLAUDE.md
 docs/agents/
+.claude/
