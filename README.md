@@ -68,7 +68,7 @@ USD CY2023` has no useful semantic neighbourhood; it is answered by lookup.
 | Component | Choice | Why |
 |---|---|---|
 | Store | OpenSearch 2.19.1 | One engine for BM25 *and* k-NN — hybrid search is one query, not a cross-system fan-out |
-| Embeddings | `BAAI/bge-small-en-v1.5` (384d) | Self-hosted, inference-only, small enough to embed 38k chunks on a laptop |
+| Embeddings | `BAAI/bge-small-en-v1.5` (384d) | Self-hosted, small enough to embed 38k chunks on a laptop. A domain fine-tune is built and has not been run — see below |
 | Reranker | `ms-marco-MiniLM-L-6-v2` | Cross-encoder over 50 candidates; the single biggest quality win |
 | Generation | Gemini free tier | Multimodal (also drives chart understanding), no card required |
 | API | FastAPI | Deliberately different from this author's other project's gRPC stack |
@@ -250,6 +250,7 @@ partial, or a lower bound, it says so.
 | Retrieval: dense / BM25 / hybrid / +rerank | `results/retrieval/report.json` | `python -m duediligence.eval.run_retrieval_eval` |
 | Fusion-weight, chunk-level, rerank-depth ablations (development split) | `results/ablations/report.json` | `python scripts/run_ablations.py` |
 | Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
+| 4,776 synthetic training queries, mined into hard-negative triplets, eval-contamination guarded | `data/training/synthetic_queries.jsonl` tracked; the mined splits are regenerable and gitignored, with row samples tracked | `python scripts/generate_synthetic_queries.py` then `python scripts/mine_hard_negatives.py` |
 | Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
@@ -288,7 +289,7 @@ verification only ever cites the newest finished run of each name.
 ### What is *not* on that list, and why that matters
 
 Everything above was produced by running the thing and is backed by a file
-you can open. Two parts of this project are **not** on that list, and the
+you can open. Three parts of this project are **not** on that list, and the
 distinction is deliberate — reading code is not evidence that the code was
 ever executed:
 
@@ -304,8 +305,16 @@ ever executed:
   against a 20/day Gemini quota, so `results/generation/report.json` reports
   a claim-support rate over 9 judgments — real, and too few to quote as a
   system-level number.
+- **The bi-encoder fine-tune has not been run.** What exists is the training
+  path: 4,776 synthetic queries generated locally, hard-negative triplets mined
+  from the live index and split by query rather than by row, a guard that drops
+  anything the eval set is labelled against, and `scripts/finetune_biencoder.py`.
+  There is no checkpoint, no fine-tuned index, and **no retrieval delta** — the
+  run needs a CUDA machine and has not happened. Every retrieval number in this
+  README is the off-the-shelf model. The reasoning behind reversing the original
+  no-fine-tuning rule is in [ADR 0005](docs/adr/0005-fine-tune-the-bi-encoder.md).
 
-If either of those later becomes verified, it gets an artifact in the table
+If any of those later becomes verified, it gets an artifact in the table
 above and a line here — not a quiet edit to a sentence elsewhere. That has
 already happened once: the evaluation set used to be listed here as
 unverified, and it now has an artifact instead (see the held-out split
@@ -415,6 +424,11 @@ probes and routing — not retrieval quality in-cluster.
   CI enforces both, but no AWS resource has been created. Validation proves
   the configuration is well-formed and nothing more. See
   `terraform/README.md` for the cost breakdown and why it is gated.
+- **The bi-encoder fine-tune is built and unrun.** `duediligence/train/` and
+  `scripts/finetune_biencoder.py` exist and are tested, and the training data
+  is mined and contamination-guarded; the training run itself needs a CUDA
+  machine and has not happened. No checkpoint, no fine-tuned index, no delta.
+  ADR 0005 records why the original no-fine-tuning rule was reversed.
 
 **Previously-known defect, now fixed:** 69 of 8,740 table chunks were 10-Q
 tables of contents. Two things were wrong — the exclusion regex required

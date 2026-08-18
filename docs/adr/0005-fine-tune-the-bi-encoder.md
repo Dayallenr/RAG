@@ -1,6 +1,8 @@
 # 0005 — Reversing the decision not to fine-tune anything
 
-**Status:** accepted, supersedes the original no-fine-tuning scope
+**Status:** accepted, supersedes the original no-fine-tuning scope. The
+training path is built and tested; the training run itself has not happened,
+so no delta exists yet.
 
 ## Context
 
@@ -40,12 +42,13 @@ Fine-tune the bi-encoder on synthetic queries mined from the corpus, with
 hard negatives mined from the *current* retriever's top hits. Training runs
 on the RTX 5070.
 
-Selecting the model and its matching index together by config profile is
-**planned and not yet built** (#20) — today `config.models.embedding_model`
-is a single name, so swapping models means editing config rather than
-choosing a profile. The point of that ticket is that a model and the index
-it embedded must travel together; mixing them silently produces garbage
-scores.
+Selecting the model and its matching index together is done by config
+profile (`config/profiles/finetuned.yaml`), because a model and the index it
+embedded must travel together: querying an index with a different model
+scores cosine similarity across two incompatible spaces, which produces
+plausible-looking rankings rather than an error. The loader refuses a profile
+that changes one without the other, and refuses an unknown profile name
+rather than silently falling back to the baseline.
 
 The cross-encoder stays un-fine-tuned. Reopen that only if the bi-encoder
 delta comes in weak.
@@ -74,9 +77,10 @@ must exchange artifacts; git is the transport
 requires hardware most readers of this repository do not have.
 
 **Accepted downside — the claim rests on scripts and reports, not weights.**
-No fine-tuned weights are published. What is verifiable is the training
-script, the tracked sample of the training data, the hosted training run,
-and the report in `results/`.
+No fine-tuned weights are published. What will be verifiable is the training
+script, the tracked sample of the training data, the hosted training run, and
+the report in `results/` — of which only the script and the tracked sample
+exist today, because the run has not happened.
 
 **Accepted risk — the delta might be small or negative.** That result gets
 published either way. A fine-tune that fails to beat BM25 on this corpus is
