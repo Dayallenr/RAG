@@ -51,6 +51,23 @@ spec:
               value: "http://opensearch:9200"
             - name: ENABLE_GENERATION
               value: "false"
+            # Switches model and index together by profile without a new
+            # image. Optional, so the default deployment runs the base
+            # profile with no ConfigMap present at all.
+            #
+            # Note what this does NOT do: the finetuned profile names a
+            # local checkpoint path, and those weights are deliberately not
+            # published (see docs/adr/0005-fine-tune-the-bi-encoder.md and the
+            # fine-tune section of the README), so selecting it in-cluster
+            # also requires an operator-supplied volume at /app/models.
+            # Without one the pod fails to load the model and never becomes
+            # ready — loudly, which is the intended failure.
+            - name: DUEDILIGENCE_CONFIG_PROFILE
+              valueFrom:
+                configMapKeyRef:
+                  name: duediligence-config
+                  key: profile
+                  optional: true
             - name: GOOGLE_API_KEY
               valueFrom:
                 secretKeyRef:

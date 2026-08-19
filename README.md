@@ -314,13 +314,14 @@ partial, or a lower bound, it says so.
 | Fine-tune delta, four-run matrix (headline on the test split) | `results/finetune_delta/report.json` + the four run reports beside it | `python scripts/run_finetune_delta.py` |
 | Why the reranked delta is zero: fused pool == BM25's candidates, 30/30 | `results/finetune_delta/rerank_pool.json` | `python scripts/verify_rerank_pool.py` |
 | Fine-tuned index holds the fine-tuned model's vectors (cos 1.000000 own / 0.857 other) | `results/index/report.json` | `python scripts/verify_index_parity.py` |
+| Either profile served by env var alone; each arm's `/readyz` names the model and index it loaded; reranked lists identical across arms, un-reranked pools identically populated but differently ordered | `results/serving/profile_check.json` | `python scripts/verify_served_profile.py` |
 | Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
 | 4,776 synthetic training queries, mined into hard-negative triplets, eval-contamination guarded | `data/training/synthetic_queries.jsonl` tracked; the mined splits are regenerable and gitignored, with row samples tracked | `python scripts/generate_synthetic_queries.py` then `python scripts/mine_hard_negatives.py` |
 | Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
 | CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
-| 521 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| 543 passing tests, ruff clean | — | `pytest -q && ruff check .` |
 | Every eval above also logged to a public tracker: **5,100/5,100 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
 
 ### The same numbers, hosted where this repository cannot edit them
@@ -379,11 +380,20 @@ ever executed:
   attribution is not yet. `scripts/transfer_checkpoint.py manifest` on the
   training machine closes it — it digests the checkpoint there and needs no
   Hub, no token and no upload, since the weights are already here.
-- **The served pipeline still runs the off-the-shelf embedding model.** Every
-  retrieval number outside the fine-tune section is `bge-small-en-v1.5`. The
-  fine-tuned profile exists (`config/profiles/finetuned.yaml`) and is measured,
-  and serving it would change nothing the reranked pipeline reports — that is
-  the finding, not an omission.
+- **The served pipeline still runs the off-the-shelf embedding model by
+  default.** Every retrieval number outside the fine-tune section is
+  `bge-small-en-v1.5`. The fine-tuned profile can now be served by setting one
+  environment variable, and the service reports which model and index it
+  actually loaded — verified end to end against the live index,
+  `results/serving/profile_check.json`. Serving it changes nothing a user sees:
+  with reranking on, both arms returned **identical result lists on all three
+  probe queries**. With reranking off, the same two arms returned the **same 50
+  candidates in a different order** on all three — which is #23's mechanism
+  reproduced through the API rather than the eval harness: the fine-tuned
+  bi-encoder reorders a pool whose membership it never changes, and reordering
+  is exactly what the cross-encoder discards. The differing order is also what
+  proves the arms really queried different vector spaces rather than the switch
+  doing nothing. That is the finding, not an omission.
 
 If any of those later becomes verified, it gets an artifact in the table
 above and a line here — not a quiet edit to a sentence elsewhere. That has
@@ -455,6 +465,34 @@ when the output changes.
 `/healthz` is liveness and never touches OpenSearch — a search blip must not
 trigger pod restarts. `/readyz` is readiness and does check it. `/metrics`
 exposes Prometheus counters, including the structured-vs-semantic split.
+
+Both health endpoints also report the `model`, `index` and `profile` the
+process actually loaded, read off the embedder rather than off config. An
+embedding model and its index are a matched pair, and a container holding a
+mismatched one raises nothing — cosine similarity across two incompatible
+vector spaces is still a number, so the answers look ordinary and are built on
+nothing. Reporting the pair is what makes that observable from outside:
+
+```bash
+python scripts/verify_served_profile.py   # both arms, real models, live index
+```
+
+That script is what produced the identity figures above: it stands the real app
+up once per profile and records what each reported and returned. The equivalent
+through compose is wired but **not exercised** — treat this block as
+illustrative, not as observed output:
+
+```bash
+DUEDILIGENCE_CONFIG_PROFILE=finetuned docker compose \
+  -f docker/docker-compose.yml --profile api up -d
+curl -s localhost:8000/readyz
+```
+
+No image rebuild and no edited config file: `config/` already ships in the
+image, so the switch is a restart with a different variable. The fine-tuned
+weights are gitignored and are not in the image, so compose mounts `models/`
+read-only for the profile that needs them — a path the verification script,
+which runs in-process, does not cover.
 
 Kubernetes manifests are in `k8s/` (OpenSearch as a StatefulSet, API as a
 Deployment with an HPA) — **verified by deploying to a real cluster**, see

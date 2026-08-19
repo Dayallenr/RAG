@@ -78,6 +78,25 @@ class DueDiligencePipeline:
 
             self.reranker = CrossEncoderReranker(self.config.models.reranker_model)
 
+    @property
+    def model_name(self) -> str:
+        """The embedding model this process actually loaded.
+
+        Read off the embedder rather than off ``self.config`` deliberately.
+        Config says which model was *asked* for; the embedder is the object
+        that will encode the next query. An index holds exactly one model's
+        vectors, and querying it with another scores cosine similarity
+        across incompatible spaces — no exception, no warning, just
+        plausible rankings built on nothing. Reporting the loaded model is
+        what makes that pair inspectable from outside the process.
+        """
+        return self.embedder.model_name
+
+    @property
+    def profile(self) -> str | None:
+        """The config profile applied at load time, or None for the base."""
+        return self.config.profile
+
     def retrieve(
         self, question: str, *, k: int = _CONTEXT_PASSAGES, filters: dict[str, Any] | None = None
     ) -> list[dict[str, Any]]:

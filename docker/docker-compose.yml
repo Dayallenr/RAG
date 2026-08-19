@@ -80,12 +80,26 @@ services:
       # worse than one that serves retrieval and exact lookup.
       - ENABLE_GENERATION=${ENABLE_GENERATION:-false}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      # Selects a config/profiles/<name>.yaml overlay — model and index
+      # together — with no rebuilt image and no file edited into the
+      # container: config/ already ships in the image, so switching is a
+      # restart with a different value. Empty means the base profile, which
+      # is byte-for-byte today's behaviour.
+      #     DUEDILIGENCE_CONFIG_PROFILE=finetuned docker compose ... up -d api
+      - DUEDILIGENCE_CONFIG_PROFILE=${DUEDILIGENCE_CONFIG_PROFILE:-}
     ports:
       - "8000:8000"
     volumes:
       # Persist downloaded model weights so a container restart does not
       # re-download ~150MB from the HuggingFace Hub.
       - model-cache:/app/.cache/huggingface
+      # The fine-tuned checkpoint is gitignored and is not in the image, so
+      # the finetuned profile resolves "models/bge-small-duediligence"
+      # against this mount rather than the Hub. Read-only: a serving
+      # container has no business writing to a checkpoint. Absent on a
+      # machine that never trained, which is harmless — nothing reads it
+      # unless that profile is selected.
+      - ../models:/app/models:ro
 
   # Trace collector, started only with `--profile tracing`:
   #     docker compose -f docker/docker-compose.yml --profile tracing up -d

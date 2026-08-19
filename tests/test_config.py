@@ -157,6 +157,29 @@ class TestConfigProfiles:
         monkeypatch.setenv("DUEDILIGENCE_CONFIG_PROFILE", "")
         assert load_config(base) == load_config("config/config.yaml")
 
+    def test_the_loaded_config_records_which_profile_was_applied(self, tmp_path):
+        """A served container has to be able to say which profile it is
+        running. Recording it on the Config means the answer comes from the
+        object that was actually built, not from re-reading an environment
+        variable that may have changed since startup."""
+        base = self._write_profile(
+            tmp_path, "finetuned", "opensearch:\n  index_name: duediligence-ft\n"
+        )
+        assert load_config(base, profile="finetuned").profile == "finetuned"
+
+    def test_the_loaded_config_records_no_profile_when_none_is_selected(self, tmp_path):
+        base = self._write_profile(tmp_path, "unused", "models: {}\n")
+        assert load_config(base).profile is None
+
+    def test_the_recorded_profile_follows_the_environment_variable(
+        self, tmp_path, monkeypatch
+    ):
+        base = self._write_profile(
+            tmp_path, "fromenv", "opensearch:\n  index_name: duediligence-fromenv\n"
+        )
+        monkeypatch.setenv("DUEDILIGENCE_CONFIG_PROFILE", "fromenv")
+        assert load_config(base).profile == "fromenv"
+
     def test_environment_endpoint_override_still_applies_under_a_profile(
         self, tmp_path, monkeypatch
     ):

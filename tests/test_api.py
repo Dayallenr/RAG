@@ -13,8 +13,18 @@ from duediligence.api.app import create_app, get_pipeline
 
 
 class StubPipeline:
-    def __init__(self, *, reachable=True, raises=False):
-        self.index_name = "duediligence-chunks"
+    def __init__(
+        self,
+        *,
+        reachable=True,
+        raises=False,
+        model_name="BAAI/bge-small-en-v1.5",
+        index_name="duediligence-chunks",
+        profile=None,
+    ):
+        self.index_name = index_name
+        self.model_name = model_name
+        self.profile = profile
         self.calls = []
         self._raises = raises
         self.client = self  # readyz calls pipeline.client.indices.exists
@@ -85,6 +95,43 @@ class TestOps:
         response = client.get("/readyz")
         assert response.status_code == 503
         assert "unreachable" in response.json()["detail"]
+
+    def test_healthz_reports_the_model_actually_loaded(self):
+        """Liveness is the one endpoint still answering when readiness is
+        failing, and "which model is this container holding" is exactly the
+        question being asked at that moment."""
+        client, _ = make_client(StubPipeline(model_name="models/bge-small-duediligence"))
+        body = client.get("/healthz").json()
+        assert body["model"] == "models/bge-small-duediligence"
+
+    def test_healthz_stays_ok_before_the_pipeline_is_loaded(self):
+        """Liveness must not depend on the pipeline: a process still loading
+        models is alive, and restarting it only makes the load start over."""
+        app = create_app()
+        app.state.pipeline = None
+        response = TestClient(app).get("/healthz")
+        assert response.status_code == 200
+        assert response.json() == {"status": "ok", "model": None, "index": None, "profile": None}
+
+    def test_readyz_reports_the_model_and_index_together(self):
+        """Reported apart they are two facts; reported together they are the
+        pair, and a mismatched pair is the failure that surfaces no error."""
+        client, _ = make_client(
+            StubPipeline(
+                model_name="models/bge-small-duediligence",
+                index_name="duediligence-chunks-finetuned",
+                profile="finetuned",
+            )
+        )
+        body = client.get("/readyz").json()
+        assert body["model"] == "models/bge-small-duediligence"
+        assert body["index"] == "duediligence-chunks-finetuned"
+        assert body["profile"] == "finetuned"
+
+    def test_no_profile_reports_null_rather_than_a_name(self):
+        """Serving with no profile set must look exactly as it does today."""
+        client, _ = make_client()
+        assert client.get("/readyz").json()["profile"] is None
 
     def test_metrics_endpoint_exposes_prometheus_text(self):
         client, _ = make_client()

@@ -9,6 +9,14 @@ python scripts/build_index.py --profile finetuned --recreate
 DUEDILIGENCE_CONFIG_PROFILE=finetuned python -m duediligence.api.app
 ```
 
+The same variable selects a profile for the served API — no rebuilt image and
+no file edited into the container, since `config/` already ships in the image.
+The service then reports the `model`, `index` and `profile` it actually loaded
+on `/healthz` and `/readyz`, so a container holding a model that does not match
+its index is visible rather than silent. `python scripts/verify_served_profile.py`
+serves both profiles for real and checks exactly that
+(`results/serving/profile_check.json`).
+
 Selection is by **name**, resolved inside this directory — not by path, so an
 experiment cannot quietly run against an untracked overlay sitting outside the
 repository and produce a report nobody else can reproduce.

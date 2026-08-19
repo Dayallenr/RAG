@@ -77,6 +77,12 @@ class Config:
     paths: PathsConfig = field(default_factory=lambda: PathsConfig("", "", "", ""))
     models: ModelsConfig = field(default_factory=lambda: ModelsConfig("", "", "", ""))
     opensearch: OpenSearchConfig = field(default_factory=lambda: OpenSearchConfig("", "local", ""))
+    #: The profile actually applied, or None for the base configuration.
+    #: Recorded at load time so a running process can report which profile
+    #: it is on without re-reading an environment variable that may have
+    #: changed since startup — the env var says what was asked for, this
+    #: says what was built.
+    profile: str | None = None
 
     def company(self, ticker: str) -> CompanyConfig:
         for company in self.companies:
@@ -186,4 +192,5 @@ def load_config(
         paths=PathsConfig(**raw["paths"]),
         models=ModelsConfig(**raw["models"]),
         opensearch=OpenSearchConfig(**raw["opensearch"]),
+        profile=selected,
     )

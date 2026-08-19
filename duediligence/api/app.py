@@ -102,6 +102,32 @@ def get_pipeline(request: Request):
 PipelineDep = Annotated[Any, Depends(get_pipeline)]
 
 
+def _served_identity(request: Request) -> dict[str, Any]:
+    """What this process is actually serving with: model, index, profile.
+
+    An embedding model and its index are a matched pair, and a container
+    holding the wrong one fails silently — cosine similarity across two
+    incompatible vector spaces returns a number, so the answers look
+    ordinary and every one of them is built on nothing. Nothing in the
+    request path can detect that. Reporting the pair on the health
+    endpoints is what turns it from an invisible failure into an
+    observable one.
+
+    Never raises. Liveness must answer before the pipeline finishes
+    loading, so an absent pipeline reports nulls rather than an error —
+    with the same three keys, so a caller parsing this never has to branch
+    on whether the field it wants is present.
+    """
+    pipeline = getattr(request.app.state, "pipeline", None)
+    if pipeline is None:
+        return {"model": None, "index": None, "profile": None}
+    return {
+        "model": pipeline.model_name,
+        "index": pipeline.index_name,
+        "profile": pipeline.profile,
+    }
+
+
 def create_app() -> FastAPI:
     # Installed once at startup. A no-op unless OTEL_EXPORTER_OTLP_ENDPOINT
     # is set, so the default deployment carries no exporter and no
@@ -121,10 +147,16 @@ def create_app() -> FastAPI:
     )
 
     @app.get("/healthz", tags=["ops"])
-    def healthz() -> dict[str, str]:
+    def healthz(request: Request) -> dict[str, Any]:
         """Liveness: is the process up. Deliberately does not touch OpenSearch —
-        a search outage must not cause pod restarts."""
-        return {"status": "ok"}
+        a search outage must not cause pod restarts.
+
+        It does report the loaded model, which costs nothing: the name is an
+        attribute already in memory. Liveness is the endpoint still answering
+        while readiness fails, which is exactly when "what is this container
+        actually holding" is the question being asked.
+        """
+        return {"status": "ok", **_served_identity(request)}
 
     @app.get("/readyz", tags=["ops"])
     def readyz(request: Request) -> dict[str, Any]:
@@ -139,7 +171,9 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=503, detail=f"opensearch unreachable: {error}") from error
         if not reachable:
             raise HTTPException(status_code=503, detail=f"index {pipeline.index_name} missing")
-        return {"status": "ready", "index": pipeline.index_name}
+        # Model and index reported together, because the failure worth
+        # catching is the pair being mismatched — see _served_identity.
+        return {"status": "ready", **_served_identity(request)}
 
     @app.get("/metrics", tags=["ops"])
     def metrics():
