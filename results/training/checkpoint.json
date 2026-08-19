@@ -1,0 +1,22 @@
+{
+  "repo_id": null,
+  "transport": "out-of-band",
+  "private": true,
+  "revision": null,
+  "uploaded_at": "2026-08-19T01:15:10+00:00",
+  "total_bytes": 134212642,
+  "trained_on": "cuda",
+  "final_eval_loss": 0.5198092460632324,
+  "files": {
+    "1_Pooling\\config.json": "2fd836f1c934037a0d8cedac00f37b1277e3c3f80bb45ef8a15699e001734ebf",
+    "2_Normalize\\config.json": "46465f75bf7d0b90617a5f2cf64e9489d7da46d492a33a19340821899f004881",
+    "config.json": "9df01cf420ab6237c278c522d8d85468e9ef43c2a84c26cba12c51e48c7a152d",
+    "config_sentence_transformers.json": "15b0e77e1625ce9be20f435fb86a11b4e895d79bbfacacab0471d92ea0d68f67",
+    "model.safetensors": "53a84a602d5d3af2c1c5df66dc54f00179853d1f67f8b2601ae08dec1f3e3526",
+    "modules.json": "5861cc45c276c15a212ad0a21a5a8664bb8ee0f70b1857d92a7f3e94df0f5d0e",
+    "README.md": "b16cdbcf74d20425be31aa196efb72ccf65f5a74b84b8036a13d9b8ea7a7e69a",
+    "sentence_bert_config.json": "5fee3fcdc4a727fad422f0fed0c867b0921eefa9051de221521956ed42eb4c19",
+    "tokenizer.json": "de2a1b8d1aee816739bc3ca0125a473a080bf05311c640f63bc22099527b1c6b",
+    "tokenizer_config.json": "101aeeb501e32e26fe79b342409f6a74d7e366862b41ac979bfb650303b3120a"
+  }
+}
