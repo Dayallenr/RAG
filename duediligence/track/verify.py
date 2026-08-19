@@ -72,6 +72,16 @@ RUN_REPORTS: dict[str, str] = {
     "ablations": "results/ablations/report.json",
     "routing-eval": "results/routing/report.json",
     "groundedness-eval": "results/generation/report.json",
+    # The fine-tune delta and the four runs it subtracts. The cells are
+    # registered individually rather than only through the comparison: a cell
+    # scored against the wrong index still produces a clean-looking delta, and
+    # the only way that shows up here is if each cell's hosted metrics are
+    # diffed against the report file that named its index.
+    "finetune-delta": "results/finetune_delta/report.json",
+    "finetune-delta-base-norerank": "results/finetune_delta/base-norerank.json",
+    "finetune-delta-base-rerank": "results/finetune_delta/base-rerank.json",
+    "finetune-delta-finetuned-norerank": "results/finetune_delta/finetuned-norerank.json",
+    "finetune-delta-finetuned-rerank": "results/finetune_delta/finetuned-rerank.json",
 }
 
 # ``runs(first: 100)`` is not a guess about how many runs exist: the API

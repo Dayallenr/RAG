@@ -1,8 +1,9 @@
 # 0005 — Reversing the decision not to fine-tune anything
 
-**Status:** accepted, supersedes the original no-fine-tuning scope. The
-training path is built and tested; the training run itself has not happened,
-so no delta exists yet.
+**Status:** accepted, supersedes the original no-fine-tuning scope. Trained,
+indexed and measured on 2026-08-18 — see *Outcome* at the end, which is the
+part worth reading: the fine-tune worked and the served pipeline cannot see
+it, for a reason in the fusion settings rather than in the model.
 
 ## Context
 
@@ -93,3 +94,42 @@ failure mode. `duediligence/train/synthetic.py` drops any query whose source
 passage is labelled in `data/eval_set.jsonl`, and drops generated queries
 too similar to an eval question. Without that, the delta measures
 memorisation of the test set.
+
+## Outcome, measured 2026-08-18
+
+The training run happened on the RTX 5070 (one epoch, 121 s,
+`results/training/report.json`), the index was rebuilt from the checkpoint,
+and the delta was measured as a four-run matrix — base and fine-tuned, each
+with and without the cross-encoder — in `results/finetune_delta/report.json`.
+
+**The decision was right about the bi-encoder and wrong about what it would
+buy.** On the held-out test split dense recall@10 goes 0.367 → **0.600**,
+reaching parity with BM25's 0.600, and it reproduces on every split (+0.233
+test, +0.232 dev, +0.233 all). It lands where this ADR argued the domain gap
+was: over all 101 questions, tables 0.200 → 0.550 and sections 0.350 → 0.650,
+against paragraphs 0.414 → 0.457.
+
+**The pipeline this repository serves does not move by a thousandth.** Through
+`hybrid + cross-encoder rerank` every metric is unchanged on every split, and
+the reranked result lists are byte-identical on all 101 questions. That is not
+the reranker absorbing the gain — it is RRF's arithmetic. A document only
+dense retrieval finds scores `0.25 / 61` at best, while BM25's document at
+candidate depth `c` scores `1 / (60 + c)`, so no dense-only document can enter
+the fused pool until `c > 184`; the pipeline runs at 50. Measured against the
+live index (`scripts/verify_rerank_pool.py`): the fused pool equals BM25's
+candidate set on 30/30 test questions in both arms. The fine-tuned vectors
+reorder the reranker's input and never change its membership.
+
+The "accepted risk" above anticipated a small or negative delta and committed
+to publishing it. The actual result is stranger and more useful: a large,
+reproducible gain in the component that was trained, and zero effect on the
+system, for a reason that lives in the fusion configuration rather than in the
+model. Realising it in the served pipeline is a fusion change — dense weight,
+candidate depth past 184, or reranking a dense-sourced pool — and that is a
+separate decision from this one, which is why it is not folded in here.
+
+The second accepted downside still stands, and got worse in one specific way:
+the checkpoint digest manifest (`results/training/checkpoint.json`) was never
+committed, so the weights that produced these numbers cannot be tied to the
+run that reported those losses. The delta is a real measurement of the indexed
+model; it is not yet an attributable one.

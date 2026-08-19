@@ -34,11 +34,12 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import time
 from collections import defaultdict
 from pathlib import Path
 
-from duediligence.config import load_config
+from duediligence.config import PROFILE_ENV_VAR, load_config
 from duediligence.eval.eval_set import (
     DEFAULT_EVAL_SET_PATH,
     SPLITS,
@@ -54,7 +55,15 @@ from duediligence.track import flatten_metrics, log_run
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["run_retrieval_eval", "verification_note"]
+__all__ = [
+    "BASELINE_REPORT_PATH", "BASELINE_RUN_NAME", "guard_profiled_output",
+    "per_query_row", "run_retrieval_eval", "verification_note",
+]
+
+#: The published table's artifacts. A run under a config profile scores a
+#: different model against a different index, so it may not claim either.
+BASELINE_REPORT_PATH = "results/retrieval/report.json"
+BASELINE_RUN_NAME = "retrieval-eval"
 
 _K_VALUES = (1, 3, 5, 10, 20)
 _CANDIDATE_K = 50
@@ -90,6 +99,61 @@ def verification_note(*, verified: int, total: int) -> str | None:
         "rest were drafted automatically from sampled chunks. Numbers over "
         "the unverified remainder are provisional."
     )
+
+
+def guard_profiled_output(*, profile: str | None, out: str, run_name: str) -> None:
+    """Refuse to let a profiled run write the baseline's artifacts.
+
+    ``results/retrieval/report.json`` holds the off-the-shelf model's numbers
+    and ``retrieval-eval`` is the tracker run the verifier diffs against it.
+    A profiled run left on those defaults would overwrite one and mislabel the
+    other with a different model's figures, and both would still look
+    internally consistent afterwards — there is no later check that could
+    catch it, which is why this raises rather than warns.
+    """
+    if not profile:
+        return
+    if out == BASELINE_REPORT_PATH:
+        raise ValueError(
+            f"profile {profile!r} is active but --out is still the baseline's "
+            f"{BASELINE_REPORT_PATH!r}. That file holds the off-the-shelf "
+            "model's published numbers; pass --out to write somewhere else."
+        )
+    if run_name == BASELINE_RUN_NAME:
+        raise ValueError(
+            f"profile {profile!r} is active but --run-name is still "
+            f"{BASELINE_RUN_NAME!r}, whose hosted metrics are checked against "
+            f"{BASELINE_REPORT_PATH!r} — a report this run did not write. "
+            "Pass --run-name."
+        )
+
+
+def per_query_row(entry: dict, retrieved: dict[str, list[str]]) -> dict:
+    """One eval question's record: what was asked, what each retriever
+    returned, and where the labelled chunk landed.
+
+    The row carries the entry's ``split`` as well as its labels. That is not
+    duplication of the report header: a run scored over every question stays
+    re-sliceable afterwards, so a held-out figure and a full-set figure can
+    come from *one* set of retrievals rather than from two runs whose
+    differences — a warm cache, a rebuilt index, a different day — would be
+    indistinguishable from the effect being measured.
+    """
+    relevant = set(entry["relevant_chunk_ids"])
+    row = {
+        "eval_id": entry["eval_id"],
+        "question": entry["question"],
+        "question_type": entry["question_type"],
+        "company": entry["company"],
+        "chunk_type": entry["chunk_type"],
+        "relevant_chunk_ids": entry["relevant_chunk_ids"],
+        "verified": entry.get("verified", False),
+        "split": entry.get("split"),
+    }
+    for name, ids in retrieved.items():
+        row[f"{name}_retrieved"] = ids
+        row[f"{name}_rank"] = next((i + 1 for i, c in enumerate(ids) if c in relevant), None)
+    return row
 
 
 def run_retrieval_eval(
@@ -155,20 +219,7 @@ def run_retrieval_eval(
             latencies["hybrid_rerank"].append((time.perf_counter() - started) * 1000)
             retrieved["hybrid_rerank"] = [h["chunk_id"] for h in reranked]
 
-        relevant = set(entry["relevant_chunk_ids"])
-        row = {
-            "eval_id": entry["eval_id"],
-            "question": entry["question"],
-            "question_type": entry["question_type"],
-            "company": entry["company"],
-            "chunk_type": entry["chunk_type"],
-            "relevant_chunk_ids": entry["relevant_chunk_ids"],
-            "verified": entry.get("verified", False),
-        }
-        for name, ids in retrieved.items():
-            row[f"{name}_retrieved"] = ids
-            row[f"{name}_rank"] = next((i + 1 for i, c in enumerate(ids) if c in relevant), None)
-        per_query.append(row)
+        per_query.append(per_query_row(entry, retrieved))
 
     retriever_names = ["dense", "bm25", "hybrid"] + (["hybrid_rerank"] if reranker else [])
 
@@ -197,6 +248,11 @@ def run_retrieval_eval(
         "queries": len(per_query),
         "human_verified_queries": human_verified_count(per_query),
         "index": index_name,
+        # The switch that set the model and the index together. Both are
+        # recorded below already; the profile is recorded too so a reader can
+        # reproduce the run with one environment variable rather than by
+        # matching two names against config/profiles/.
+        "profile": os.environ.get(PROFILE_ENV_VAR),
         "embedding_model": config.models.embedding_model,
         "reranker_model": config.models.reranker_model if reranker else None,
         "k": k,
@@ -260,9 +316,24 @@ def main() -> None:
     parser.add_argument("--k", type=int, default=20)
     parser.add_argument("--no-rerank", action="store_true", help="skip cross-encoder reranking")
     parser.add_argument("--out", default="results/retrieval/report.json")
+    parser.add_argument(
+        "--run-name",
+        default="retrieval-eval",
+        help=(
+            "experiment-tracker run name. The default is the one whose report "
+            "is results/retrieval/report.json, so a run writing anywhere else "
+            "must rename itself or verify_wandb_runs.py will diff a hosted run "
+            "against a report it did not produce."
+        ),
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.WARNING)
+    guard_profiled_output(
+        profile=os.environ.get(PROFILE_ENV_VAR),
+        out=args.out,
+        run_name=args.run_name,
+    )
     report = run_retrieval_eval(
         args.eval_set, k=args.k, rerank=not args.no_rerank, split=args.split
     )
@@ -274,11 +345,12 @@ def main() -> None:
     # The report file stays the source of truth; this is additive, and a
     # no-op without WANDB_API_KEY.
     run_url = log_run(
-        name="retrieval-eval",
+        name=args.run_name,
         tags=["retrieval", "eval"],
         config={
             "eval_set": report["eval_set"],
             "index": report["index"],
+            "profile": report["profile"],
             "embedding_model": report["embedding_model"],
             "reranker_model": report["reranker_model"],
             "k": report["k"],

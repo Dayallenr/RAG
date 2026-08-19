@@ -7,8 +7,8 @@
   "access_note": "public \u2014 anyone can view it, nobody else can write to it",
   "accepts_public_writes": false,
   "tolerance": 1e-09,
-  "metrics_compared": 786,
-  "metrics_matched": 786,
+  "metrics_compared": 5100,
+  "metrics_matched": 5100,
   "verified": true,
   "runs": [
     {
@@ -75,8 +75,73 @@
       "missing_from_hosted": [],
       "only_in_hosted": [],
       "ok": true
+    },
+    {
+      "display_name": "finetune-delta",
+      "report": "results/finetune_delta/report.json",
+      "run_id": "l2wdsr94",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/l2wdsr94",
+      "created_at": "2026-08-19T00:53:34Z",
+      "compared": 2442,
+      "matched": 2442,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
+    {
+      "display_name": "finetune-delta-base-norerank",
+      "report": "results/finetune_delta/base-norerank.json",
+      "run_id": "1adsklzp",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/1adsklzp",
+      "created_at": "2026-08-19T00:38:47Z",
+      "compared": 402,
+      "matched": 402,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
+    {
+      "display_name": "finetune-delta-base-rerank",
+      "report": "results/finetune_delta/base-rerank.json",
+      "run_id": "lmp1oe5m",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/lmp1oe5m",
+      "created_at": "2026-08-19T00:39:47Z",
+      "compared": 534,
+      "matched": 534,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
+    {
+      "display_name": "finetune-delta-finetuned-norerank",
+      "report": "results/finetune_delta/finetuned-norerank.json",
+      "run_id": "pw3ultel",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/pw3ultel",
+      "created_at": "2026-08-19T00:40:06Z",
+      "compared": 402,
+      "matched": 402,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
+    {
+      "display_name": "finetune-delta-finetuned-rerank",
+      "report": "results/finetune_delta/finetuned-rerank.json",
+      "run_id": "21q6uksj",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/21q6uksj",
+      "created_at": "2026-08-19T00:41:06Z",
+      "compared": 534,
+      "matched": 534,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
     }
   ],
-  "runs_on_server": 14,
+  "runs_on_server": 21,
   "caveat": "Metrics are compared key for key against the report files in results/, using the same flattening that produced the hosted keys. The comparison says the hosted runs and the local reports agree; it does not re-derive the numbers from the corpus, and it inherits every caveat those reports state \u2014 most importantly that relevance labels are a floor, not an estimate."
 }

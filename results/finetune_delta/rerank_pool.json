@@ -1,0 +1,25 @@
+{
+  "question": "does the fine-tuned bi-encoder change which documents the cross-encoder reranks, or only their order?",
+  "eval_split": "test",
+  "queries": 30,
+  "candidate_k": 50,
+  "dense_weight": 0.25,
+  "rrf_k": 60,
+  "arms": {
+    "base": {
+      "index": "duediligence-chunks",
+      "embedding_model": "BAAI/bge-small-en-v1.5"
+    },
+    "finetuned": {
+      "index": "duediligence-chunks-finetuned",
+      "embedding_model": "models/bge-small-duediligence"
+    }
+  },
+  "pool_equals_bm25_candidates": 30,
+  "pool_equals_bm25_candidates_finetuned": 30,
+  "pools_identical_as_sets_across_arms": 30,
+  "pools_identical_in_order_across_arms": 0,
+  "mean_pool_jaccard_across_arms": 1.0,
+  "dense_only_entry_depth": 184,
+  "finding": "At dense weight 0.25 and rrf_k 60, a document found by dense retrieval alone cannot enter the fused pool until the candidate depth exceeds 184; the pipeline runs at 50. The pool's membership is therefore BM25's, and the bi-encoder only reorders it \u2014 which is the one thing a cross-encoder discards. A null reranked delta under this configuration is a property of the fusion settings, not evidence about the fine-tuned model."
+}

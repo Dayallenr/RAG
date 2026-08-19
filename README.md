@@ -68,7 +68,7 @@ USD CY2023` has no useful semantic neighbourhood; it is answered by lookup.
 | Component | Choice | Why |
 |---|---|---|
 | Store | OpenSearch 2.19.1 | One engine for BM25 *and* k-NN — hybrid search is one query, not a cross-system fan-out |
-| Embeddings | `BAAI/bge-small-en-v1.5` (384d) | Self-hosted, small enough to embed 38k chunks on a laptop. A domain fine-tune is built and has not been run — see below |
+| Embeddings | `BAAI/bge-small-en-v1.5` (384d) | Self-hosted, small enough to embed 38k chunks on a laptop. A domain fine-tune of it was trained and measured: **+0.233 dense recall@10** on the held-out split, and **+0.000** once the pipeline's reranker runs — see below |
 | Reranker | `ms-marco-MiniLM-L-6-v2` | Cross-encoder over 50 candidates; the single biggest quality win |
 | Generation | Gemini free tier | Multimodal (also drives chart understanding), no card required |
 | API | FastAPI | Deliberately different from this author's other project's gRPC stack |
@@ -200,6 +200,68 @@ any future claim, and stating it is cheaper than a contaminated 101.
 
 ---
 
+## The fine-tune: a large dense gain the pipeline throws away
+
+Dense retrieval lost to BM25 by roughly 2x on this corpus, which reads as a
+domain gap rather than a fusion problem, so the bi-encoder was fine-tuned on
+4,776 synthetic queries mined into hard-negative triplets ([ADR
+0005](docs/adr/0005-fine-tune-the-bi-encoder.md); one epoch, 121 s on an RTX
+5070, `results/training/report.json`). The result was measured as a **four-run
+matrix** — off-the-shelf and fine-tuned, each with and without the
+cross-encoder — because those two pairs answer different questions and only
+one of them describes the served system.
+
+Headline on the **held-out test split** (30 questions, all human-verified),
+`results/finetune_delta/report.json`:
+
+| retriever | recall@10 base → tuned | Δ recall@10 | Δ MRR |
+|---|---|---|---|
+| dense | 0.367 → **0.600** | **+0.233** | +0.123 |
+| BM25 (unchanged by construction) | 0.600 → 0.600 | +0.000 | +0.000 |
+| hybrid (RRF, dense weight 0.25) | 0.667 → 0.667 | +0.000 | +0.047 |
+| **hybrid + cross-encoder rerank** | 0.667 → 0.667 | **+0.000** | **+0.000** |
+
+The bi-encoder gain is real and large: on the held-out questions the
+fine-tuned dense retriever reaches **parity with BM25** (0.600 vs 0.600),
+closing the gap that motivated the training run. It reproduces across splits
+— +0.233 on test, +0.232 on dev, +0.233 on all 101 — and it is concentrated
+exactly where dense was weakest. Over all 101 questions, dense recall@10 by
+chunk type moves 0.200 → **0.550** on tables (n=40) and 0.350 → **0.650** on
+sections (n=20), against 0.414 → 0.457 on paragraphs (n=35).
+
+**And the deployed pipeline's number does not move at all.** Not
+approximately: the cross-encoder returned *byte-identical* result lists on
+all 101 questions in both arms. The reason is arithmetic, and
+`scripts/verify_rerank_pool.py` checks it against the live index rather than
+asserting it. RRF scores a document `weight / (60 + rank)`, so a document only
+dense retrieval found scores at best `0.25 / 61`, while BM25's document at
+candidate depth `c` scores `1 / (60 + c)` — the dense-only document wins only
+once `c > 184`. The pipeline runs at 50. Measured on the test split: the
+fused candidate pool equals BM25's candidate set on **30/30** questions in
+both arms, identical as sets on 30/30 and identical in order on 0/30. The
+fine-tuned embeddings reorder the pool the reranker is handed and never
+change its membership — and reordering is the one thing a cross-encoder
+discards.
+
+So the honest reading is three sentences, not one. The fine-tune worked. The
+reranked configuration this repository ships cannot see it, for a reason in
+the fusion settings rather than in the model. Anyone reporting only the
++0.233 would be describing a system nobody runs, and anyone reporting only the
++0.000 would be calling a working fine-tune a failure.
+
+**What this does not establish.** The weights on the serving machine cannot
+be tied to the training run that reported those losses: the digest manifest
+`scripts/transfer_checkpoint.py push` writes
+(`results/training/checkpoint.json`) is not in this repository, so the
+checkpoint arrived by another channel. What *is* verified is that the two
+indexes hold different models' vectors and that each holds its own
+(cos 1.000000 against its own model, 0.857 against the other's,
+`results/index/report.json`), so this is a real measurement of the indexed
+model — just not yet an attributable one. The eval-set caveats above apply
+unchanged, and to both arms equally.
+
+---
+
 ## Structured routing: the exact-answer path
 
 A deterministic rule set — not an LLM call — decides whether a question is a
@@ -249,14 +311,17 @@ partial, or a lower bound, it says so.
 | Chart understanding **3/3** hand-graded | `results/charts/report.json` | `python -m duediligence.eval.run_chart_eval` |
 | Retrieval: dense / BM25 / hybrid / +rerank | `results/retrieval/report.json` | `python -m duediligence.eval.run_retrieval_eval` |
 | Fusion-weight, chunk-level, rerank-depth ablations (development split) | `results/ablations/report.json` | `python scripts/run_ablations.py` |
+| Fine-tune delta, four-run matrix (headline on the test split) | `results/finetune_delta/report.json` + the four run reports beside it | `python scripts/run_finetune_delta.py` |
+| Why the reranked delta is zero: fused pool == BM25's candidates, 30/30 | `results/finetune_delta/rerank_pool.json` | `python scripts/verify_rerank_pool.py` |
+| Fine-tuned index holds the fine-tuned model's vectors (cos 1.000000 own / 0.857 other) | `results/index/report.json` | `python scripts/verify_index_parity.py` |
 | Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
 | 4,776 synthetic training queries, mined into hard-negative triplets, eval-contamination guarded | `data/training/synthetic_queries.jsonl` tracked; the mined splits are regenerable and gitignored, with row samples tracked | `python scripts/generate_synthetic_queries.py` then `python scripts/mine_hard_negatives.py` |
 | Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
 | CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
-| 447 passing tests, ruff clean | — | `pytest -q && ruff check .` |
-| Every eval above also logged to a public tracker: **786/786 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
+| 508 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| Every eval above also logged to a public tracker: **5,100/5,100 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
 
 ### The same numbers, hosted where this repository cannot edit them
 
@@ -306,14 +371,18 @@ ever executed:
   a claim-support rate over 14 judgments — real, and too few to quote as a
   system-level number. (68 of the 101 are eligible: the 12 structured-route
   answers cite no passages and the 21 refusals assert no claim to support.)
-- **The bi-encoder fine-tune has not been run.** What exists is the training
-  path: 4,776 synthetic queries generated locally, hard-negative triplets mined
-  from the live index and split by query rather than by row, a guard that drops
-  anything the eval set is labelled against, and `scripts/finetune_biencoder.py`.
-  There is no checkpoint, no fine-tuned index, and **no retrieval delta** — the
-  run needs a CUDA machine and has not happened. Every retrieval number in this
-  README is the off-the-shelf model. The reasoning behind reversing the original
-  no-fine-tuning rule is in [ADR 0005](docs/adr/0005-fine-tune-the-bi-encoder.md).
+- **The fine-tuned weights are not traceable to the training run.** The
+  fine-tune has run, its index is built, and its delta is measured (see above),
+  but the digest manifest that would tie the checkpoint on the serving machine
+  to the losses in `results/training/report.json` was never committed, so the
+  two are joined by nothing a reader can check. The measurement is real; the
+  attribution is not yet, and `scripts/transfer_checkpoint.py push` on the
+  training machine is what closes it.
+- **The served pipeline still runs the off-the-shelf embedding model.** Every
+  retrieval number outside the fine-tune section is `bge-small-en-v1.5`. The
+  fine-tuned profile exists (`config/profiles/finetuned.yaml`) and is measured,
+  and serving it would change nothing the reranked pipeline reports — that is
+  the finding, not an omission.
 
 If any of those later becomes verified, it gets an artifact in the table
 above and a line here — not a quiet edit to a sentence elsewhere. That has
@@ -330,6 +399,32 @@ docker compose -f docker/docker-compose.yml up -d      # OpenSearch
 python scripts/build_index.py --recreate               # embed + index (~10 min)
 python -m duediligence.eval.run_retrieval_eval         # reproduce the table above
 ```
+
+Reproduce the fine-tune delta, checkpoint to number. The profile is one
+environment variable because it has to move the embedding model and the index
+together — the config loader refuses a profile that changes one without the
+other, since querying an index with the model it was not built from produces a
+plausible ranking rather than an error:
+
+```bash
+# 1. the checkpoint lands at models/bge-small-duediligence (gitignored)
+python scripts/transfer_checkpoint.py pull            # needs the manifest committed
+# 2. build its index — the baseline index is untouched
+DUEDILIGENCE_CONFIG_PROFILE=finetuned python scripts/build_index.py \
+  --recreate --batch-size 64
+# 3. confirm each index holds its own model's vectors before trusting a delta
+python scripts/verify_index_parity.py
+# 4. the four-run matrix, then the comparison (writes results/finetune_delta/)
+python scripts/run_finetune_delta.py
+# 5. why the reranked cell is 0.000
+python scripts/verify_rerank_pool.py
+```
+
+Step 4 runs each of the four cells in its own subprocess: this is an 8 GB
+machine that already swaps, and two embedding models plus a cross-encoder
+resident at once is how an earlier index build degraded from 80 chunks/s to 3.
+Run it with nothing else heavy on the box. `--from-reports` recomputes the
+comparison from reports that already exist.
 
 Serve the API:
 
@@ -425,11 +520,14 @@ probes and routing — not retrieval quality in-cluster.
   CI enforces both, but no AWS resource has been created. Validation proves
   the configuration is well-formed and nothing more. See
   `terraform/README.md` for the cost breakdown and why it is gated.
-- **The bi-encoder fine-tune is built and unrun.** `duediligence/train/` and
-  `scripts/finetune_biencoder.py` exist and are tested, and the training data
-  is mined and contamination-guarded; the training run itself needs a CUDA
-  machine and has not happened. No checkpoint, no fine-tuned index, no delta.
-  ADR 0005 records why the original no-fine-tuning rule was reversed.
+- **The bi-encoder fine-tune is trained, indexed and measured — and cannot be
+  attributed.** One epoch on an RTX 5070 (121 s), a 38,483-document index built
+  from the checkpoint, and a four-run delta matrix: +0.233 dense recall@10 on
+  the held-out split, +0.000 through the reranked pipeline for a structural
+  reason measured in `results/finetune_delta/rerank_pool.json`. What is missing
+  is the checkpoint digest manifest, without which the weights on this machine
+  cannot be shown to be the ones that training run produced. ADR 0005 records
+  why the original no-fine-tuning rule was reversed.
 
 **Previously-known defect, now fixed:** 69 of 8,740 table chunks were 10-Q
 tables of contents. Two things were wrong — the exclusion regex required
