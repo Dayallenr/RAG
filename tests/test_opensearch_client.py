@@ -12,9 +12,12 @@ import pytest
 from duediligence.config import OpenSearchConfig
 from duediligence.index.embed import EMBEDDING_DIMENSION
 from duediligence.index.opensearch_client import (
+    DEFAULT_EF_CONSTRUCTION,
+    DEFAULT_M,
     bm25_search,
     build_client,
     build_index_mapping,
+    exact_knn_search,
     knn_search,
     to_index_document,
 )
@@ -79,6 +82,24 @@ class TestIndexMapping:
         assert text_field["type"] == "text"
         assert text_field["analyzer"] == "english"
 
+    def test_hnsw_defaults_are_the_ones_the_corpus_was_indexed_with(self):
+        # Every index in this project was built with these, so changing the
+        # default silently makes a rebuilt index incomparable to every
+        # published number measured against the old one.
+        parameters = build_index_mapping()["mappings"]["properties"]["embedding"]["method"][
+            "parameters"
+        ]
+        assert parameters == {"ef_construction": DEFAULT_EF_CONSTRUCTION, "m": DEFAULT_M}
+
+    def test_hnsw_build_parameters_are_overridable_for_the_sweep(self):
+        # The ANN sweep (#14) builds one index per (m, ef_construction) pair.
+        # They come from here rather than from a mapping the script writes
+        # itself, so a swept index differs from the served one in exactly the
+        # two parameters being swept and nothing else.
+        mapping = build_index_mapping(m=32, ef_construction=256)
+        parameters = mapping["mappings"]["properties"]["embedding"]["method"]["parameters"]
+        assert parameters == {"ef_construction": 256, "m": 32}
+
 
 class TestToIndexDocument:
     def test_keys_document_by_content_addressed_chunk_id(self):
@@ -129,11 +150,56 @@ class TestKnnSearch:
         # the filter; a post-filter could reduce k hits to almost none.
         assert knn_clause["filter"]["bool"]["must"] == [{"term": {"company": "COLB"}}]
 
+    def test_ef_search_is_absent_unless_asked_for(self):
+        client = StubClient()
+        knn_search(client, "idx", [0.1] * EMBEDDING_DIMENSION, k=5)
+        # Absent, not defaulted: with no ef_search the Lucene engine searches
+        # at ef = k, and writing that value in explicitly would make every
+        # future change to the engine default invisible here.
+        assert "method_parameters" not in client.last_body["query"]["knn"]["embedding"]
+
+    def test_ef_search_is_passed_as_a_search_time_method_parameter(self):
+        client = StubClient()
+        knn_search(client, "idx", [0.1] * EMBEDDING_DIMENSION, k=10, ef_search=200)
+        knn_clause = client.last_body["query"]["knn"]["embedding"]
+        assert knn_clause["method_parameters"] == {"ef_search": 200}
+
+    def test_ef_search_below_k_is_rejected(self):
+        # Lucene's HNSW searcher keeps a candidate queue of ef entries and
+        # cannot return more results than it holds. OpenSearch does not
+        # error on ef_search < k, it returns a shorter list, which reads as
+        # a retrieval failure rather than a misconfiguration.
+        with pytest.raises(ValueError, match="ef_search"):
+            knn_search(StubClient(), "idx", [0.1] * EMBEDDING_DIMENSION, k=50, ef_search=10)
+
     def test_formats_hits_with_chunk_id_and_score(self):
         results = knn_search(StubClient(), "idx", [0.1] * EMBEDDING_DIMENSION, k=1)
         assert results[0]["chunk_id"] == "abc123"
         assert results[0]["score"] == 0.9
         assert results[0]["company"] == "COLB"
+
+
+class TestExactKnnSearch:
+    def test_scores_every_document_with_the_knn_painless_extension(self):
+        client = StubClient()
+        exact_knn_search(client, "idx", [0.1] * EMBEDDING_DIMENSION, k=10)
+
+        script = client.last_body["query"]["script_score"]["script"]
+        # match_all + a scoring script is brute force: no HNSW graph is
+        # consulted, which is what makes this usable as the ground truth the
+        # approximate search is scored against.
+        assert client.last_body["query"]["script_score"]["query"] == {"match_all": {}}
+        assert script["source"] == "knn_score"
+        assert script["lang"] == "knn"
+        assert script["params"]["space_type"] == "cosinesimil"
+        assert script["params"]["field"] == "embedding"
+
+    def test_returns_hits_in_the_same_shape_as_the_approximate_search(self):
+        # The sweep compares the two lists directly, so they have to be
+        # comparable without either caller knowing which produced them.
+        results = exact_knn_search(StubClient(), "idx", [0.1] * EMBEDDING_DIMENSION, k=1)
+        assert results[0]["chunk_id"] == "abc123"
+        assert results[0]["score"] == 0.9
 
 
 class TestBm25Search:

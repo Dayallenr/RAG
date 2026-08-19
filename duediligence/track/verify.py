@@ -91,6 +91,14 @@ RUN_REPORTS: dict[str, str] = {
     # above: on 30 questions one question is 0.033 of recall@10, which is what
     # makes the full-set zero readable as a zero rather than as luck.
     "onnx-benchmark-test": "results/onnx/test-split.json",
+    # The ANN parameter sweep (#14) and its two split runs. The operating
+    # point is chosen on a label-free criterion (how much of the exact
+    # neighbourhood the graph reached), but the end-task numbers beside it are
+    # not, so dev and test are logged as their own runs rather than as slices
+    # of the full-set one.
+    "ann-sweep": "results/ann_sweep/report.json",
+    "ann-sweep-dev": "results/ann_sweep/dev-split.json",
+    "ann-sweep-test": "results/ann_sweep/test-split.json",
 }
 
 # ``runs(first: 100)`` is not a guess about how many runs exist: the API

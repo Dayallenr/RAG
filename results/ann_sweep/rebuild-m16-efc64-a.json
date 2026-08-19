@@ -1,0 +1,240 @@
+{
+  "model": "models/bge-small-duediligence",
+  "profile": "finetuned",
+  "index": "duediligence-chunks-finetuned",
+  "eval_set": "data/eval_set.jsonl",
+  "split": "all",
+  "queries": 101,
+  "human_verified": 101,
+  "indexed_documents": 38483,
+  "repeats": 1,
+  "target_ann_recall": 0.99,
+  "ground_truth": {
+    "method": "match_all + knn_score painless script (brute force, no HNSW graph)",
+    "depth": 50,
+    "latency_ms": {
+      "mean": 26.978955020330442,
+      "p50": 25.854375038761646,
+      "p95": 31.15695802262053,
+      "samples": 101
+    },
+    "retrieval_by_k": {
+      "50": {
+        "queries": 101.0,
+        "recall@1": 0.22277227722772278,
+        "hit_rate@1": 0.22772277227722773,
+        "ndcg@1": 0.22772277227722773,
+        "recall@5": 0.5297029702970297,
+        "hit_rate@5": 0.5346534653465347,
+        "ndcg@5": 0.38957634611454517,
+        "recall@10": 0.5841584158415841,
+        "hit_rate@10": 0.594059405940594,
+        "ndcg@10": 0.4071968997381939,
+        "mrr": 0.3674396958875622,
+        "map": 0.36322186519761057
+      }
+    }
+  },
+  "served_index": {
+    "build": {
+      "m": 16,
+      "ef_construction": 128
+    },
+    "segments": 7,
+    "size_bytes": 385896242,
+    "store_size_bytes": 385897086,
+    "curve": {
+      "50": [
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": null,
+          "ann_recall": 0.9603960396039604,
+          "ann_recall_min": 0.5,
+          "queries_matching_exact_exactly": 53,
+          "latency_ms": {
+            "mean": 9.805182286648837,
+            "p50": 9.375250025186688,
+            "p95": 12.587582983542234,
+            "samples": 101
+          },
+          "retrieval": {
+            "queries": 101.0,
+            "recall@1": 0.22277227722772278,
+            "hit_rate@1": 0.22772277227722773,
+            "ndcg@1": 0.22772277227722773,
+            "recall@5": 0.5099009900990099,
+            "hit_rate@5": 0.5148514851485149,
+            "ndcg@5": 0.37949929105706004,
+            "recall@10": 0.5742574257425742,
+            "hit_rate@10": 0.5841584158415841,
+            "ndcg@10": 0.4001003396872828,
+            "mrr": 0.3609936367158187,
+            "map": 0.3567758060258671
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": 800,
+          "ann_recall": 0.998019801980198,
+          "ann_recall_min": 0.9,
+          "queries_matching_exact_exactly": 98,
+          "latency_ms": {
+            "mean": 13.737164595104423,
+            "p50": 13.642959005665034,
+            "p95": 15.659958007745445,
+            "samples": 101
+          },
+          "retrieval": {
+            "queries": 101.0,
+            "recall@1": 0.22277227722772278,
+            "hit_rate@1": 0.22772277227722773,
+            "ndcg@1": 0.22772277227722773,
+            "recall@5": 0.5297029702970297,
+            "hit_rate@5": 0.5346534653465347,
+            "ndcg@5": 0.38957634611454517,
+            "recall@10": 0.5841584158415841,
+            "hit_rate@10": 0.594059405940594,
+            "ndcg@10": 0.4071968997381939,
+            "mrr": 0.3674396958875622,
+            "map": 0.36322186519761057
+          },
+          "repeat_lists_identical": true
+        }
+      ]
+    }
+  },
+  "operating_point": {
+    "50": {
+      "ef_search": 800,
+      "reached_target": true,
+      "ann_recall": 0.998019801980198,
+      "latency_ms": {
+        "mean": 13.737164595104423,
+        "p50": 13.642959005665034,
+        "p95": 15.659958007745445,
+        "samples": 101
+      },
+      "retrieval": {
+        "queries": 101.0,
+        "recall@1": 0.22277227722772278,
+        "hit_rate@1": 0.22772277227722773,
+        "ndcg@1": 0.22772277227722773,
+        "recall@5": 0.5297029702970297,
+        "hit_rate@5": 0.5346534653465347,
+        "ndcg@5": 0.38957634611454517,
+        "recall@10": 0.5841584158415841,
+        "hit_rate@10": 0.594059405940594,
+        "ndcg@10": 0.4071968997381939,
+        "mrr": 0.3674396958875622,
+        "map": 0.36322186519761057
+      },
+      "default_ann_recall": 0.9603960396039604,
+      "default_latency_ms": {
+        "mean": 9.805182286648837,
+        "p50": 9.375250025186688,
+        "p95": 12.587582983542234,
+        "samples": 101
+      }
+    }
+  },
+  "justification": [
+    "At k=50, ef_search=800 reaches ANN recall 0.998 against the default's 0.960, for p95 15.7 ms against 12.6 ms (1.24x), clearing the 0.99 ANN-recall target. Labelled dense recall@10 is 0.584 (+0.010 against the default)."
+  ],
+  "build_sweep": [
+    {
+      "label": "m16-efc64",
+      "config": {
+        "m": 16,
+        "ef_construction": 64,
+        "documents": 38483,
+        "reindex_seconds": 19.882400042028166,
+        "forcemerge_seconds": 6.143953417020384,
+        "build_seconds": 26.02635345904855,
+        "size_bytes": 357756320,
+        "store_size_bytes": 444235771,
+        "segments": 1,
+        "size_settled": true
+      },
+      "vector_check": {
+        "queries": 101,
+        "identical": 94,
+        "tied": 7,
+        "different": 0,
+        "queries_with_different_vectors": [],
+        "vectors_match_source": true
+      },
+      "points": [
+        {
+          "build": "m16-efc64",
+          "k": 50,
+          "ef_search": null,
+          "ann_recall": 0.9069306930693068,
+          "ann_recall_min": 0.02,
+          "queries_matching_exact_exactly": 19,
+          "latency_ms": {
+            "mean": 8.514764436894087,
+            "p50": 7.619375013746321,
+            "p95": 12.618666980415583,
+            "samples": 101
+          },
+          "retrieval": {
+            "queries": 101.0,
+            "recall@1": 0.18316831683168316,
+            "hit_rate@1": 0.18811881188118812,
+            "ndcg@1": 0.18811881188118812,
+            "recall@5": 0.4900990099009901,
+            "hit_rate@5": 0.49504950495049505,
+            "ndcg@5": 0.34997238571850553,
+            "recall@10": 0.5445544554455446,
+            "hit_rate@10": 0.5544554455445545,
+            "ndcg@10": 0.36759293934215426,
+            "mrr": 0.32718898455684864,
+            "map": 0.32300010413034447
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "m16-efc64",
+          "k": 50,
+          "ef_search": 800,
+          "ann_recall": 0.996039603960396,
+          "ann_recall_min": 0.92,
+          "queries_matching_exact_exactly": 83,
+          "latency_ms": {
+            "mean": 8.885364264300517,
+            "p50": 8.63812497118488,
+            "p95": 11.033040995243937,
+            "samples": 101
+          },
+          "retrieval": {
+            "queries": 101.0,
+            "recall@1": 0.22277227722772278,
+            "hit_rate@1": 0.22772277227722773,
+            "ndcg@1": 0.22772277227722773,
+            "recall@5": 0.5297029702970297,
+            "hit_rate@5": 0.5346534653465347,
+            "ndcg@5": 0.38957634611454517,
+            "recall@10": 0.5841584158415841,
+            "hit_rate@10": 0.594059405940594,
+            "ndcg@10": 0.4071968997381939,
+            "mrr": 0.36744852029941516,
+            "map": 0.3632306896094636
+          },
+          "repeat_lists_identical": true
+        }
+      ]
+    }
+  ],
+  "build_sweep_vectors_verified": true,
+  "served_pipeline": null,
+  "caveats": [
+    "Latencies are wall-clock at the client over HTTP to a local container on an 8 GB Mac; quote the ratios between points, not the absolute milliseconds.",
+    "The build sweep runs on one-segment, vector-only copies made with _reindex. They are comparable to each other and not to the served index, which has 7 segments and carries the text field.",
+    "ANN recall is measured against exact search over the same vectors. It says how much of the true neighbourhood the graph reached, not whether that neighbourhood answers the question \u2014 which is what the labelled metrics beside it are for.",
+    "Relevance labels are a lower bound (mean 1.02 labelled chunks per question), so absolute end-task recall understates every point equally.",
+    "This corpus contains equal-scoring chunks (boilerplate repeated verbatim across filings), so where a tie straddles the k-th place the 'true' top k is itself arbitrary. ANN recall therefore understates slightly: a graph that returned the other member of a tie is counted as having missed."
+  ]
+}

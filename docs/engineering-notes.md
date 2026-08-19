@@ -396,3 +396,66 @@ quantisation is `onnxruntime.quantization.quantize_dynamic` — `onnx` and
 pooling assumption explicit and checkable (bge-small pools on CLS, not mean;
 `export_onnx` refuses a checkpoint that does not) instead of trusting a
 converter to infer it.
+
+## `store.size` measured the directory, not the index
+
+**What I saw.** The ANN sweep (#14) reports the on-disk size of each rebuilt
+copy. The first run had `m8-efc256` at **774 MB** and `m16-efc64` at **281 MB**,
+for indexes holding the identical 38,483 vectors — a 2.75x spread that no build
+parameter could produce, since the HNSW graph is a few MB either way.
+
+**Cause.** `_stats`' `store.size_in_bytes` is the size of the shard directory.
+A force merge writes the new segment before the superseded ones are unlinked,
+so the directory briefly holds two copies of the corpus, and the reading
+depends on when it was taken. Polling until two consecutive readings agreed did
+not fix it — both readings can land inside the same stale window, and a merge
+still committing can also be caught mid-write and read *low*, which is what the
+281 MB was.
+
+**What I changed.** Size is summed from the segments API, which lists live
+segments only. Across the whole 9-cell grid it then reads 357.7-358.1 MB — a
+0.12% spread, which is the graph, and it matches the raw arithmetic (38,483 x
+384 floats, stored once by the HNSW format and again as doc values). The
+`store.size` figure is still reported beside it as `store_size_bytes`, so the
+gap between the two is inspectable rather than a claim in a docstring.
+
+## A faithful index copy still reorders results
+
+**What I saw.** Every `_reindex` copy in the build grid was checked by running
+*exact* search on it and comparing against exact search on the source — same
+vectors must mean same ranking. Up to 10 of 101 queries came back in a
+different order. That is the signature of a lossy copy, and it would have
+invalidated the whole grid.
+
+**Cause.** Ties. These filings repeat boilerplate verbatim across companies and
+quarters, so genuinely distinct chunks score identically, and Lucene breaks a
+score tie on internal document id — which a 7-segment source and a force-merged
+1-segment copy do not share. Where a tie straddles the k-th place, which
+document makes the cut is arbitrary in *both* indexes.
+
+**What I changed.** The check classifies each query `identical`, `tied`, or
+`different` (`compare_exact_lists`): same set with every disagreeing position
+holding equal scores is `tied`; a symmetric difference whose members all score
+at the cut is `tied`; anything else is `different`. `different: 0` on all nine
+copies is the number the grid rests on, and it is now the one reported. The
+same fact bounds the ANN recall figures slightly: a graph that returned the
+other member of a tie is scored as having missed.
+
+## One HNSW build does not measure one HNSW configuration
+
+**What I saw.** In the 9-cell `(m, ef_construction)` grid, `m16-efc64` was stuck
+at **0.912** ANN recall even at `ef_search=800`, while every other cell reached
+≥0.991. Read naively, that is a build parameter failing.
+
+**Cause.** It was not reproducible. The same configuration rebuilt twice more,
+unchanged, gave **0.996** and **0.961** — a build-to-build spread of 0.084,
+wider than the gaps between the grid's cells. HNSW construction is randomised
+(layer assignment and neighbour selection), so with one build per cell the grid
+ranks which cell got the lucky graph alongside which parameters help.
+
+**What I changed.** Nothing in the code — the honest fix is in what the result
+is allowed to claim. The grid is reported as the range these parameters live in
+rather than a ranking of them, the two rebuilds are committed as artifacts
+beside the report, and the conclusion that does survive is the one the
+search-time curve made independently: on this corpus `ef_search` is where the
+recall is.

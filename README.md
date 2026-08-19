@@ -361,6 +361,104 @@ variable nobody can read.
 
 ---
 
+## ANN parameters: the dense path was giving up 6% of its neighbours
+
+Every index here was built and queried on OpenSearch's HNSW defaults — `m=16`,
+`ef_construction=128`, and no `ef_search` at all, which makes Lucene search at
+`ef = k`. Defensible, and until now unmeasured. `scripts/sweep_ann.py` measures
+it against exact search over the same vectors: `match_all` plus the k-NN
+plugin's `knn_score` script visits every one of the 38,483 documents and
+consults no graph, so its ranking is the ground truth by construction.
+
+**ANN recall** below is the share of the true top-k the graph actually reached.
+101 questions, fine-tuned model and index, `results/ann_sweep/report.json`. The
+`k=20` block is the depth every dense number published in this README was
+retrieved at — the `default` row reproduces `0.5545` exactly:
+
+| k=20, served index | ANN recall | worst query | lists matching exact | p50 ms | p95 ms | dense recall@10 |
+|---|---|---|---|---|---|---|
+| **default (ef = k)** | 0.939 | 0.30 | 58/101 | 5.2 | 6.5 | 0.5545 |
+| ef_search=100 | 0.981 | 0.40 | 92/101 | 5.8 | 8.6 | 0.5743 |
+| **ef_search=200** | **0.993** | 0.75 | 97/101 | 6.4 | 8.1 | **0.5842** |
+| ef_search=400 | 0.998 | 0.75 | 100/101 | 7.7 | 10.1 | 0.5842 |
+| exact (brute force) | 1.000 | 1.00 | 101/101 | 29.3 | 38.3 | 0.5842 |
+
+So **0.030 of the dense retriever's recall@10 was approximation error rather
+than the embedding model**, and `ef_search=200` buys all of it back for 1.24x
+p95 on a step that is ~2% of an `/ask`. It gets worse the shallower you
+retrieve: at `k=10` the default reaches only 0.886 of the true neighbourhood and
+costs **0.089** recall@10. Brute force is the other end of the same curve —
+4-6x the latency for the last 0.7%, and at this corpus size that is 29 ms, not a
+different architecture.
+
+**Three numbers, and all three have to travel together.**
+
+1. *ANN recall* is label-free — it compares two searches over the same vectors —
+   and the deficit is solid: 0.939 on all 101, 0.953 on the held-out 30.
+2. *Labelled* dense recall@10 gains **+0.030** on all 101 and **+0.042** on dev,
+   but **+0.000 on the held-out 30 at k=20** (0.600 either way; it is +0.033
+   there at k=10). On 30 questions one question is 0.033 — the split simply has
+   no question in the sensitive place. Quoting only the +0.030 would be
+   split-picking.
+3. *Through the pipeline that ships* (RRF + cross-encoder) it is **+0.000 on
+   every metric with 101/101 reranked lists byte-identical**. That is the third
+   independent measurement of the same fused-pool arithmetic that eats the
+   fine-tune's +0.233 and INT8's reordering: at candidate depth 50 the fused
+   pool is BM25's candidate set, and the reranker discards the order the dense
+   half supplies.
+
+**The chosen operating point is therefore `ef_search=200` (400 at candidate
+depth 50) for the dense path, and no change to the served default.** The knob
+exists, is tested, and is one argument on `knn_search`/`hybrid_search`; making
+it the default would change nothing a user of this pipeline can observe while
+silently breaking comparability with every dense figure published above. It
+becomes worth switching on the day the fusion lets dense-only documents through.
+
+**Build parameters, swept on nine rebuilt configurations** — `m ∈ {8,16,32}` x
+`ef_construction ∈ {64,128,256}`, each copied with `_reindex` (so the model is
+never re-run), force-merged to one segment, and verified to hold the source's
+own vectors before being measured — `different: 0` on all nine, which is the
+number that decides whether the grid measures parameters or a lossy copy.
+
+At `k=50`, ANN recall at the engine default spans **0.803 (m16-efc64) to 0.949
+(m32-efc256)** across the grid, and eight of nine cells reach ≥0.991 once
+`ef_search` is raised to 800. Build cost is 18-35 s and index size spans
+357.7-358.1 MB — a **0.12% spread**, because the graph is a rounding error
+beside 38,483 vectors that Lucene stores twice.
+
+**But one build per cell does not measure the cell, and that is measured, not
+suspected.** `m16-efc64` was the one configuration that stayed stuck at 0.912
+even at `ef_search=800`. Rebuilt twice more, unchanged, it gave **0.996** and
+**0.961** (`results/ann_sweep/rebuild-m16-efc64-{a,b}.json`) — a build-to-build
+spread of 0.084, wider than the gaps between grid cells. HNSW construction is
+randomised, so a one-build grid ranks luck alongside parameters. Read the grid
+as the range these parameters live in; the conclusion it does support is the
+one the search-time curve already made, that `ef_search` is where the recall is
+on this corpus.
+
+One systems detail falls out of the copies. The one-segment copies reach
+**lower** ANN recall at the default than the served 7-segment index does (0.686-0.884
+against 0.886 at `k=10`), because each segment is searched at `ef = k` and their
+results are merged — so a force merge that makes queries faster also makes the
+default search less accurate. Segment count is an ANN parameter whether or not
+anyone tunes it.
+
+Two measurement traps this run walked into, both now guarded by tests and both
+reported in the artifact rather than smoothed over: `store.size` counts segment
+files pending deletion, so a force-merged copy read 774 MB while holding 358 MB
+(the report carries both numbers); and the copies "disagreed" with the source's
+exact ranking on up to 10 of 101 queries, which turned out to be *tie ordering* —
+this corpus repeats boilerplate verbatim across filings, and order among equal
+scores follows internal document ids that a 7-segment index and a 1-segment copy
+do not share. `different: 0` on all nine copies is the number that mattered.
+
+```bash
+python scripts/sweep_ann.py --profile finetuned                 # curve + build grid
+python scripts/sweep_ann.py --profile finetuned --skip-build-sweep --split test
+```
+
+---
+
 ## Structured routing: the exact-answer path
 
 A deterministic rule set — not an LLM call — decides whether a question is a
@@ -416,14 +514,17 @@ partial, or a lower bound, it says so.
 | Either profile served by env var alone; each arm's `/readyz` names the model and index it loaded; reranked lists identical across arms, un-reranked pools identically populated but differently ordered | `results/serving/profile_check.json` | `python scripts/verify_served_profile.py` |
 | ONNX + INT8 backends: latency, throughput, size, and recall degradation on both the dense and the served path (101 questions, four arms including PyTorch-on-CPU) | `results/onnx/report.json` | `python scripts/export_onnx.py --profile finetuned` then `python scripts/benchmark_onnx.py --profile finetuned` |
 | The same benchmark on the 30-question held-out split (where INT8 costs one dense question at k=10 and gains one at k=1, and still changes nothing served) | `results/onnx/test-split.json` | `... --split test --out results/onnx/test-split.json --run-name onnx-benchmark-test` |
+| ANN recall-vs-latency curve: `ef_search` on the served index at k=10/20/50 against exact brute force, and a 9-cell (m, ef_construction) build grid on verified copies | `results/ann_sweep/report.json` | `python scripts/sweep_ann.py --profile finetuned` |
+| The same curve on the 71-question development and 30-question held-out splits (where the labelled gain is +0.042 and +0.000) | `results/ann_sweep/dev-split.json`, `results/ann_sweep/test-split.json` | `... --skip-build-sweep --split test --out results/ann_sweep/test-split.json --run-name ann-sweep-test` |
+| One grid cell rebuilt twice unchanged, moving ANN recall 0.912 → 0.996 / 0.961 — why the build grid is a range, not a ranking | `results/ann_sweep/rebuild-m16-efc64-{a,b}.json` | `python scripts/sweep_ann.py --m 16 --ef-construction 64 --k-values 50 --ef-search 800 --repeats 1 --out <path>` |
 | Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
 | 4,776 synthetic training queries, mined into hard-negative triplets, eval-contamination guarded | `data/training/synthetic_queries.jsonl` tracked; the mined splits are regenerable and gitignored, with row samples tracked | `python scripts/generate_synthetic_queries.py` then `python scripts/mine_hard_negatives.py` |
 | Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
 | CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
-| 617 passing tests, ruff clean | — | `pytest -q && ruff check .` |
-| Every eval above also logged to a public tracker: **5,686/5,686 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
+| 649 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| Every eval above also logged to a public tracker: **10,710/10,710 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
 
 ### The same numbers, hosted where this repository cannot edit them
 
@@ -443,7 +544,7 @@ project **with no credentials** — the same anonymous read a stranger gets,
 which is also how it establishes the project really is public, since a private
 one returns nothing to an anonymous caller — and compares every hosted metric
 against its report file on disk, using the same flattening that produced the
-hosted keys. **5,686 of 5,686 match** across the twelve registered runs
+hosted keys. **10,710 of 10,710 match** across the fifteen registered runs
 (`results/tracking/report.json`). It exits non-zero if a report is ever
 regenerated without tracking on, which is exactly how a link like this goes
 quietly stale.
@@ -539,6 +640,8 @@ python scripts/verify_rerank_pool.py
 # 6. optional: export that model to ONNX/INT8 and measure what it costs
 python scripts/export_onnx.py --profile finetuned
 python scripts/benchmark_onnx.py --profile finetuned
+# 7. optional: the ANN curve against exact search over the same vectors
+python scripts/sweep_ann.py --profile finetuned
 ```
 
 Step 4 runs each of the four cells in its own subprocess: this is an 8 GB

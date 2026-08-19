@@ -36,6 +36,8 @@ from duediligence.index.embed import EMBEDDING_DIMENSION
 logger = logging.getLogger(__name__)
 
 __all__ = [
+    "DEFAULT_EF_CONSTRUCTION",
+    "DEFAULT_M",
     "bm25_search",
     "build_client",
     "build_index_mapping",
@@ -43,11 +45,20 @@ __all__ = [
     "bulk_load_settings",
     "create_index",
     "document_count",
+    "exact_knn_search",
     "existing_chunk_ids",
     "iter_jsonl_chunks",
     "knn_search",
     "to_index_document",
 ]
+
+#: HNSW build parameters every index in this project was created with, and
+#: therefore the ones every published retrieval number was measured against.
+#: They are OpenSearch's own defaults; named here so the ANN sweep (#14) can
+#: build variants from the same mapping the served index uses instead of
+#: writing a second mapping that could drift from it.
+DEFAULT_M = 16
+DEFAULT_EF_CONSTRUCTION = 128
 
 # Fields carried into the index. ``embedding`` is excluded from search
 # results everywhere below — returning 384 floats per hit would dominate
@@ -55,7 +66,9 @@ __all__ = [
 _SOURCE_EXCLUDES = ["embedding"]
 
 
-def build_index_mapping() -> dict[str, Any]:
+def build_index_mapping(
+    *, m: int = DEFAULT_M, ef_construction: int = DEFAULT_EF_CONSTRUCTION
+) -> dict[str, Any]:
     """Index settings + mappings for the chunk corpus.
 
     ``number_of_replicas: 0`` because a single-node cluster has nowhere to
@@ -67,6 +80,12 @@ def build_index_mapping() -> dict[str, Any]:
     (rather than faiss/nmslib) keeps the vectors in the same Lucene segments
     as the inverted index, so there's no separate native memory pool to size
     and filtered k-NN works without extra configuration.
+
+    ``m`` and ``ef_construction`` are build-time HNSW parameters: they are
+    baked into the graph when a document is indexed and cannot be changed
+    afterwards without re-indexing, which is why the sweep in
+    ``scripts/sweep_ann.py`` has to build one index per pair. The search-time
+    counterpart, ``ef_search``, is a per-query argument to :func:`knn_search`.
     """
     return {
         "settings": {
@@ -102,7 +121,7 @@ def build_index_mapping() -> dict[str, Any]:
                         "name": "hnsw",
                         "space_type": "cosinesimil",
                         "engine": "lucene",
-                        "parameters": {"ef_construction": 128, "m": 16},
+                        "parameters": {"ef_construction": ef_construction, "m": m},
                     },
                 },
             }
@@ -301,6 +320,7 @@ def knn_search(
     *,
     k: int = 10,
     filters: dict[str, Any] | None = None,
+    ef_search: int | None = None,
 ) -> list[dict[str, Any]]:
     """Dense retrieval: approximate nearest neighbors over the embeddings.
 
@@ -308,8 +328,28 @@ def knn_search(
     applied *inside* the k-NN clause, so the engine returns k results that
     already satisfy the filter rather than k global neighbors that a
     post-filter might reduce to almost nothing.
+
+    ``ef_search`` widens the HNSW candidate queue for this query only — the
+    accuracy/latency knob the sweep in ``scripts/sweep_ann.py`` measures.
+    Left ``None`` the Lucene engine searches at ``ef = k``, which is what
+    every number this project has published so far was measured at; the
+    default is therefore an absent parameter rather than a written-in value,
+    so a future change to the engine's own default stays visible.
+
+    ``ef_search < k`` is refused. OpenSearch accepts it and returns fewer
+    than ``k`` hits rather than erroring, which reaches a caller as a
+    retrieval failure instead of a misconfiguration.
     """
+    if ef_search is not None and ef_search < k:
+        raise ValueError(
+            f"ef_search={ef_search} is below k={k}: the HNSW candidate queue "
+            "cannot yield more results than it holds, and OpenSearch answers "
+            "with a short result list rather than an error."
+        )
+
     knn_clause: dict[str, Any] = {"vector": query_vector, "k": k}
+    if ef_search is not None:
+        knn_clause["method_parameters"] = {"ef_search": ef_search}
     if filters:
         knn_clause["filter"] = {"bool": {"must": _filter_clauses(filters)}}
 
@@ -318,6 +358,50 @@ def knn_search(
         body={
             "size": k,
             "query": {"knn": {"embedding": knn_clause}},
+            "_source": {"excludes": _SOURCE_EXCLUDES},
+        },
+    )
+    return _format_hits(response)
+
+
+def exact_knn_search(
+    client: OpenSearch,
+    index_name: str,
+    query_vector: list[float],
+    *,
+    k: int = 10,
+) -> list[dict[str, Any]]:
+    """Brute-force nearest neighbors: the ground truth ANN recall is scored against.
+
+    ``match_all`` plus the k-NN plugin's ``knn_score`` scoring script visits
+    every document and consults no HNSW graph, so the ranking it returns is
+    the exact one by definition — which is what makes it usable as the
+    reference for the approximate search built over the same vectors. It
+    costs a full scan of the corpus per query and is a measurement tool, not
+    a serving path.
+
+    No ``filters`` argument on purpose: the sweep scores unfiltered
+    retrieval, and a filtered ground truth would silently answer a different
+    question from the approximate arm it is compared against.
+    """
+    response = client.search(
+        index=index_name,
+        body={
+            "size": k,
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "knn_score",
+                        "lang": "knn",
+                        "params": {
+                            "field": "embedding",
+                            "query_value": query_vector,
+                            "space_type": "cosinesimil",
+                        },
+                    },
+                }
+            },
             "_source": {"excludes": _SOURCE_EXCLUDES},
         },
     )

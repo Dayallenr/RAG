@@ -123,6 +123,7 @@ def hybrid_search(
     rrf_k: int = DEFAULT_RRF_K,
     weights: Sequence[float] | None = None,
     filters: dict[str, Any] | None = None,
+    ef_search: int | None = None,
 ) -> list[dict[str, Any]]:
     """Run both retrievers, fuse with RRF, return the top k hits.
 
@@ -133,6 +134,12 @@ def hybrid_search(
 
     ``weights`` defaults to ``[1.0, DEFAULT_DENSE_WEIGHT]`` (lexical first,
     dense second) rather than equal weighting; see DEFAULT_DENSE_WEIGHT.
+
+    ``ef_search`` is forwarded to the dense half only — it is an HNSW
+    search-time parameter and has no lexical counterpart. It exists here so
+    the ANN sweep (#14) can ask what a wider graph search is worth *through
+    the pipeline this project serves*, not only on the dense path where a
+    dense change shows up undamped.
     """
     if weights is None:
         weights = [1.0, DEFAULT_DENSE_WEIGHT]
@@ -142,7 +149,14 @@ def hybrid_search(
     with span("search.bm25", candidate_k=candidate_k):
         lexical = bm25_search(client, index_name, query, k=candidate_k, filters=filters)
     with span("search.knn", candidate_k=candidate_k):
-        dense = knn_search(client, index_name, query_vector, k=candidate_k, filters=filters)
+        dense = knn_search(
+            client,
+            index_name,
+            query_vector,
+            k=candidate_k,
+            filters=filters,
+            ef_search=ef_search,
+        )
 
     by_id: dict[str, dict[str, Any]] = {}
     for hit in (*lexical, *dense):

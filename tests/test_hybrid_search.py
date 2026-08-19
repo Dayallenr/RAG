@@ -110,6 +110,24 @@ class TestHybridSearch:
         # depth must not collapse to k.
         assert all(body["size"] == 40 for body in client.calls)
 
+    def test_ef_search_reaches_the_dense_half_and_only_the_dense_half(self):
+        # ef_search is an HNSW search-time parameter with no lexical
+        # counterpart; putting it on the BM25 query would be rejected by
+        # OpenSearch, and dropping it silently would make the sweep's
+        # through-the-pipeline arm measure the default it meant to change.
+        client = FusionStubClient()
+        hybrid_search(client, "idx", "q", [0.1] * 384, k=5, candidate_k=40, ef_search=200)
+        dense = [b for b in client.calls if "knn" in b["query"]]
+        lexical = [b for b in client.calls if "knn" not in b["query"]]
+        assert dense[0]["query"]["knn"]["embedding"]["method_parameters"] == {"ef_search": 200}
+        assert all("method_parameters" not in str(b) for b in lexical)
+
+    def test_no_ef_search_leaves_the_dense_query_at_the_engine_default(self):
+        client = FusionStubClient()
+        hybrid_search(client, "idx", "q", [0.1] * 384, k=5, candidate_k=40)
+        dense = [b for b in client.calls if "knn" in b["query"]]
+        assert "method_parameters" not in dense[0]["query"]["knn"]["embedding"]
+
 
 class TestTunedDefaults:
     def test_dense_defaults_to_quarter_weight_not_equal(self):

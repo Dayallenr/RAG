@@ -7,8 +7,8 @@
   "access_note": "public \u2014 anyone can view it, nobody else can write to it",
   "accepts_public_writes": false,
   "tolerance": 1e-09,
-  "metrics_compared": 5686,
-  "metrics_matched": 5686,
+  "metrics_compared": 10710,
+  "metrics_matched": 10710,
   "verified": true,
   "runs": [
     {
@@ -166,8 +166,47 @@
       "missing_from_hosted": [],
       "only_in_hosted": [],
       "ok": true
+    },
+    {
+      "display_name": "ann-sweep",
+      "report": "results/ann_sweep/report.json",
+      "run_id": "has5s7fd",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/has5s7fd",
+      "created_at": "2026-08-19T18:08:04Z",
+      "compared": 4034,
+      "matched": 4034,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
+    {
+      "display_name": "ann-sweep-dev",
+      "report": "results/ann_sweep/dev-split.json",
+      "run_id": "t1335xuh",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/t1335xuh",
+      "created_at": "2026-08-19T18:11:05Z",
+      "compared": 495,
+      "matched": 495,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
+    {
+      "display_name": "ann-sweep-test",
+      "report": "results/ann_sweep/test-split.json",
+      "run_id": "hsdzrc1n",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/hsdzrc1n",
+      "created_at": "2026-08-19T18:11:51Z",
+      "compared": 495,
+      "matched": 495,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
     }
   ],
-  "runs_on_server": 31,
+  "runs_on_server": 36,
   "caveat": "Metrics are compared key for key against the report files in results/, using the same flattening that produced the hosted keys. The comparison says the hosted runs and the local reports agree; it does not re-derive the numbers from the corpus, and it inherits every caveat those reports state \u2014 most importantly that relevance labels are a floor, not an estimate."
 }

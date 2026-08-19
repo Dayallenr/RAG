@@ -1,0 +1,718 @@
+{
+  "model": "models/bge-small-duediligence",
+  "profile": "finetuned",
+  "index": "duediligence-chunks-finetuned",
+  "eval_set": "data/eval_set.jsonl",
+  "split": "test",
+  "queries": 30,
+  "human_verified": 30,
+  "indexed_documents": 38483,
+  "repeats": 5,
+  "target_ann_recall": 0.99,
+  "ground_truth": {
+    "method": "match_all + knn_score painless script (brute force, no HNSW graph)",
+    "depth": 50,
+    "latency_ms": {
+      "mean": 29.013202867160242,
+      "p50": 27.090457966551185,
+      "p95": 29.46304203942418,
+      "samples": 30
+    },
+    "retrieval_by_k": {
+      "10": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "mrr": 0.42055555555555557,
+        "map": 0.42055555555555557
+      },
+      "20": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "mrr": 0.42529411764705877,
+        "map": 0.42529411764705877
+      },
+      "50": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "mrr": 0.42917176385011174,
+        "map": 0.42917176385011174
+      }
+    }
+  },
+  "served_index": {
+    "build": {
+      "m": 16,
+      "ef_construction": 128
+    },
+    "segments": 7,
+    "size_bytes": 385896242,
+    "store_size_bytes": 385897086,
+    "curve": {
+      "10": [
+        {
+          "build": "served",
+          "k": 10,
+          "ef_search": null,
+          "ann_recall": 0.9299999999999999,
+          "ann_recall_min": 0.5,
+          "queries_matching_exact_exactly": 19,
+          "latency_ms": {
+            "mean": 5.13806668148997,
+            "p50": 4.668666981160641,
+            "p95": 6.440832978114486,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.5666666666666667,
+            "hit_rate@5": 0.5666666666666667,
+            "ndcg@5": 0.4528441775310227,
+            "recall@10": 0.5666666666666667,
+            "hit_rate@10": 0.5666666666666667,
+            "ndcg@10": 0.4528441775310227,
+            "mrr": 0.41388888888888886,
+            "map": 0.41388888888888886
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 10,
+          "ef_search": 50,
+          "ann_recall": 0.9933333333333334,
+          "ann_recall_min": 0.9,
+          "queries_matching_exact_exactly": 28,
+          "latency_ms": {
+            "mean": 4.48155755798022,
+            "p50": 4.464166995603591,
+            "p95": 5.431999976281077,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42055555555555557,
+            "map": 0.42055555555555557
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 10,
+          "ef_search": 100,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 4.222383565890293,
+            "p50": 3.8470830186270177,
+            "p95": 5.787083995528519,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42055555555555557,
+            "map": 0.42055555555555557
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 10,
+          "ef_search": 200,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 5.576779973537971,
+            "p50": 5.495708028320223,
+            "p95": 6.912124983500689,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42055555555555557,
+            "map": 0.42055555555555557
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 10,
+          "ef_search": 400,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 6.654709192613761,
+            "p50": 6.544541975017637,
+            "p95": 7.751291966997087,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42055555555555557,
+            "map": 0.42055555555555557
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 10,
+          "ef_search": 800,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 8.64720612570333,
+            "p50": 8.671083021908998,
+            "p95": 9.847959037870169,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42055555555555557,
+            "map": 0.42055555555555557
+          },
+          "repeat_lists_identical": true
+        }
+      ],
+      "20": [
+        {
+          "build": "served",
+          "k": 20,
+          "ef_search": null,
+          "ann_recall": 0.9533333333333334,
+          "ann_recall_min": 0.7,
+          "queries_matching_exact_exactly": 16,
+          "latency_ms": {
+            "mean": 5.252346692529197,
+            "p50": 5.140459048561752,
+            "p95": 6.334791018161923,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.4256691919191919,
+            "map": 0.4256691919191919
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 20,
+          "ef_search": 50,
+          "ann_recall": 0.98,
+          "ann_recall_min": 0.7,
+          "queries_matching_exact_exactly": 25,
+          "latency_ms": {
+            "mean": 5.814838861115277,
+            "p50": 5.642417003400624,
+            "p95": 7.047250051982701,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42554664289958405,
+            "map": 0.42554664289958405
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 20,
+          "ef_search": 100,
+          "ann_recall": 0.9866666666666667,
+          "ann_recall_min": 0.7,
+          "queries_matching_exact_exactly": 27,
+          "latency_ms": {
+            "mean": 6.027328340569511,
+            "p50": 5.906999984290451,
+            "p95": 6.950583017896861,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42529411764705877,
+            "map": 0.42529411764705877
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 20,
+          "ef_search": 200,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 6.532381884753704,
+            "p50": 6.550708028953522,
+            "p95": 7.765333983115852,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42529411764705877,
+            "map": 0.42529411764705877
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 20,
+          "ef_search": 400,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 7.888789210701361,
+            "p50": 7.890624983701855,
+            "p95": 9.21029201708734,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42529411764705877,
+            "map": 0.42529411764705877
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 20,
+          "ef_search": 800,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 9.773771099280566,
+            "p50": 9.82304202625528,
+            "p95": 11.23649999499321,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42529411764705877,
+            "map": 0.42529411764705877
+          },
+          "repeat_lists_identical": true
+        }
+      ],
+      "50": [
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": null,
+          "ann_recall": 0.9706666666666667,
+          "ann_recall_min": 0.56,
+          "queries_matching_exact_exactly": 20,
+          "latency_ms": {
+            "mean": 9.33814057498239,
+            "p50": 9.269666974432766,
+            "p95": 10.868666984606534,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.429424289102637,
+            "map": 0.429424289102637
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": 50,
+          "ann_recall": 0.9706666666666667,
+          "ann_recall_min": 0.56,
+          "queries_matching_exact_exactly": 20,
+          "latency_ms": {
+            "mean": 9.463130522829792,
+            "p50": 9.211915952619165,
+            "p95": 11.409624945372343,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.429424289102637,
+            "map": 0.429424289102637
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": 100,
+          "ann_recall": 0.9806666666666667,
+          "ann_recall_min": 0.56,
+          "queries_matching_exact_exactly": 24,
+          "latency_ms": {
+            "mean": 9.791685307087997,
+            "p50": 9.734833030961454,
+            "p95": 11.134416970890015,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42917176385011174,
+            "map": 0.42917176385011174
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": 200,
+          "ann_recall": 0.9906666666666666,
+          "ann_recall_min": 0.72,
+          "queries_matching_exact_exactly": 29,
+          "latency_ms": {
+            "mean": 10.40559166111052,
+            "p50": 10.231417021714151,
+            "p95": 12.145415996201336,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42917176385011174,
+            "map": 0.42917176385011174
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": 400,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 11.621677241443345,
+            "p50": 11.642041965387762,
+            "p95": 13.570957991760224,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42917176385011174,
+            "map": 0.42917176385011174
+          },
+          "repeat_lists_identical": true
+        },
+        {
+          "build": "served",
+          "k": 50,
+          "ef_search": 800,
+          "ann_recall": 1.0,
+          "ann_recall_min": 1.0,
+          "queries_matching_exact_exactly": 30,
+          "latency_ms": {
+            "mean": 13.649651178081209,
+            "p50": 13.63412500359118,
+            "p95": 15.751832979731262,
+            "samples": 150
+          },
+          "retrieval": {
+            "queries": 30.0,
+            "recall@1": 0.3,
+            "hit_rate@1": 0.3,
+            "ndcg@1": 0.3,
+            "recall@5": 0.6,
+            "hit_rate@5": 0.6,
+            "ndcg@5": 0.4657392711055074,
+            "recall@10": 0.6,
+            "hit_rate@10": 0.6,
+            "ndcg@10": 0.4657392711055074,
+            "mrr": 0.42917176385011174,
+            "map": 0.42917176385011174
+          },
+          "repeat_lists_identical": true
+        }
+      ]
+    }
+  },
+  "operating_point": {
+    "10": {
+      "ef_search": 50,
+      "reached_target": true,
+      "ann_recall": 0.9933333333333334,
+      "latency_ms": {
+        "mean": 4.48155755798022,
+        "p50": 4.464166995603591,
+        "p95": 5.431999976281077,
+        "samples": 150
+      },
+      "retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "mrr": 0.42055555555555557,
+        "map": 0.42055555555555557
+      },
+      "default_ann_recall": 0.9299999999999999,
+      "default_latency_ms": {
+        "mean": 5.13806668148997,
+        "p50": 4.668666981160641,
+        "p95": 6.440832978114486,
+        "samples": 150
+      }
+    },
+    "20": {
+      "ef_search": 200,
+      "reached_target": true,
+      "ann_recall": 1.0,
+      "latency_ms": {
+        "mean": 6.532381884753704,
+        "p50": 6.550708028953522,
+        "p95": 7.765333983115852,
+        "samples": 150
+      },
+      "retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "mrr": 0.42529411764705877,
+        "map": 0.42529411764705877
+      },
+      "default_ann_recall": 0.9533333333333334,
+      "default_latency_ms": {
+        "mean": 5.252346692529197,
+        "p50": 5.140459048561752,
+        "p95": 6.334791018161923,
+        "samples": 150
+      }
+    },
+    "50": {
+      "ef_search": 200,
+      "reached_target": true,
+      "ann_recall": 0.9906666666666666,
+      "latency_ms": {
+        "mean": 10.40559166111052,
+        "p50": 10.231417021714151,
+        "p95": 12.145415996201336,
+        "samples": 150
+      },
+      "retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "mrr": 0.42917176385011174,
+        "map": 0.42917176385011174
+      },
+      "default_ann_recall": 0.9706666666666667,
+      "default_latency_ms": {
+        "mean": 9.33814057498239,
+        "p50": 9.269666974432766,
+        "p95": 10.868666984606534,
+        "samples": 150
+      }
+    }
+  },
+  "justification": [
+    "At k=10, ef_search=50 reaches ANN recall 0.993 against the default's 0.930, for p95 5.4 ms against 6.4 ms (0.84x), clearing the 0.99 ANN-recall target. Labelled dense recall@10 is 0.600 (+0.033 against the default).",
+    "At k=20, ef_search=200 reaches ANN recall 1.000 against the default's 0.953, for p95 7.8 ms against 6.3 ms (1.23x), clearing the 0.99 ANN-recall target. Labelled dense recall@10 is 0.600 (+0.000 against the default).",
+    "At k=50, ef_search=200 reaches ANN recall 0.991 against the default's 0.971, for p95 12.1 ms against 10.9 ms (1.12x), clearing the 0.99 ANN-recall target. Labelled dense recall@10 is 0.600 (+0.000 against the default)."
+  ],
+  "build_sweep": [],
+  "build_sweep_vectors_verified": null,
+  "served_pipeline": null,
+  "caveats": [
+    "Latencies are wall-clock at the client over HTTP to a local container on an 8 GB Mac; quote the ratios between points, not the absolute milliseconds.",
+    "The build sweep runs on one-segment, vector-only copies made with _reindex. They are comparable to each other and not to the served index, which has 7 segments and carries the text field.",
+    "ANN recall is measured against exact search over the same vectors. It says how much of the true neighbourhood the graph reached, not whether that neighbourhood answers the question \u2014 which is what the labelled metrics beside it are for.",
+    "Relevance labels are a lower bound (mean 1.02 labelled chunks per question), so absolute end-task recall understates every point equally.",
+    "This corpus contains equal-scoring chunks (boilerplate repeated verbatim across filings), so where a tie straddles the k-th place the 'true' top k is itself arbitrary. ANN recall therefore understates slightly: a graph that returned the other member of a tie is counted as having missed."
+  ]
+}
