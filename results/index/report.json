@@ -1,0 +1,154 @@
+{
+  "baseline": {
+    "index": "duediligence-chunks",
+    "model": "BAAI/bge-small-en-v1.5",
+    "counts": {
+      "paragraph": 28144,
+      "table": 8671,
+      "section": 1155,
+      "document": 502,
+      "chart_description": 11
+    },
+    "total": 38483
+  },
+  "candidate": {
+    "profile": "finetuned",
+    "index": "duediligence-chunks-finetuned",
+    "model": "models/bge-small-duediligence",
+    "counts": {
+      "paragraph": 28144,
+      "table": 8671,
+      "section": 1155,
+      "document": 502,
+      "chart_description": 11
+    },
+    "total": 38483
+  },
+  "coverage_matches": true,
+  "coverage_checked_by": "exact chunk_id set diff",
+  "sampled_chunks": 20,
+  "provenance": [
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "f7b9cc0bcd3a7666",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.857149
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "f7b9cc0bcd3a7666",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.857149
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "cfd65c0d6a0dcbfb",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.883736
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "cfd65c0d6a0dcbfb",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.883736
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "ad61a355c7f8f701",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.485991
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "ad61a355c7f8f701",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.485991
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "a364e81a7f102b4d",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.502582
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "a364e81a7f102b4d",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.502582
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "854792081d18541f",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.619779
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "854792081d18541f",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.619779
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "6a1b94733948ba53",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.874859
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "6a1b94733948ba53",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.874859
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "26163a5941f34da2",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.813969
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "26163a5941f34da2",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.813969
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "906e5ebeb220f230",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.82027
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "906e5ebeb220f230",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.82027
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "53e97b14662b1273",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.835966
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "53e97b14662b1273",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.835966
+    },
+    {
+      "index": "duediligence-chunks",
+      "chunk_id": "775105dbe0a986fc",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.692144
+    },
+    {
+      "index": "duediligence-chunks-finetuned",
+      "chunk_id": "775105dbe0a986fc",
+      "cos_own_model": 1.0,
+      "cos_other_model": 0.692144
+    }
+  ],
+  "problems": [],
+  "passed": true
+}
