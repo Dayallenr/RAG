@@ -331,13 +331,20 @@ What is known about that one file, as measurement rather than inference:
   `config_sentence_transformers.json`, which *does* match the manifest. The
   serving machine runs sentence-transformers **5.7.0**, and loading the
   checkpoint here emits a version-mismatch warning.
-- `modules.json` alone carries a distinct modification time on this disk
-  (15:32, against 22:29 for the files that verify), so it was rewritten locally
-  after the checkpoint arrived rather than in transit.
+- The directory's modification times fall into two groups. The seven files
+  that verify are stamped 22:28–22:29 on 2026-08-18 — **ahead of this
+  machine's own clock at the time of writing (21:51)**, so they are timestamps
+  preserved from elsewhere rather than times anything was written here.
+  `modules.json` is stamped 15:32, a local past time, clustering with the
+  15:30 creation of the `1_Pooling` and `2_Normalize` directories.
 
-The account most consistent with that evidence is that the 6.0.0-format module
-list was rewritten by hand into the 5.x form this machine can load. It is
-labelled an account, not a conclusion, because nobody recorded doing it.
+So `modules.json` is the one file in the checkpoint whose timestamp this
+machine could have produced, while every file that verifies carries a foreign
+one. That is consistent with the 6.0.0-format module list having been rewritten
+here into the 5.x form this sentence-transformers can load, and the rest having
+been copied in with their original stamps. It is labelled consistent-with, not
+proof: mtimes are trivially rewritable, nobody recorded doing it, and the
+timestamps cannot date the checkpoint's arrival on this disk at all.
 
 **What this supports and what it does not.** The delta above is an attributable
 measurement of the trained weights: the file carrying every parameter matches
@@ -354,14 +361,17 @@ specific bytes, and treating its existence as proof would make a corrupted or
 substituted checkpoint read as verified — worse than reporting no manifest at
 all, because it would look checked.
 
-Independent of the manifest, the checkpoint on this machine was measured to be a
-real fine-tune of the base model rather than a copy of it: 384-dimensional,
-L2-normalized output, `max_seq_length` 512, `Transformer → Pooling → Normalize`,
-and cosine **0.68** against `BAAI/bge-small-en-v1.5` on a probe query — moved,
-and not to a degenerate space. Each index was separately confirmed to hold its
-own model's vectors (cosine 1.000000 against its own model, 0.857 against the
-other's, `results/index/report.json`), which is what rules out the delta being
-an artifact of one arm querying the wrong index.
+Independent of the manifest, the checkpoint on this machine loads as a
+sentence-transformers model of the expected shape: 384-dimensional,
+L2-normalized output, `max_seq_length` 512, `Transformer → Pooling → Normalize`.
+
+And it is a real fine-tune rather than a copy of the base model.
+`results/index/report.json` re-embeds 10 sampled chunks under both models and
+compares them to the vectors each index actually stores: **cosine 1.000000
+against its own model** on every sample in both indexes, and **0.486–0.884
+against the other's** (mean 0.739). The first number is what rules out the
+delta being an artifact of one arm querying the wrong index; the second is the
+two models disagreeing about the same text, which a copy could not do.
 
 ---
 

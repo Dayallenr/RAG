@@ -105,3 +105,39 @@ class TestTheRealManifestStillDescribesTheRealCheckpoint:
         normalised = {name.replace("\\", "/") for name in files}
         assert "model.safetensors" in normalised
         assert {"1_Pooling/config.json", "2_Normalize/config.json"} <= normalised
+
+
+class TestAMalformedManifestDoesNotContradictItself:
+    """`checkpoint_manifest_present` and `checkpoint_problems` land in the same
+    report and must agree that a manifest exists.
+
+    A manifest whose `files` map is empty or missing is falsy to the report's
+    presence test but truthy to a bare `if not manifest` guard, which produced
+    `checkpoint_manifest_present: false` beside a populated problem list and a
+    note saying no manifest was present. Both halves were defensible; together
+    they described two different situations.
+    """
+
+    def test_an_empty_file_map_is_not_checked_against_the_weights(
+        self, script, checkpoint
+    ):
+        assert script._checkpoint_problems({"files": {}}, _run(str(checkpoint))) is None
+
+    def test_a_manifest_with_no_file_map_is_not_checked_either(
+        self, script, checkpoint
+    ):
+        assert script._checkpoint_problems({"trained_on": "cuda"}, _run(str(checkpoint))) is None
+
+    def test_the_report_agrees_with_itself_about_whether_a_manifest_exists(
+        self, script, checkpoint
+    ):
+        from duediligence.eval.finetune_delta import _training_run
+
+        malformed = {"files": {}}
+        training = _training_run(
+            {"epochs": 1.0}, "results/training/report.json", malformed,
+            script._checkpoint_problems(malformed, _run(str(checkpoint))),
+        )
+        assert training["checkpoint_manifest_present"] is False
+        assert training["checkpoint_problems"] is None
+        assert training["weights_traceable_to_this_run"] is False

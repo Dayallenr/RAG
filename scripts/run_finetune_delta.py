@@ -178,8 +178,12 @@ def _checkpoint_problems(manifest: dict | None, finetuned_run: dict) -> list[str
     arm actually queried with. A constant would keep reporting a clean verify
     after the profile was pointed somewhere else.
     """
+    # `not manifest.get("files")` rather than `not manifest`, to match the
+    # report's own presence test. A manifest that lost its file map is absent
+    # as far as both are concerned, and disagreeing about that put
+    # `checkpoint_manifest_present: false` next to a populated problem list.
     model = finetuned_run.get("embedding_model")
-    if not manifest or not model:
+    if not manifest or not manifest.get("files") or not model:
         return None
     directory = Path(model)
     if not directory.is_dir():

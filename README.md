@@ -265,9 +265,10 @@ comparison rather than by the manifest's presence, because a manifest that
 merely exists would make a corrupted checkpoint read as verified. The full
 file-by-file account is in the [model card](docs/model-card.md#provenance-what-ties-these-weights-to-that-run).
 Separately, the two indexes were confirmed to hold different models' vectors
-with each holding its own (cos 1.000000 against its own model, 0.857 against the
-other's, `results/index/report.json`), which rules out one arm querying the
-wrong index. The eval-set caveats above apply unchanged, and to both arms
+with each holding its own — over 10 sampled chunks, cos 1.000000 against its own
+model in both indexes and 0.486–0.884 against the other's
+(`results/index/report.json`) — which rules out one arm querying the wrong
+index. The eval-set caveats above apply unchanged, and to both arms
 equally.
 
 Everything about the model itself — training data, the contamination guard, the
@@ -327,7 +328,7 @@ partial, or a lower bound, it says so.
 | Fusion-weight, chunk-level, rerank-depth ablations (development split) | `results/ablations/report.json` | `python scripts/run_ablations.py` |
 | Fine-tune delta, four-run matrix (headline on the test split) | `results/finetune_delta/report.json` + the four run reports beside it | `python scripts/run_finetune_delta.py` |
 | Why the reranked delta is zero: fused pool == BM25's candidates, 30/30 | `results/finetune_delta/rerank_pool.json` | `python scripts/verify_rerank_pool.py` |
-| Fine-tuned index holds the fine-tuned model's vectors (cos 1.000000 own / 0.857 other) | `results/index/report.json` | `python scripts/verify_index_parity.py` |
+| Fine-tuned index holds the fine-tuned model's vectors (cos 1.000000 own / 0.486-0.884 other, 10 samples) | `results/index/report.json` | `python scripts/verify_index_parity.py` |
 | Either profile served by env var alone; each arm's `/readyz` names the model and index it loaded; reranked lists identical across arms, un-reranked pools identically populated but differently ordered | `results/serving/profile_check.json` | `python scripts/verify_served_profile.py` |
 | Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
 | 4,776 synthetic training queries, mined into hard-negative triplets, eval-contamination guarded | `data/training/synthetic_queries.jsonl` tracked; the mined splits are regenerable and gitignored, with row samples tracked | `python scripts/generate_synthetic_queries.py` then `python scripts/mine_hard_negatives.py` |
@@ -390,9 +391,10 @@ ever executed:
   file.** The digest manifest is committed and `model.safetensors` matches it
   byte for byte, so the delta is attributable to the trained model. But
   `scripts/transfer_checkpoint.py verify` exits 1 on `modules.json` — a
-  410-byte module list, rewritten locally after arrival so an older
-  sentence-transformers could load it — and this repository does not describe a
-  failing check as a passing one. Closing it means re-running
+  410-byte module list holding no weights, and the one file in the checkpoint
+  whose timestamp this machine could have produced, consistent with a local
+  rewrite into the format an older sentence-transformers can load — and this
+  repository does not describe a failing check as a passing one. Closing it means re-running
   `transfer_checkpoint.py manifest` on the training machine against the
   checkpoint it still holds. The [model card](docs/model-card.md#provenance-what-ties-these-weights-to-that-run)
   has the file-by-file account.

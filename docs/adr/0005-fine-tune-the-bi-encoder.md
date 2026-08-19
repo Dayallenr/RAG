@@ -133,7 +133,7 @@ The second accepted downside is mostly closed. The checkpoint digest manifest
 these numbers match it — `model.safetensors` byte for byte — so the delta is an
 attributable measurement of the trained model. What remains is narrow and
 stated rather than smoothed over: `transfer_checkpoint.py verify` exits 1 on
-`modules.json`, a 410-byte module list holding no weights, rewritten on the
-serving machine after the checkpoint arrived. The
+`modules.json`, a 410-byte module list holding no weights, and the only file in
+the checkpoint carrying a timestamp this machine could have written. The
 [model card](../model-card.md#provenance-what-ties-these-weights-to-that-run)
 records the evidence file by file.

@@ -418,3 +418,42 @@ class TestAManifestWrittenOnTheTrainingMachine:
 
         problems = script.verify_against_manifest(checkpoint, manifest)
         assert any("missing: 1_Pooling/config.json" in p for p in problems)
+
+
+class TestAManifestThatChecksNothing:
+    """`verify` exits 0 to mean "these weights are the ones that were trained".
+
+    That exit code is the whole provenance design, so the ways it can be
+    reached without comparing anything matter more than the ways it fails. A
+    manifest whose file map is empty or absent has nothing to check, and a
+    checkpoint directory that does not exist yields no files to flag as
+    unexpected — `Path("/nope").rglob("*")` yields nothing rather than raising
+    — so the naive implementation returned "no problems" for both.
+    """
+
+    def test_a_manifest_listing_no_files_is_itself_a_problem(self, script, checkpoint):
+        assert script.verify_against_manifest(checkpoint, {"files": {}}) != []
+
+    def test_a_manifest_with_no_file_map_at_all_is_a_problem(self, script, checkpoint):
+        assert script.verify_against_manifest(checkpoint, {"trained_on": "cuda"}) != []
+
+    def test_a_checkpoint_directory_that_is_not_there_is_a_problem(
+        self, script, checkpoint, report, tmp_path
+    ):
+        manifest = script.build_manifest(
+            checkpoint, repo_id=None, private=True, revision=None, report_path=report,
+        )
+        problems = script.verify_against_manifest(tmp_path / "never-arrived", manifest)
+        assert any("missing" in p for p in problems)
+
+    def test_verify_exits_nonzero_rather_than_passing_vacuously(
+        self, script, checkpoint, tmp_path
+    ):
+        """The end-to-end shape of the hole: a manifest that lost its file map,
+        and `--checkpoint` pointing somewhere the weights have not landed."""
+        path = tmp_path / "checkpoint.json"
+        path.write_text(json.dumps({"files": {}, "trained_on": "cuda"}))
+
+        assert script.verify(argparse.Namespace(
+            checkpoint=str(tmp_path / "not-here"), manifest=str(path)
+        )) == 1

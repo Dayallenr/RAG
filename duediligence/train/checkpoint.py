@@ -63,11 +63,25 @@ def verify_against_manifest(directory: Path, manifest: dict) -> list[str]:
     Manifest keys are re-normalised on the way in, not merely on the way out:
     a manifest written before ``checkpoint_files`` used POSIX names still
     carries Windows separators and must keep verifying.
+
+    **An empty file map is a problem, not a clean bill of health.** Both loops
+    below are driven by data, so a manifest that lost its ``files`` map checks
+    nothing — and against a directory that does not exist, ``rglob`` yields
+    nothing rather than raising, so there is not even an unexpected file to
+    flag. That combination returned "no problems", which `verify` reports with
+    exit 0: the one code this whole design uses to mean "these weights are the
+    ones that were trained".
     """
     expected = {
         name.replace("\\", "/"): want
         for name, want in (manifest.get("files") or {}).items()
     }
+    if not expected:
+        return [
+            "the manifest lists no files, so it can prove nothing about this "
+            "checkpoint — regenerate it with `transfer_checkpoint.py manifest` "
+            "on the machine that trained these weights"
+        ]
     problems = []
     for name, want in sorted(expected.items()):
         path = directory / name
