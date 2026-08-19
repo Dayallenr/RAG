@@ -79,9 +79,9 @@
     {
       "display_name": "finetune-delta",
       "report": "results/finetune_delta/report.json",
-      "run_id": "l2wdsr94",
-      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/l2wdsr94",
-      "created_at": "2026-08-19T00:53:34Z",
+      "run_id": "0a8trbed",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/0a8trbed",
+      "created_at": "2026-08-19T04:45:32Z",
       "compared": 2442,
       "matched": 2442,
       "mismatched": [],
@@ -142,6 +142,6 @@
       "ok": true
     }
   ],
-  "runs_on_server": 21,
+  "runs_on_server": 23,
   "caveat": "Metrics are compared key for key against the report files in results/, using the same flattening that produced the hosted keys. The comparison says the hosted runs and the local reports agree; it does not re-derive the numbers from the corpus, and it inherits every caveat those reports state \u2014 most importantly that relevance labels are a floor, not an estimate."
 }

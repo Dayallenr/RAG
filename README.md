@@ -249,16 +249,30 @@ the fusion settings rather than in the model. Anyone reporting only the
 +0.233 would be describing a system nobody runs, and anyone reporting only the
 +0.000 would be calling a working fine-tune a failure.
 
-**What this does not establish.** The weights on the serving machine cannot
-be tied to the training run that reported those losses: the digest manifest
-`scripts/transfer_checkpoint.py push` writes
-(`results/training/checkpoint.json`) is not in this repository, so the
-checkpoint arrived by another channel. What *is* verified is that the two
-indexes hold different models' vectors and that each holds its own
-(cos 1.000000 against its own model, 0.857 against the other's,
-`results/index/report.json`), so this is a real measurement of the indexed
-model — just not yet an attributable one. The eval-set caveats above apply
-unchanged, and to both arms equally.
+**What this does and does not establish.** The digest manifest that ties these
+weights to that training run (`results/training/checkpoint.json`, written by
+`scripts/transfer_checkpoint.py manifest` on the training machine and carried by
+git) is committed, and **the weights match it**: `model.safetensors`, all
+133,462,128 bytes, plus the tokenizer, the architecture config and both nested
+module configs. So the delta above is an attributable measurement of the trained
+model. The checkpoint *directory* is not clean, though —
+`transfer_checkpoint.py verify` exits 1 on `modules.json`, a 410-byte module
+list that carries no weights and was rewritten locally after the checkpoint
+arrived, to a form this machine's older sentence-transformers can load. That is
+why `results/finetune_delta/report.json` still reports
+`weights_traceable_to_this_run: false`: the field is set by an actual digest
+comparison rather than by the manifest's presence, because a manifest that
+merely exists would make a corrupted checkpoint read as verified. The full
+file-by-file account is in the [model card](docs/model-card.md#provenance-what-ties-these-weights-to-that-run).
+Separately, the two indexes were confirmed to hold different models' vectors
+with each holding its own (cos 1.000000 against its own model, 0.857 against the
+other's, `results/index/report.json`), which rules out one arm querying the
+wrong index. The eval-set caveats above apply unchanged, and to both arms
+equally.
+
+Everything about the model itself — training data, the contamination guard, the
+split discipline, hyperparameters, intended use, limitations, and what shipping
+no weights costs the claim — is in the **[model card](docs/model-card.md)**.
 
 ---
 
@@ -372,14 +386,16 @@ ever executed:
   a claim-support rate over 14 judgments — real, and too few to quote as a
   system-level number. (68 of the 101 are eligible: the 12 structured-route
   answers cite no passages and the 21 refusals assert no claim to support.)
-- **The fine-tuned weights are not traceable to the training run.** The
-  fine-tune has run, its index is built, and its delta is measured (see above),
-  but the digest manifest that would tie the checkpoint on the serving machine
-  to the losses in `results/training/report.json` was never committed, so the
-  two are joined by nothing a reader can check. The measurement is real; the
-  attribution is not yet. `scripts/transfer_checkpoint.py manifest` on the
-  training machine closes it — it digests the checkpoint there and needs no
-  Hub, no token and no upload, since the weights are already here.
+- **The fine-tuned checkpoint verifies on its weights but not on one metadata
+  file.** The digest manifest is committed and `model.safetensors` matches it
+  byte for byte, so the delta is attributable to the trained model. But
+  `scripts/transfer_checkpoint.py verify` exits 1 on `modules.json` — a
+  410-byte module list, rewritten locally after arrival so an older
+  sentence-transformers could load it — and this repository does not describe a
+  failing check as a passing one. Closing it means re-running
+  `transfer_checkpoint.py manifest` on the training machine against the
+  checkpoint it still holds. The [model card](docs/model-card.md#provenance-what-ties-these-weights-to-that-run)
+  has the file-by-file account.
 - **The served pipeline still runs the off-the-shelf embedding model by
   default.** Every retrieval number outside the fine-tune section is
   `bge-small-en-v1.5`. The fine-tuned profile can now be served by setting one
@@ -562,14 +578,14 @@ probes and routing — not retrieval quality in-cluster.
   CI enforces both, but no AWS resource has been created. Validation proves
   the configuration is well-formed and nothing more. See
   `terraform/README.md` for the cost breakdown and why it is gated.
-- **The bi-encoder fine-tune is trained, indexed and measured — and cannot be
-  attributed.** One epoch on an RTX 5070 (121 s), a 38,483-document index built
+- **The bi-encoder fine-tune is trained, indexed, measured and documented.** One epoch on an RTX 5070 (121 s), a 38,483-document index built
   from the checkpoint, and a four-run delta matrix: +0.233 dense recall@10 on
   the held-out split, +0.000 through the reranked pipeline for a structural
-  reason measured in `results/finetune_delta/rerank_pool.json`. What is missing
-  is the checkpoint digest manifest, without which the weights on this machine
-  cannot be shown to be the ones that training run produced. ADR 0005 records
-  why the original no-fine-tuning rule was reversed.
+  reason measured in `results/finetune_delta/rerank_pool.json`. The digest
+  manifest is committed and the weights match it; the checkpoint directory as a
+  whole does not, on one metadata file. The
+  [model card](docs/model-card.md) documents the model end to end, and ADR 0005
+  records why the original no-fine-tuning rule was reversed.
 
 **Previously-known defect, now fixed:** 69 of 8,740 table chunks were 10-Q
 tables of contents. Two things were wrong — the exclusion regex required

@@ -365,3 +365,56 @@ class TestVerifyLocalWeights:
         assert script.verify(argparse.Namespace(
             checkpoint=str(checkpoint), manifest=str(tmp_path / "absent.json")
         )) == 1
+
+
+class TestAManifestWrittenOnTheTrainingMachine:
+    """The manifest is written on Windows and read on macOS — that is the
+    entire point of the file, and it is where the naive implementation broke.
+
+    `str(Path("1_Pooling/config.json"))` renders with the *writing* machine's
+    separator, so a manifest built on the 5070 keys its nested modules as
+    `1_Pooling\\config.json`. Read here, every nested entry is reported both
+    missing and unexpected, and `verify` can never pass — which is
+    indistinguishable from weights that genuinely did not arrive. The pooling
+    and normalize configs are exactly the files this catches, and a bi-encoder
+    that loses them silently produces different vectors.
+    """
+
+    def _windows_manifest(self, script, checkpoint, report):
+        """What `manifest` on the training machine actually committed."""
+        built = script.build_manifest(
+            checkpoint, repo_id=None, private=True, revision=None,
+            report_path=report, transport="out-of-band",
+        )
+        built["files"] = {
+            name.replace("/", "\\"): value for name, value in built["files"].items()
+        }
+        return built
+
+    def test_the_manifest_keys_are_posix_whatever_wrote_them(self, script, checkpoint):
+        assert not any("\\" in name for name in script.checkpoint_files(checkpoint))
+
+    def test_a_windows_written_manifest_verifies_here(self, script, checkpoint, report):
+        manifest = self._windows_manifest(script, checkpoint, report)
+        assert "1_Pooling\\config.json" in manifest["files"], "fixture must model Windows"
+
+        assert script.verify_against_manifest(checkpoint, manifest) == []
+
+    def test_it_still_catches_a_nested_file_that_really_changed(
+        self, script, checkpoint, report
+    ):
+        """Normalising separators must not turn the check into a rubber stamp."""
+        manifest = self._windows_manifest(script, checkpoint, report)
+        (checkpoint / "1_Pooling" / "config.json").write_text('{"pooling_mode_cls_token": false}')
+
+        problems = script.verify_against_manifest(checkpoint, manifest)
+        assert any("digest mismatch" in p and "1_Pooling/config.json" in p for p in problems)
+
+    def test_it_still_catches_a_nested_file_that_never_arrived(
+        self, script, checkpoint, report
+    ):
+        manifest = self._windows_manifest(script, checkpoint, report)
+        (checkpoint / "1_Pooling" / "config.json").unlink()
+
+        problems = script.verify_against_manifest(checkpoint, manifest)
+        assert any("missing: 1_Pooling/config.json" in p for p in problems)

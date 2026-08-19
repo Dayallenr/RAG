@@ -293,31 +293,59 @@ def _training_run(
     training_report: dict | None,
     training_report_path: str | None,
     checkpoint_manifest: dict | None,
+    checkpoint_problems: list[str] | None = None,
 ) -> dict | None:
     """What produced the weights, and whether that can actually be shown.
 
-    ``transfer_checkpoint.py push`` writes a digest manifest so the weights
-    that travel by Hub can be tied back to the run that trained them. Without
-    it, the losses in the training report and the vectors in the candidate
-    index are two facts with nothing joining them, and a model card that
-    cited one against the other would be asserting a link nobody checked.
-    That is stated here rather than left for a reader to notice.
+    ``transfer_checkpoint.py push`` (or ``manifest``) writes a digest manifest
+    so the weights that travel out of band can be tied back to the run that
+    trained them. Without it, the losses in the training report and the
+    vectors in the candidate index are two facts with nothing joining them,
+    and a model card that cited one against the other would be asserting a
+    link nobody checked. That is stated here rather than left for a reader to
+    notice.
+
+    **Presence is not verification.** A manifest is a claim about specific
+    bytes, so the tie holds only when those bytes were compared and matched:
+    ``checkpoint_problems`` is the output of
+    ``transfer_checkpoint.py verify`` — ``None`` for never checked, ``[]`` for
+    checked and clean, and a list of complaints otherwise. Reading mere
+    presence as proof is worse than reporting no manifest at all, because a
+    corrupted or substituted checkpoint then looks checked.
     """
     if training_report is None:
         return None
-    traceable = bool(checkpoint_manifest and checkpoint_manifest.get("files"))
-    note = (
-        "The checkpoint's digest manifest (results/training/checkpoint.json) is "
-        "present, so these weights are tied to the training run that reported "
-        "these losses."
-        if traceable else
-        "No checkpoint digest manifest (results/training/checkpoint.json) is "
-        "present, so the weights that produced the candidate index cannot be "
-        "shown to be the ones this training run wrote. The delta below is a "
-        "real measurement of the indexed model; attributing it to these "
-        "hyperparameters requires running scripts/transfer_checkpoint.py push "
-        "on the training machine and committing the manifest."
-    )
+    has_manifest = bool(checkpoint_manifest and checkpoint_manifest.get("files"))
+    traceable = has_manifest and checkpoint_problems == []
+    if traceable:
+        note = (
+            "The checkpoint's digest manifest (results/training/checkpoint.json) "
+            "is present and every file on disk matches it, so these weights are "
+            "tied to the training run that reported these losses."
+        )
+    elif has_manifest and checkpoint_problems is None:
+        note = (
+            "The checkpoint's digest manifest (results/training/checkpoint.json) "
+            "is present but was not checked against the weights on this machine, "
+            "so nothing here ties them to this run. Run "
+            "scripts/transfer_checkpoint.py verify."
+        )
+    elif has_manifest:
+        note = (
+            "The checkpoint's digest manifest (results/training/checkpoint.json) "
+            "is present but the weights on this machine do not match it, so they "
+            "are not tied to this run: "
+            + "; ".join(checkpoint_problems or [])
+        )
+    else:
+        note = (
+            "No checkpoint digest manifest (results/training/checkpoint.json) is "
+            "present, so the weights that produced the candidate index cannot be "
+            "shown to be the ones this training run wrote. The delta below is a "
+            "real measurement of the indexed model; attributing it to these "
+            "hyperparameters requires running scripts/transfer_checkpoint.py "
+            "manifest on the training machine and committing the manifest."
+        )
     return {
         "report": training_report_path,
         "base_model": training_report.get("base_model"),
@@ -329,6 +357,8 @@ def _training_run(
         "final_train_loss": training_report.get("final_train_loss"),
         "final_eval_loss": training_report.get("final_eval_loss"),
         "weights_traceable_to_this_run": traceable,
+        "checkpoint_manifest_present": has_manifest,
+        "checkpoint_problems": checkpoint_problems,
         "traceability_note": note,
     }
 
@@ -407,6 +437,7 @@ def build_comparison(
     training_report: dict | None = None,
     training_report_path: str | None = None,
     checkpoint_manifest: dict | None = None,
+    checkpoint_problems: list[str] | None = None,
     pool_report: dict | None = None,
     headline_split: str = "test",
     splits: Sequence[str] = ("test", "dev", ALL),
@@ -475,7 +506,8 @@ def build_comparison(
             "candidate_pool": pool_report,
         },
         "training_run": _training_run(
-            training_report, training_report_path, checkpoint_manifest
+            training_report, training_report_path, checkpoint_manifest,
+            checkpoint_problems,
         ),
         "confounds": list(CONFOUNDS),
         "headline": headline,

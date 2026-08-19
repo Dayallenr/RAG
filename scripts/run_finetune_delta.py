@@ -48,6 +48,7 @@ from duediligence.config import PROFILE_ENV_VAR
 from duediligence.eval.eval_set import DEFAULT_EVAL_SET_PATH, SPLITS
 from duediligence.eval.finetune_delta import ALL, METRICS, build_comparison
 from duediligence.track import flatten_metrics, log_run
+from duediligence.train.checkpoint import verify_against_manifest
 
 logger = logging.getLogger("finetune-delta")
 
@@ -163,6 +164,30 @@ def _print_table(report: dict) -> None:
               f"hybrid+rerank {reranked:+.3f}")
 
 
+def _checkpoint_problems(manifest: dict | None, finetuned_run: dict) -> list[str] | None:
+    """Whether the weights on this machine are the ones the manifest describes.
+
+    ``None`` means the question was not asked — no manifest, or no local
+    checkpoint directory to ask it about. It is deliberately distinct from
+    ``[]``, which means the digests were compared and matched: the report
+    treats only the empty list as a tie to the training run, so a manifest that
+    exists but was never checked cannot certify itself.
+
+    The directory comes from the fine-tuned run's own ``embedding_model``
+    rather than from a constant here, so what gets digested is the model that
+    arm actually queried with. A constant would keep reporting a clean verify
+    after the profile was pointed somewhere else.
+    """
+    model = finetuned_run.get("embedding_model")
+    if not manifest or not model:
+        return None
+    directory = Path(model)
+    if not directory.is_dir():
+        # A Hub id rather than a local path: nothing on this disk to digest.
+        return None
+    return verify_against_manifest(directory, manifest)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--eval-set", default=DEFAULT_EVAL_SET_PATH)
@@ -211,12 +236,20 @@ def main() -> None:
         for arm in ("base", "finetuned")
     }
 
+    # Read once, then checked against the weights — the report distinguishes
+    # "no manifest" from "manifest that does not match", and only an actual
+    # digest comparison can tell those apart.
+    checkpoint_manifest = _optional_json(CHECKPOINT_MANIFEST_PATH)
+
     report = build_comparison(
         base_runs=runs["base"],
         finetuned_runs=runs["finetuned"],
         training_report=_optional_json(TRAINING_REPORT_PATH),
         training_report_path=TRAINING_REPORT_PATH,
-        checkpoint_manifest=_optional_json(CHECKPOINT_MANIFEST_PATH),
+        checkpoint_manifest=checkpoint_manifest,
+        checkpoint_problems=_checkpoint_problems(
+            checkpoint_manifest, runs["finetuned"]["no_rerank"]
+        ),
         # Why the reranked cell moved or did not: written by
         # scripts/verify_rerank_pool.py, folded in when it exists and recorded
         # as absent when it does not, rather than explained in prose here.

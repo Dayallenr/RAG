@@ -54,7 +54,6 @@ then here:
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import logging
 import os
@@ -64,17 +63,23 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from duediligence.train.checkpoint import (  # noqa: E402
+    TRAINER_OUTPUT_DIR,
+    checkpoint_files,
+    digest,
+    verify_against_manifest,
+)
+
 logger = logging.getLogger("transfer-checkpoint")
 
 DEFAULT_CHECKPOINT = "models/bge-small-duediligence"
 DEFAULT_MANIFEST = "results/training/checkpoint.json"
 TRAINING_REPORT = "results/training/report.json"
 
-# The trainer's own output_dir sits inside the checkpoint directory. With
-# save_strategy="no" it holds nothing, but an interrupted or differently
-# configured run would fill it with optimiser state that is useless here and
-# far larger than the weights.
-IGNORED = ("checkpoints/*", "checkpoints/**")
+# What `upload_folder` must not send. `checkpoint_files` skips the same
+# directory on the digesting side — see duediligence/train/checkpoint.py for
+# why it is there at all.
+IGNORED = (f"{TRAINER_OUTPUT_DIR}/*", f"{TRAINER_OUTPUT_DIR}/**")
 
 # What sentence-transformers writes and what the embedder needs back. Checked
 # before the upload so a wrong --checkpoint fails on this machine rather than
@@ -83,39 +88,12 @@ REQUIRED_FILES = ("config.json", "modules.json")
 WEIGHT_FILES = ("model.safetensors", "pytorch_model.bin")
 
 
-def checkpoint_files(directory: Path) -> list[str]:
-    """Every file to transfer, relative to the checkpoint directory.
-
-    Dot-directories are skipped: ``snapshot_download`` writes its own
-    ``.cache/huggingface`` bookkeeping into the target, and verifying that
-    against a manifest written before it existed would fail every pull.
-    """
-    files = []
-    for path in sorted(directory.rglob("*")):
-        if not path.is_file():
-            continue
-        relative = path.relative_to(directory)
-        parts = relative.parts
-        if parts[0] == "checkpoints" or any(part.startswith(".") for part in parts):
-            continue
-        files.append(str(relative))
-    return files
-
-
 def looks_like_a_checkpoint(directory: Path) -> bool:
     if not directory.is_dir():
         return False
     if not all((directory / name).exists() for name in REQUIRED_FILES):
         return False
     return any((directory / name).exists() for name in WEIGHT_FILES)
-
-
-def digest(path: Path) -> str:
-    sha = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            sha.update(block)
-    return sha.hexdigest()
 
 
 def build_manifest(directory: Path, *, repo_id: str | None, private: bool,
@@ -150,22 +128,6 @@ def build_manifest(directory: Path, *, repo_id: str | None, private: bool,
         "final_eval_loss": report.get("final_eval_loss"),
         "files": {name: digest(directory / name) for name in files},
     }
-
-
-def verify_against_manifest(directory: Path, manifest: dict) -> list[str]:
-    """Problems with what arrived. Empty means the weights are the ones sent."""
-    expected = manifest.get("files") or {}
-    problems = []
-    for name, want in sorted(expected.items()):
-        path = directory / name
-        if not path.exists():
-            problems.append(f"missing: {name}")
-        elif (got := digest(path)) != want:
-            problems.append(f"digest mismatch: {name} (expected {want[:12]}…, got {got[:12]}…)")
-    for name in checkpoint_files(directory):
-        if name not in expected:
-            problems.append(f"unexpected file not in the manifest: {name}")
-    return problems
 
 
 def resolve_token(explicit: str | None) -> str | None:

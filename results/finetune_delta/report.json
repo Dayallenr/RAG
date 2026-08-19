@@ -93,7 +93,11 @@
     "final_train_loss": 0.5379423904418945,
     "final_eval_loss": 0.5198092460632324,
     "weights_traceable_to_this_run": false,
-    "traceability_note": "No checkpoint digest manifest (results/training/checkpoint.json) is present, so the weights that produced the candidate index cannot be shown to be the ones this training run wrote. The delta below is a real measurement of the indexed model; attributing it to these hyperparameters requires running scripts/transfer_checkpoint.py push on the training machine and committing the manifest."
+    "checkpoint_manifest_present": true,
+    "checkpoint_problems": [
+      "digest mismatch: modules.json (expected 5861cc45c276\u2026, got a0f5ee40975a\u2026)"
+    ],
+    "traceability_note": "The checkpoint's digest manifest (results/training/checkpoint.json) is present but the weights on this machine do not match it, so they are not tied to this run: digest mismatch: modules.json (expected 5861cc45c276\u2026, got a0f5ee40975a\u2026)"
   },
   "confounds": [
     "Relevance labels are a floor, not an estimate: they average 1.02 chunks per question, drawn from a stratified sampled candidate pool rather than exhaustive judgments over all 38,483 chunks, so a retriever that returns an unlabelled chunk which does answer the question is scored as missing.",

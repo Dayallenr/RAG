@@ -245,13 +245,45 @@ class TestBuildComparison:
         assert traceability is False
         assert "manifest" in report["training_run"]["traceability_note"].lower()
 
-    def test_a_present_manifest_is_reported_with_its_digest(self):
+    def test_a_manifest_that_matches_the_weights_ties_them_to_the_run(self):
         base, finetuned = self._runs()
         report = build_comparison(
             base_runs=base, finetuned_runs=finetuned, training_report={"epochs": 1.0},
             checkpoint_manifest={"files": {"model.safetensors": "abc123"}},
+            checkpoint_problems=[],
         )
         assert report["training_run"]["weights_traceable_to_this_run"] is True
+
+    def test_a_manifest_that_does_not_match_the_weights_certifies_nothing(self):
+        """The one way this check could certify something false.
+
+        A manifest is a claim about specific bytes. Treating its mere presence
+        as proof means a checkpoint that arrived corrupted, or a different
+        checkpoint entirely, reads as tied to the run — which is worse than
+        reporting no manifest at all, because it looks checked.
+        """
+        base, finetuned = self._runs()
+        report = build_comparison(
+            base_runs=base, finetuned_runs=finetuned, training_report={"epochs": 1.0},
+            checkpoint_manifest={"files": {"model.safetensors": "abc123"}},
+            checkpoint_problems=["digest mismatch: modules.json (expected 5861…, got a0f5…)"],
+        )
+        training = report["training_run"]
+        assert training["weights_traceable_to_this_run"] is False
+        assert "modules.json" in training["traceability_note"], (
+            "the note must name what failed, or nobody can tell a corrupted "
+            "weight file from a rewritten metadata file"
+        )
+
+    def test_an_unverified_manifest_is_not_a_verified_one(self):
+        """Manifest present, digests never compared: still not a tie."""
+        base, finetuned = self._runs()
+        report = build_comparison(
+            base_runs=base, finetuned_runs=finetuned, training_report={"epochs": 1.0},
+            checkpoint_manifest={"files": {"model.safetensors": "abc123"}},
+            checkpoint_problems=None,
+        )
+        assert report["training_run"]["weights_traceable_to_this_run"] is False
 
 
 class TestRerankAbsorption:
