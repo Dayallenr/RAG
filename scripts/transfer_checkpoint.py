@@ -22,6 +22,22 @@ that ties these weights to the run that produced them: `results/training/
 report.json` records no checkpoint identity at all, so "the checkpoint" and
 "the losses" are otherwise two unrelated artifacts.
 
+**If the weights already reached the serving machine some other way**, the Hub
+has nothing left to do — only the evidence is missing. Run `manifest` on the
+training machine against the checkpoint it produced, commit the file, and run
+`verify` where the weights are:
+
+    # on the training machine
+    python scripts/transfer_checkpoint.py manifest
+    git add results/training/checkpoint.json && git commit && git push
+
+    # where the weights already are
+    git pull && python scripts/transfer_checkpoint.py verify
+
+The digests are the same either way: taken from the trained files on the
+machine that trained them, carried by git. What the Hub route buys on top is
+the ability to fetch the weights again.
+
 Usage, on the training machine:
 
     export HF_TOKEN=hf_...
@@ -102,9 +118,18 @@ def digest(path: Path) -> str:
     return sha.hexdigest()
 
 
-def build_manifest(directory: Path, *, repo_id: str, private: bool, revision: str | None,
-                   report_path: Path) -> dict:
-    """Describe exactly what was uploaded, and which run it came from."""
+def build_manifest(directory: Path, *, repo_id: str | None, private: bool,
+                   revision: str | None, report_path: Path,
+                   transport: str = "huggingface-hub") -> dict:
+    """Describe exactly what was transferred, and which run it came from.
+
+    ``transport`` records how the weights themselves travelled. The Hub is one
+    way; a disk, a scp, or a copy made before this script existed is another,
+    and the digests are the same evidence either way — they are taken from the
+    trained files on the machine that trained them and travel by git. Naming
+    the transport keeps an out-of-band manifest from reading like an upload
+    that failed to record its repository.
+    """
     files = checkpoint_files(directory)
     report = json.loads(report_path.read_text()) if report_path.exists() else {}
     if not report:
@@ -114,6 +139,7 @@ def build_manifest(directory: Path, *, repo_id: str, private: bool, revision: st
         )
     return {
         "repo_id": repo_id,
+        "transport": transport,
         "private": private,
         "revision": revision,
         "uploaded_at": datetime.now(UTC).isoformat(timespec="seconds"),
@@ -234,6 +260,77 @@ def pull(args, *, download=None) -> int:
     return 0
 
 
+def manifest(args) -> int:
+    """Write the digest manifest for a local checkpoint — no Hub, no token.
+
+    For the case where the weights have already reached the serving machine by
+    some other route, so the only thing missing is the evidence tying them to
+    the run that trained them. Run this on the training machine, against the
+    checkpoint it produced, and commit the file it writes.
+    """
+    directory = Path(args.checkpoint)
+    if not looks_like_a_checkpoint(directory):
+        print(
+            f"{directory} is not a sentence-transformers checkpoint "
+            f"(need {', '.join(REQUIRED_FILES)} and one of {', '.join(WEIGHT_FILES)})",
+            file=sys.stderr,
+        )
+        return 1
+
+    written = build_manifest(
+        directory,
+        repo_id=None,
+        private=True,
+        revision=None,
+        report_path=Path(args.report),
+        transport="out-of-band",
+    )
+    manifest_path = Path(args.manifest)
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(written, indent=2) + "\n")
+
+    print(f"digested {len(written['files'])} files "
+          f"({written['total_bytes'] / 1e6:.1f} MB) from {directory}")
+    print(f"  trained on {written.get('trained_on')}, "
+          f"final eval loss {written.get('final_eval_loss')}")
+    print(f"wrote {manifest_path} — commit it, then run "
+          "`transfer_checkpoint.py verify` on the machine holding the weights")
+    return 0
+
+
+def verify(args) -> int:
+    """Check weights already on this machine against a committed manifest.
+
+    ``pull`` does this to what it just downloaded. This is the same check for
+    weights that arrived by another channel: nothing to fetch, everything
+    still to prove.
+    """
+    directory = Path(args.checkpoint)
+    manifest_path = Path(args.manifest)
+    if not manifest_path.exists():
+        print(
+            f"{manifest_path} is not here, so there is nothing to verify against. "
+            "Run `transfer_checkpoint.py manifest` on the training machine and "
+            "commit the result, or these weights stay untraceable to any run.",
+            file=sys.stderr,
+        )
+        return 1
+
+    claimed = json.loads(manifest_path.read_text())
+    problems = verify_against_manifest(directory, claimed)
+    if problems:
+        print(f"{directory} does not match {manifest_path}:", file=sys.stderr)
+        for problem in problems:
+            print(f"  {problem}", file=sys.stderr)
+        return 1
+
+    print(f"verified {len(claimed['files'])} files against {manifest_path}")
+    print(f"  trained on {claimed.get('trained_on')}, "
+          f"final eval loss {claimed.get('final_eval_loss')}, "
+          f"transport {claimed.get('transport', 'huggingface-hub')}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -244,6 +341,17 @@ def build_parser() -> argparse.ArgumentParser:
         sub.add_argument("--checkpoint", default=DEFAULT_CHECKPOINT)
         sub.add_argument("--manifest", default=DEFAULT_MANIFEST)
         sub.add_argument("--token", default=None, help="defaults to HF_TOKEN in the environment or .env")
+
+    # The Hub-free route: the weights travelled some other way and only the
+    # evidence is missing. Neither of these takes a repository or a token.
+    manifest_parser = subparsers.add_parser("manifest")
+    manifest_parser.add_argument("--checkpoint", default=DEFAULT_CHECKPOINT)
+    manifest_parser.add_argument("--manifest", default=DEFAULT_MANIFEST)
+    manifest_parser.add_argument("--report", default=TRAINING_REPORT)
+
+    verify_parser = subparsers.add_parser("verify")
+    verify_parser.add_argument("--checkpoint", default=DEFAULT_CHECKPOINT)
+    verify_parser.add_argument("--manifest", default=DEFAULT_MANIFEST)
 
     push_parser = subparsers.choices["push"]
     push_parser.add_argument("--report", default=TRAINING_REPORT)
@@ -260,7 +368,8 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-    raise SystemExit(push(args) if args.command == "push" else pull(args))
+    commands = {"push": push, "pull": pull, "manifest": manifest, "verify": verify}
+    raise SystemExit(commands[args.command](args))
 
 
 if __name__ == "__main__":

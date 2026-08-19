@@ -320,7 +320,7 @@ partial, or a lower bound, it says so.
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
 | CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
-| 514 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| 521 passing tests, ruff clean | — | `pytest -q && ruff check .` |
 | Every eval above also logged to a public tracker: **5,100/5,100 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
 
 ### The same numbers, hosted where this repository cannot edit them
@@ -376,8 +376,9 @@ ever executed:
   but the digest manifest that would tie the checkpoint on the serving machine
   to the losses in `results/training/report.json` was never committed, so the
   two are joined by nothing a reader can check. The measurement is real; the
-  attribution is not yet, and `scripts/transfer_checkpoint.py push` on the
-  training machine is what closes it.
+  attribution is not yet. `scripts/transfer_checkpoint.py manifest` on the
+  training machine closes it — it digests the checkpoint there and needs no
+  Hub, no token and no upload, since the weights are already here.
 - **The served pipeline still runs the off-the-shelf embedding model.** Every
   retrieval number outside the fine-tune section is `bge-small-en-v1.5`. The
   fine-tuned profile exists (`config/profiles/finetuned.yaml`) and is measured,
@@ -407,8 +408,11 @@ other, since querying an index with the model it was not built from produces a
 plausible ranking rather than an error:
 
 ```bash
-# 1. the checkpoint lands at models/bge-small-duediligence (gitignored)
-python scripts/transfer_checkpoint.py pull            # needs the manifest committed
+# 1. the checkpoint lands at models/bge-small-duediligence (gitignored).
+#    Either fetch it, or — if it arrived some other way — just verify it
+#    against the manifest committed from the training machine.
+python scripts/transfer_checkpoint.py pull --repo-id <user>/bge-small-duediligence
+python scripts/transfer_checkpoint.py verify          # no Hub, no token
 # 2. build its index — the baseline index is untouched
 DUEDILIGENCE_CONFIG_PROFILE=finetuned python scripts/build_index.py \
   --recreate --batch-size 64

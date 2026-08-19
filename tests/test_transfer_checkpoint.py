@@ -15,6 +15,7 @@ than a restatement of whatever arrived.
 """
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import json
 import sys
@@ -262,3 +263,105 @@ class TestPull:
         ])
 
         assert script.pull(args, download=lambda **kwargs: None) == 1
+
+
+class TestManifestWithoutTheHub:
+    """The Hub is a courier, and a courier is not always needed.
+
+    When the weights have already reached the serving machine by some other
+    route, the only thing still missing is the digest manifest — and that is
+    computable from the checkpoint on the training machine with no upload,
+    no token, and no repository. The evidence is identical either way: the
+    digests are taken from the trained files on the machine that trained them
+    and travel by git, which is what ties them to the losses in the training
+    report. What is lost is only the ability to re-download, which is why the
+    manifest records no repo and says so rather than leaving a null that
+    reads like a failed upload.
+    """
+
+    def test_it_writes_a_manifest_with_no_repository_and_no_token(
+        self, script, checkpoint, report, tmp_path
+    ):
+        out = tmp_path / "checkpoint.json"
+        args = argparse.Namespace(
+            checkpoint=str(checkpoint), manifest=str(out), report=str(report)
+        )
+        assert script.manifest(args) == 0
+        written = json.loads(out.read_text())
+        assert written["repo_id"] is None
+        assert written["transport"] == "out-of-band"
+
+    def test_the_digests_match_what_the_hub_path_would_have_written(
+        self, script, checkpoint, report, tmp_path
+    ):
+        out = tmp_path / "checkpoint.json"
+        script.manifest(argparse.Namespace(
+            checkpoint=str(checkpoint), manifest=str(out), report=str(report)
+        ))
+        local = json.loads(out.read_text())
+        hosted = script.build_manifest(
+            checkpoint, repo_id="u/m", private=True, revision=None, report_path=report
+        )
+        assert local["files"] == hosted["files"]
+
+    def test_it_carries_the_same_provenance_as_the_hub_path(
+        self, script, checkpoint, report, tmp_path
+    ):
+        out = tmp_path / "checkpoint.json"
+        script.manifest(argparse.Namespace(
+            checkpoint=str(checkpoint), manifest=str(out), report=str(report)
+        ))
+        written = json.loads(out.read_text())
+        assert written["trained_on"] == "cuda"
+        assert written["final_eval_loss"] == 0.5198092460632324
+
+    def test_it_refuses_a_directory_that_is_not_a_checkpoint(
+        self, script, report, tmp_path
+    ):
+        (tmp_path / "empty").mkdir()
+        out = tmp_path / "checkpoint.json"
+        code = script.manifest(argparse.Namespace(
+            checkpoint=str(tmp_path / "empty"), manifest=str(out), report=str(report)
+        ))
+        assert code == 1
+        assert not out.exists()
+
+
+class TestVerifyLocalWeights:
+    """The serving side of the out-of-band route.
+
+    ``pull`` verifies weights it just downloaded. When the weights arrived by
+    another channel there is nothing to download, but the same check still
+    has to run — and it has to fail loudly when the manifest is absent, since
+    "nothing to compare against" is exactly the state that would otherwise be
+    reported as verified.
+    """
+
+    def _manifest_file(self, script, checkpoint, report, tmp_path):
+        path = tmp_path / "checkpoint.json"
+        script.manifest(argparse.Namespace(
+            checkpoint=str(checkpoint), manifest=str(path), report=str(report)
+        ))
+        return path
+
+    def test_weights_matching_the_committed_manifest_verify(
+        self, script, checkpoint, report, tmp_path
+    ):
+        path = self._manifest_file(script, checkpoint, report, tmp_path)
+        assert script.verify(argparse.Namespace(
+            checkpoint=str(checkpoint), manifest=str(path)
+        )) == 0
+
+    def test_a_changed_weight_file_fails(self, script, checkpoint, report, tmp_path):
+        path = self._manifest_file(script, checkpoint, report, tmp_path)
+        (checkpoint / "model.safetensors").write_bytes(b"different")
+        assert script.verify(argparse.Namespace(
+            checkpoint=str(checkpoint), manifest=str(path)
+        )) == 1
+
+    def test_a_missing_manifest_fails_rather_than_passing_vacuously(
+        self, script, checkpoint, tmp_path
+    ):
+        assert script.verify(argparse.Namespace(
+            checkpoint=str(checkpoint), manifest=str(tmp_path / "absent.json")
+        )) == 1
