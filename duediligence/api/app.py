@@ -103,7 +103,7 @@ PipelineDep = Annotated[Any, Depends(get_pipeline)]
 
 
 def _served_identity(request: Request) -> dict[str, Any]:
-    """What this process is actually serving with: model, index, profile.
+    """What this process is actually serving with: model, index, profile, backend.
 
     An embedding model and its index are a matched pair, and a container
     holding the wrong one fails silently — cosine similarity across two
@@ -115,16 +115,17 @@ def _served_identity(request: Request) -> dict[str, Any]:
 
     Never raises. Liveness must answer before the pipeline finishes
     loading, so an absent pipeline reports nulls rather than an error —
-    with the same three keys, so a caller parsing this never has to branch
+    with the same four keys, so a caller parsing this never has to branch
     on whether the field it wants is present.
     """
     pipeline = getattr(request.app.state, "pipeline", None)
     if pipeline is None:
-        return {"model": None, "index": None, "profile": None}
+        return {"model": None, "index": None, "profile": None, "backend": None}
     return {
         "model": pipeline.model_name,
         "index": pipeline.index_name,
         "profile": pipeline.profile,
+        "backend": pipeline.backend,
     }
 
 

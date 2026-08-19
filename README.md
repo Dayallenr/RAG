@@ -277,6 +277,90 @@ no weights costs the claim — is in the **[model card](docs/model-card.md)**.
 
 ---
 
+## Inference optimisation: 3.4x faster per query, and free where it ships
+
+The fine-tuned bi-encoder was exported to ONNX and dynamically quantised to
+INT8, then measured on both axes rather than one: what the optimisation saves,
+and what it costs in retrieval quality. Both backends run the same weights and
+are selected by one environment variable —
+`DUEDILIGENCE_EMBEDDING_BACKEND=onnx-int8` — with no caller change anywhere
+(`duediligence/index/embed.py` holds the query prefix, the normalization and
+the dimension assertion, and a backend only turns text into vectors).
+
+101 questions against the fine-tuned index, `results/onnx/report.json`. `Δ dense`
+is the raw k-NN path; `Δ served` is the pipeline this project actually deploys
+(RRF + cross-encoder rerank):
+
+| arm | ms/query | p95 | corpus texts/s | on disk | Δ dense recall@10 | Δ served recall@10 | identical dense lists |
+|---|---|---|---|---|---|---|---|
+| PyTorch (MPS) | 10.3 | 17.0 | 273.2 | 133.5 MB | — | — | — |
+| PyTorch (CPU) | 12.6 | 14.8 | 85.2 | 133.5 MB | +0.000 | +0.000 | 101/101 |
+| ONNX fp32 (CPU) | 6.3 | 7.5 | 31.0 | 133.1 MB | +0.000 | +0.000 | 101/101 |
+| **ONNX INT8 (CPU)** | **3.0** | **3.7** | 43.2 | **34.0 MB** | +0.000 | **+0.000** | **0/101** |
+
+Four things in that table are worth stating plainly rather than letting the
+best row speak for itself.
+
+**The speedup is a runtime win, not a hardware artefact.** That is what the
+`torch:cpu` arm is for: PyTorch on CPU is 1.22x *slower* per query than on MPS,
+so ONNX's 1.63x and INT8's 3.44x are not "CPU beats MPS at batch 1". INT8's p95
+falls from 17.0 ms to 3.7 ms — the tail tightens more than the mean, which is
+the part a latency SLO feels.
+
+**It is a serving-path optimisation, and the batch direction is the opposite.**
+On corpus throughput INT8 manages 43.2 texts/s against PyTorch's 273.2 on MPS —
+and against PyTorch's own 85.2 on CPU, so it loses even the like-for-like
+comparison. Re-embedding the 38,483-chunk corpus with it would take ~6.3x
+longer than with PyTorch on MPS. The quantised model is therefore deployed as a
+*query* encoder against an index the fp32 model built, which is what these
+recall figures measure; re-embedding the corpus with a quantised model is a
+different deployment and was not run.
+
+**"No change in recall@10" is not "no change".** INT8's vectors differ from the
+fp32 ones (mean cosine 0.9954, minimum 0.9912) and the dense top-20 lists
+differ on **all 101 questions**. The metrics barely move anyway: recall@1, @5
+and @10 are identical, recall@20 is −0.005 and MRR −0.0005. That −0.005 is one
+*label* of a multi-label question, not one question — `hit_rate@20` is
+unchanged, and the only k at which a whole question flips from hit to miss is
+k=3 (`hit_rate@3` 0.416 → 0.406). On the 30-question held-out split the same
+backend costs −0.033 dense recall@10 and *gains* +0.033 dense recall@1
+(`results/onnx/test-split.json`) — one question each way, which is what one
+question is worth on thirty. Quoting either of those alone would be picking a
+split and a metric.
+
+**Through the pipeline that ships, none of it reaches the user.** With RRF and
+the cross-encoder in place, INT8 scores **+0.000 on every metric** and returns
+**identical reranked lists on all 101 questions** — and on all 30 of the
+held-out split. That is the same structural reason the fine-tune's +0.233 does
+not reach users: at dense weight 0.25 and candidate depth 50 the fused pool is
+BM25's candidate set, so the bi-encoder reorders a pool whose membership it
+never changes, and the cross-encoder discards the order. Here that arithmetic
+works in the optimisation's favour — the quantisation is free precisely because
+the served pipeline is insensitive to exactly what quantisation perturbs.
+
+The fp32 export is the control that makes the INT8 row readable: it reproduces
+PyTorch's rankings **exactly**, on all 101 questions, so anything INT8 changes
+is quantisation and not the export. That is checked at export time too —
+`export_onnx` re-scores the graph against the PyTorch model at three batch
+shapes including one filling the 512-token window, and refuses to keep an
+export that disagrees, because `torch.onnx.export` traces one concrete forward
+pass and transformers' attention path has data-dependent branches that could
+bake a sequence length into the graph.
+
+```bash
+python scripts/export_onnx.py --profile finetuned      # ~130MB fp32 + 34MB INT8, gitignored
+python scripts/benchmark_onnx.py --profile finetuned   # writes results/onnx/report.json
+DUEDILIGENCE_EMBEDDING_BACKEND=onnx-int8 uvicorn duediligence.api.app:app --factory
+```
+
+`/healthz` and `/readyz` report the backend actually loaded alongside the model
+and index. Not because users would notice INT8 — measured above, they would
+not — but because a container running different arithmetic on the same weights
+should be identifiable from outside rather than inferred from an environment
+variable nobody can read.
+
+---
+
 ## Structured routing: the exact-answer path
 
 A deterministic rule set — not an LLM call — decides whether a question is a
@@ -330,14 +414,16 @@ partial, or a lower bound, it says so.
 | Why the reranked delta is zero: fused pool == BM25's candidates, 30/30 | `results/finetune_delta/rerank_pool.json` | `python scripts/verify_rerank_pool.py` |
 | Fine-tuned index holds the fine-tuned model's vectors (cos 1.000000 own / 0.486-0.884 other, 10 samples) | `results/index/report.json` | `python scripts/verify_index_parity.py` |
 | Either profile served by env var alone; each arm's `/readyz` names the model and index it loaded; reranked lists identical across arms, un-reranked pools identically populated but differently ordered | `results/serving/profile_check.json` | `python scripts/verify_served_profile.py` |
+| ONNX + INT8 backends: latency, throughput, size, and recall degradation on both the dense and the served path (101 questions, four arms including PyTorch-on-CPU) | `results/onnx/report.json` | `python scripts/export_onnx.py --profile finetuned` then `python scripts/benchmark_onnx.py --profile finetuned` |
+| The same benchmark on the 30-question held-out split (where INT8 costs one dense question at k=10 and gains one at k=1, and still changes nothing served) | `results/onnx/test-split.json` | `... --split test --out results/onnx/test-split.json --run-name onnx-benchmark-test` |
 | Frozen 71/30 development/test split, stratified | `split` field in `data/eval_set.jsonl` | `python scripts/assign_eval_splits.py --dry-run` |
 | 4,776 synthetic training queries, mined into hard-negative triplets, eval-contamination guarded | `data/training/synthetic_queries.jsonl` tracked; the mined splits are regenerable and gitignored, with row samples tracked | `python scripts/generate_synthetic_queries.py` then `python scripts/mine_hard_negatives.py` |
 | Routing + structured exactness **3/3** | `results/routing/report.json` | `python -m duediligence.eval.run_routing_eval` |
 | Kubernetes deployment, probes, Service routing | `results/deployment/k8s_verification.json` | `kind create cluster && kubectl apply -f k8s/` |
 | Both query paths answering, end to end | `docs/assets/demo.cast` | `asciinema rec docs/assets/demo.cast -c ./scripts/demo.sh` |
 | CI green on `main`: lint+unit, integration vs real OpenSearch, image build+boot, kind manifest validation, Terraform validate | [GitHub Actions](https://github.com/Dayallenr/RAG/actions/workflows/ci.yml) | `.github/workflows/ci.yml` |
-| 543 passing tests, ruff clean | — | `pytest -q && ruff check .` |
-| Every eval above also logged to a public tracker: **5,100/5,100 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
+| 617 passing tests, ruff clean | — | `pytest -q && ruff check .` |
+| Every eval above also logged to a public tracker: **5,686/5,686 hosted metrics match `results/`** | `results/tracking/report.json` | `python scripts/verify_wandb_runs.py` |
 
 ### The same numbers, hosted where this repository cannot edit them
 
@@ -357,7 +443,7 @@ project **with no credentials** — the same anonymous read a stranger gets,
 which is also how it establishes the project really is public, since a private
 one returns nothing to an anonymous caller — and compares every hosted metric
 against its report file on disk, using the same flattening that produced the
-hosted keys. **786 of 786 match** across the five runs
+hosted keys. **5,686 of 5,686 match** across the twelve registered runs
 (`results/tracking/report.json`). It exits non-zero if a report is ever
 regenerated without tracking on, which is exactly how a link like this goes
 quietly stale.
@@ -370,7 +456,7 @@ verification only ever cites the newest finished run of each name.
 ### What is *not* on that list, and why that matters
 
 Everything above was produced by running the thing and is backed by a file
-you can open. Three parts of this project are **not** on that list, and the
+you can open. Four parts of this project are **not** on that list, and the
 distinction is deliberate — reading code is not evidence that the code was
 ever executed:
 
@@ -450,6 +536,9 @@ python scripts/verify_index_parity.py
 python scripts/run_finetune_delta.py
 # 5. why the reranked cell is 0.000
 python scripts/verify_rerank_pool.py
+# 6. optional: export that model to ONNX/INT8 and measure what it costs
+python scripts/export_onnx.py --profile finetuned
+python scripts/benchmark_onnx.py --profile finetuned
 ```
 
 Step 4 runs each of the four cells in its own subprocess: this is an 8 GB

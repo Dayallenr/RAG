@@ -82,6 +82,15 @@ RUN_REPORTS: dict[str, str] = {
     "finetune-delta-base-rerank": "results/finetune_delta/base-rerank.json",
     "finetune-delta-finetuned-norerank": "results/finetune_delta/finetuned-norerank.json",
     "finetune-delta-finetuned-rerank": "results/finetune_delta/finetuned-rerank.json",
+    # The ONNX/INT8 inference benchmark (#13). Registered for the same reason
+    # the training run had to be: the verifier only checks run names it knows,
+    # so an unregistered report is indistinguishable from a healthy project.
+    "onnx-benchmark": "results/onnx/report.json",
+    # The same benchmark on the 30-question held-out split. Registered
+    # separately because it is a different measurement, not a slice of the one
+    # above: on 30 questions one question is 0.033 of recall@10, which is what
+    # makes the full-set zero readable as a zero rather than as luck.
+    "onnx-benchmark-test": "results/onnx/test-split.json",
 }
 
 # ``runs(first: 100)`` is not a guess about how many runs exist: the API

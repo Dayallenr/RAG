@@ -26,6 +26,7 @@ use.
 | Headline result | dense recall@10 **0.367 → 0.600** on the held-out test split (**+0.233**) |
 | Result through the shipped pipeline | **+0.000 on every metric** — see [The delta](#the-delta) |
 | Provenance | digest manifest present; 9 of 10 files match, `modules.json` does not — see [Provenance](#provenance-what-ties-these-weights-to-that-run) |
+| Optimised variants | ONNX fp32 (133.1 MB) and ONNX INT8 (34.0 MB, 3.44x faster per query, +0.000 served) — see [Optimised variants](#optimised-variants-onnx-and-int8) |
 
 Both headline numbers are load-bearing and **travel together**. Quoting +0.233
 alone describes a configuration nobody runs; quoting +0.000 alone calls a
@@ -402,6 +403,47 @@ false.
 
 ---
 
+## Optimised variants: ONNX and INT8
+
+The same weights are also served through two other runtimes, selected by
+`DUEDILIGENCE_EMBEDDING_BACKEND` with no caller change. Both are derived
+artifacts, produced by `python scripts/export_onnx.py --profile finetuned` and
+not tracked in git.
+
+| variant | on disk | ms/query (101 questions) | corpus texts/s | Δ dense recall@10 | Δ served recall@10 |
+|---|---|---|---|---|---|
+| PyTorch on MPS, the default | 133.5 MB | 10.3 | 273.2 | — | — |
+| PyTorch on CPU | 133.5 MB | 12.6 | 85.2 | +0.000 | +0.000 |
+| ONNX fp32 (CPU) | 133.1 MB | 6.3 | 31.0 | +0.000 | +0.000 |
+| ONNX INT8 (CPU) | 34.0 MB | 3.0 | 43.2 | +0.000 | +0.000 |
+
+`results/onnx/report.json`. The PyTorch-on-CPU arm is there to separate the
+runtime from the hardware: PyTorch on CPU is *slower* per query than on MPS, so
+ONNX's 1.63x and INT8's 3.44x are wins for the runtime rather than for the
+processor.
+
+**What INT8 changes, and where it stops.** Its vectors sit at mean cosine
+**0.9954** (minimum 0.9912) from the fp32 ones and reorder the dense top-20 on
+**every** question, while recall@1/@5/@10 are unchanged and recall@20 moves
+−0.005 — one label of a multi-label question, with `hit_rate@20` unchanged. On
+the 30-question held-out split it costs −0.033 dense recall@10 and gains +0.033
+dense recall@1: one question each way (`results/onnx/test-split.json`). Through
+the served pipeline — RRF at dense weight 0.25, candidate depth 50, then the
+cross-encoder — it is **+0.000 on every metric with identical reranked lists on
+all 101 questions**, for the same fusion reason [the fine-tune's own gain does
+not reach users](#and-the-shipped-pipelines-number-does-not-move-at-all). The
+served pipeline is insensitive to precisely what quantisation perturbs.
+
+**Where each variant belongs.** INT8 is a serving-path optimisation: 3.44x
+faster on a single query (p95 17.0 → 3.7 ms) and 0.26x the size, but 43.2
+texts/s against PyTorch's 273.2 on MPS and 85.2 on CPU, so it loses batch
+throughput even like-for-like. The corpus is still embedded with PyTorch, and
+the recall figures above measure INT8 as a *query* encoder against an index the
+fp32 model built. Re-embedding the corpus with a quantised model is a different
+deployment and was not measured.
+
+---
+
 ## Reproducing this
 
 Requires the corpus indexed locally (`docker compose -f
@@ -430,6 +472,10 @@ DUEDILIGENCE_CONFIG_PROFILE=finetuned python scripts/build_index.py --recreate
 # 7. the four-run matrix and the comparison
 python scripts/run_finetune_delta.py
 python scripts/verify_rerank_pool.py
+
+# 8. optional: the optimised variants and what they cost
+python scripts/export_onnx.py --profile finetuned
+python scripts/benchmark_onnx.py --profile finetuned
 ```
 
 ## Related documents

@@ -305,3 +305,94 @@ thing to try on the 5070 rather than as a solution. And the constraint is
 written into the script's own docstring, so the next person to read
 `resolve_device()` returning `mps` does not spend an afternoon rediscovering
 it.
+
+## An unchanged metric is not an unchanged result
+
+**What I saw.** I quantised the fine-tuned bi-encoder to INT8, expected to
+pay for it in recall, and got a delta table of zeros: recall@1, @5 and @10
+identical to PyTorch's on all 101 questions. My first reading was "dynamic
+quantisation is free on this corpus", and I nearly wrote that down.
+
+**Cause.** It is not that nothing changed. INT8's query vectors differ from
+the fp32 ones (mean cosine 0.9954, minimum 0.9912) and the dense top-20 result
+lists differ on **101 of 101 questions** — every single one. recall@k only
+asks whether a labelled chunk is inside the top k, so a backend can reorder
+every list it returns and score exactly the same. The metrics were unchanged;
+the results were not, and those are different claims.
+
+**What I changed.** The benchmark now reports, per arm, how many result lists
+are byte-identical to the baseline's alongside the metric deltas, and the
+trade-off sentence it generates states both in one breath. I added recall@20 to
+the reported metrics, because it was the only metric that moved at all — and
+then had to be careful about that one too: **−0.005 is one *label* of a
+multi-label question, not one question.** `hit_rate@20` is identical across all
+three backends, so at k=20 no question flipped from hit to miss at all; the
+only k where one did is k=3 (`hit_rate@3` 0.4158 → 0.4059). I also re-ran the
+same benchmark on the 30-question held-out split, where INT8 costs **−0.033
+dense recall@10** *and gains* **+0.033 dense recall@1** — one question each
+way, which is what one question is worth on thirty. My first write-up of this
+quoted only the −0.033, which is the same split-and-metric picking the
+paragraph was complaining about.
+
+**And the part that matters most, which I nearly did not measure.** All of the
+above is the raw dense path. Through the pipeline this project actually serves
+— RRF at dense weight 0.25, candidate depth 50, then the cross-encoder — INT8
+scores **+0.000 on every metric with identical reranked lists on all 101
+questions**, and on all 30 of the held-out split. Same arithmetic as the
+fine-tune's +0.000: the fused pool is BM25's candidate set, so the bi-encoder
+reorders a pool whose membership it never changes and the reranker discards the
+order. There it destroyed a real gain; here it absorbs a real perturbation.
+Quoting the dense degradation alone would have described a configuration nobody
+runs.
+
+`results/onnx/report.json` and `results/onnx/test-split.json`.
+
+## The optimised backend is faster per query and much slower per batch
+
+**What I saw.** The first fair timing run had ONNX fp32 at 30 texts/s against
+PyTorch's 282 on the corpus sample — the *optimised* runtime, nine times
+slower. My first instinct was that the export was broken.
+
+**Cause.** Two separate things, and the first one was my bug. I was feeding
+the ONNX session texts in arrival order, so every batch padded up to its
+longest member; `sentence_transformers.encode` sorts by length first. Fixing
+that — `sorted_batches` in `duediligence/index/onnx_embed.py`, which returns
+indices so results scatter back into the caller's order — is worth **1.69x**
+on its own: 256 real chunks at batch 32 encode at 13.6 texts/s in arrival
+order and 22.9 sorted (an ad-hoc timing on this machine, no report file
+behind it). What remains is real and not a bug: the ONNX
+backends run on CPU and the PyTorch baseline runs on MPS, so on batch
+throughput PyTorch wins by 6.3x even against INT8 — and by 2.0x on CPU against
+CPU, which is the comparison that removes the hardware from the question. On
+single-query encoding, one short text with no batch to fill, INT8 wins by
+3.44x and its p95 falls from 17.0 ms to 3.7 ms. That direction is a runtime
+win rather than a hardware one: the benchmark measures a `torch:cpu` arm for
+exactly this reason, and PyTorch on CPU is 1.22x *slower* per query than on
+MPS.
+
+**Consequence.** The optimisation is for the serving path, not the indexing
+path. Re-embedding the corpus with INT8 would take roughly 6.3x longer than
+with PyTorch on this machine, so the quantised model is deployed as a query
+encoder against an index the fp32 model built — which is what
+`results/onnx/report.json` measures, and it says so rather than leaving a
+reader to assume both sides were quantised.
+
+## `optimum` would have quietly downgraded transformers
+
+**What I saw.** The obvious way to get ONNX out of a sentence-transformers
+model is `SentenceTransformer(..., backend="onnx")`, which needs
+`optimum[onnxruntime]`. `pip install --dry-run` resolved it to *downgrading*
+`transformers` from 5.15.0 to 4.57.6 and `huggingface_hub` with it.
+
+**Cause.** `optimum` 2.x still pins `transformers>=4.29` with an upper bound
+below 5, and pip solved the conflict by moving the installed package rather
+than failing.
+
+**What I changed.** Skipped `optimum` entirely. The export is
+`torch.onnx.export` over a small wrapper module that reproduces the
+checkpoint's own `Transformer -> CLS pooling -> Normalize` stack, and the
+quantisation is `onnxruntime.quantization.quantize_dynamic` — `onnx` and
+`onnxruntime` install with **no downgrades**. Doing it by hand also made the
+pooling assumption explicit and checkable (bge-small pools on CLS, not mean;
+`export_onnx` refuses a checkpoint that does not) instead of trusting a
+converter to infer it.

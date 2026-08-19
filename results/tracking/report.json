@@ -7,8 +7,8 @@
   "access_note": "public \u2014 anyone can view it, nobody else can write to it",
   "accepts_public_writes": false,
   "tolerance": 1e-09,
-  "metrics_compared": 5100,
-  "metrics_matched": 5100,
+  "metrics_compared": 5686,
+  "metrics_matched": 5686,
   "verified": true,
   "runs": [
     {
@@ -66,9 +66,9 @@
     {
       "display_name": "groundedness-eval",
       "report": "results/generation/report.json",
-      "run_id": "by3533l3",
-      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/by3533l3",
-      "created_at": "2026-08-18T18:13:01Z",
+      "run_id": "h663e7y4",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/h663e7y4",
+      "created_at": "2026-08-19T05:08:28Z",
       "compared": 14,
       "matched": 14,
       "mismatched": [],
@@ -140,8 +140,34 @@
       "missing_from_hosted": [],
       "only_in_hosted": [],
       "ok": true
+    },
+    {
+      "display_name": "onnx-benchmark",
+      "report": "results/onnx/report.json",
+      "run_id": "c6lwzio4",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/c6lwzio4",
+      "created_at": "2026-08-19T06:02:53Z",
+      "compared": 293,
+      "matched": 293,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
+    },
+    {
+      "display_name": "onnx-benchmark-test",
+      "report": "results/onnx/test-split.json",
+      "run_id": "2phybr70",
+      "run_url": "https://wandb.ai/dayallenr30-university-of-california/duediligence-rag/runs/2phybr70",
+      "created_at": "2026-08-19T06:04:40Z",
+      "compared": 293,
+      "matched": 293,
+      "mismatched": [],
+      "missing_from_hosted": [],
+      "only_in_hosted": [],
+      "ok": true
     }
   ],
-  "runs_on_server": 23,
+  "runs_on_server": 31,
   "caveat": "Metrics are compared key for key against the report files in results/, using the same flattening that produced the hosted keys. The comparison says the hosted runs and the local reports agree; it does not re-derive the numbers from the corpus, and it inherits every caveat those reports state \u2014 most importantly that relevance labels are a floor, not an estimate."
 }

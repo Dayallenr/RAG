@@ -1,0 +1,435 @@
+{
+  "model": "models/bge-small-duediligence",
+  "profile": "finetuned",
+  "index": "duediligence-chunks-finetuned",
+  "index_built_with_backend": "torch",
+  "eval_set": "data/eval_set.jsonl",
+  "split": "test",
+  "queries": 30,
+  "k": 20,
+  "candidate_k": 50,
+  "baseline_arm": "torch",
+  "export": {
+    "model": "models/bge-small-duediligence",
+    "export_dir": "models/onnx/bge-small-duediligence",
+    "opset": 17,
+    "max_seq_length": 512,
+    "variants": {
+      "onnx": {
+        "path": "models/onnx/bge-small-duediligence/model.onnx",
+        "bytes": 133073684,
+        "parity": {
+          "max_abs_diff_vs_torch": 2.752058207988739e-07,
+          "min_cosine_vs_torch": 0.9999998807907104,
+          "probe_batches": 3
+        }
+      },
+      "onnx-int8": {
+        "path": "models/onnx/bge-small-duediligence/model_int8.onnx",
+        "bytes": 34015261,
+        "parity": {
+          "max_abs_diff_vs_torch": 0.02164115011692047,
+          "min_cosine_vs_torch": 0.9915434718132019,
+          "probe_batches": 3
+        }
+      }
+    }
+  },
+  "backends": {
+    "torch": {
+      "backend": "torch",
+      "device": "mps",
+      "loaded": "torch:mps",
+      "size_bytes": 133462128,
+      "query_latency_ms": {
+        "mean": 12.044836233447617,
+        "p50": 11.802333989180624,
+        "p95": 16.46516699111089,
+        "queries": 30
+      },
+      "passage_throughput": {
+        "texts": 512,
+        "seconds": 1.8472722920123488,
+        "texts_per_second": 277.16541963732186,
+        "batch_size": 32
+      },
+      "contract": {
+        "dimension": 384,
+        "max_norm_error": 5.960464477539063e-08,
+        "query_passage_max_cosine": 0.985520601272583,
+        "query_and_passage_encoding_distinct": true
+      },
+      "retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@3": 0.5333333333333333,
+        "hit_rate@3": 0.5333333333333333,
+        "ndcg@3": 0.43848829226190955,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "recall@20": 0.6666666666666666,
+        "hit_rate@20": 0.6666666666666666,
+        "ndcg@20": 0.48319238736448594,
+        "mrr": 0.4256691919191919,
+        "map": 0.4256691919191919
+      },
+      "reranked_latency_ms_mean": 340.95473749912344,
+      "reranked_retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@3": 0.43333333333333335,
+        "hit_rate@3": 0.43333333333333335,
+        "ndcg@3": 0.384123967142861,
+        "recall@5": 0.5666666666666667,
+        "hit_rate@5": 0.5666666666666667,
+        "ndcg@5": 0.43716513313542826,
+        "recall@10": 0.6666666666666666,
+        "hit_rate@10": 0.6666666666666666,
+        "ndcg@10": 0.467946071645935,
+        "recall@20": 0.7666666666666667,
+        "hit_rate@20": 0.7666666666666667,
+        "ndcg@20": 0.4912791062963394,
+        "mrr": 0.41221560846560845,
+        "map": 0.41221560846560845
+      },
+      "query_latency_speedup_vs_torch": 1.0,
+      "throughput_speedup_vs_torch": 1.0,
+      "size_ratio_vs_torch": 1.0,
+      "retrieval_delta_vs_torch": {
+        "recall@1": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "recall@20": 0.0,
+        "mrr": 0.0,
+        "ndcg@10": 0.0
+      },
+      "vector_fidelity_vs_torch": {
+        "query": {
+          "mean_cosine": 1.0,
+          "min_cosine": 0.9999998807907104
+        },
+        "passage": {
+          "mean_cosine": 1.0,
+          "min_cosine": 0.9999998211860657
+        }
+      },
+      "identical_result_lists_vs_torch": 30,
+      "reranked_delta_vs_torch": {
+        "recall@1": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "recall@20": 0.0,
+        "mrr": 0.0,
+        "ndcg@10": 0.0
+      },
+      "identical_reranked_lists_vs_torch": 30
+    },
+    "torch:cpu": {
+      "backend": "torch",
+      "device": "cpu",
+      "loaded": "torch:cpu",
+      "size_bytes": 133462128,
+      "query_latency_ms": {
+        "mean": 15.604988844521964,
+        "p50": 15.874208009336144,
+        "p95": 16.662125010043383,
+        "queries": 30
+      },
+      "passage_throughput": {
+        "texts": 512,
+        "seconds": 6.298469749977812,
+        "texts_per_second": 81.28958625256614,
+        "batch_size": 32
+      },
+      "contract": {
+        "dimension": 384,
+        "max_norm_error": 1.1920928955078125e-07,
+        "query_passage_max_cosine": 0.985520601272583,
+        "query_and_passage_encoding_distinct": true
+      },
+      "retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@3": 0.5333333333333333,
+        "hit_rate@3": 0.5333333333333333,
+        "ndcg@3": 0.43848829226190955,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "recall@20": 0.6666666666666666,
+        "hit_rate@20": 0.6666666666666666,
+        "ndcg@20": 0.48319238736448594,
+        "mrr": 0.4256691919191919,
+        "map": 0.4256691919191919
+      },
+      "reranked_latency_ms_mean": 334.4842555350624,
+      "reranked_retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@3": 0.43333333333333335,
+        "hit_rate@3": 0.43333333333333335,
+        "ndcg@3": 0.384123967142861,
+        "recall@5": 0.5666666666666667,
+        "hit_rate@5": 0.5666666666666667,
+        "ndcg@5": 0.43716513313542826,
+        "recall@10": 0.6666666666666666,
+        "hit_rate@10": 0.6666666666666666,
+        "ndcg@10": 0.467946071645935,
+        "recall@20": 0.7666666666666667,
+        "hit_rate@20": 0.7666666666666667,
+        "ndcg@20": 0.4912791062963394,
+        "mrr": 0.41221560846560845,
+        "map": 0.41221560846560845
+      },
+      "query_latency_speedup_vs_torch": 0.772,
+      "throughput_speedup_vs_torch": 0.293,
+      "size_ratio_vs_torch": 1.0,
+      "retrieval_delta_vs_torch": {
+        "recall@1": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "recall@20": 0.0,
+        "mrr": 0.0,
+        "ndcg@10": 0.0
+      },
+      "vector_fidelity_vs_torch": {
+        "query": {
+          "mean_cosine": 1.0,
+          "min_cosine": 0.9999999403953552
+        },
+        "passage": {
+          "mean_cosine": 1.0,
+          "min_cosine": 0.9999998807907104
+        }
+      },
+      "identical_result_lists_vs_torch": 30,
+      "reranked_delta_vs_torch": {
+        "recall@1": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "recall@20": 0.0,
+        "mrr": 0.0,
+        "ndcg@10": 0.0
+      },
+      "identical_reranked_lists_vs_torch": 30
+    },
+    "onnx": {
+      "backend": "onnx",
+      "device": null,
+      "loaded": "onnx:models/onnx/bge-small-duediligence/model.onnx",
+      "size_bytes": 133073684,
+      "query_latency_ms": {
+        "mean": 6.314115164180596,
+        "p50": 6.120916979853064,
+        "p95": 7.114792009815574,
+        "queries": 30
+      },
+      "passage_throughput": {
+        "texts": 512,
+        "seconds": 16.682864832982887,
+        "texts_per_second": 30.690172528866235,
+        "batch_size": 32
+      },
+      "contract": {
+        "dimension": 384,
+        "max_norm_error": 3.5762786865234375e-07,
+        "query_passage_max_cosine": 0.985520601272583,
+        "query_and_passage_encoding_distinct": true
+      },
+      "retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@3": 0.5333333333333333,
+        "hit_rate@3": 0.5333333333333333,
+        "ndcg@3": 0.43848829226190955,
+        "recall@5": 0.6,
+        "hit_rate@5": 0.6,
+        "ndcg@5": 0.4657392711055074,
+        "recall@10": 0.6,
+        "hit_rate@10": 0.6,
+        "ndcg@10": 0.4657392711055074,
+        "recall@20": 0.6666666666666666,
+        "hit_rate@20": 0.6666666666666666,
+        "ndcg@20": 0.48319238736448594,
+        "mrr": 0.4256691919191919,
+        "map": 0.4256691919191919
+      },
+      "reranked_latency_ms_mean": 337.272368031942,
+      "reranked_retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@3": 0.43333333333333335,
+        "hit_rate@3": 0.43333333333333335,
+        "ndcg@3": 0.384123967142861,
+        "recall@5": 0.5666666666666667,
+        "hit_rate@5": 0.5666666666666667,
+        "ndcg@5": 0.43716513313542826,
+        "recall@10": 0.6666666666666666,
+        "hit_rate@10": 0.6666666666666666,
+        "ndcg@10": 0.467946071645935,
+        "recall@20": 0.7666666666666667,
+        "hit_rate@20": 0.7666666666666667,
+        "ndcg@20": 0.4912791062963394,
+        "mrr": 0.41221560846560845,
+        "map": 0.41221560846560845
+      },
+      "query_latency_speedup_vs_torch": 1.908,
+      "throughput_speedup_vs_torch": 0.111,
+      "size_ratio_vs_torch": 0.997,
+      "retrieval_delta_vs_torch": {
+        "recall@1": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "recall@20": 0.0,
+        "mrr": 0.0,
+        "ndcg@10": 0.0
+      },
+      "vector_fidelity_vs_torch": {
+        "query": {
+          "mean_cosine": 1.0,
+          "min_cosine": 0.9999995231628418
+        },
+        "passage": {
+          "mean_cosine": 1.0,
+          "min_cosine": 0.9999996423721313
+        }
+      },
+      "identical_result_lists_vs_torch": 30,
+      "reranked_delta_vs_torch": {
+        "recall@1": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "recall@20": 0.0,
+        "mrr": 0.0,
+        "ndcg@10": 0.0
+      },
+      "identical_reranked_lists_vs_torch": 30
+    },
+    "onnx-int8": {
+      "backend": "onnx-int8",
+      "device": null,
+      "loaded": "onnx-int8:models/onnx/bge-small-duediligence/model_int8.onnx",
+      "size_bytes": 34015261,
+      "query_latency_ms": {
+        "mean": 3.0181653040926903,
+        "p50": 2.9252920066937804,
+        "p95": 3.489083028398454,
+        "queries": 30
+      },
+      "passage_throughput": {
+        "texts": 512,
+        "seconds": 10.76049995800713,
+        "texts_per_second": 47.581432275273535,
+        "batch_size": 32
+      },
+      "contract": {
+        "dimension": 384,
+        "max_norm_error": 3.5762786865234375e-07,
+        "query_passage_max_cosine": 0.9803584218025208,
+        "query_and_passage_encoding_distinct": true
+      },
+      "retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3333333333333333,
+        "hit_rate@1": 0.3333333333333333,
+        "ndcg@1": 0.3333333333333333,
+        "recall@3": 0.5,
+        "hit_rate@3": 0.5,
+        "ndcg@3": 0.43412396714286106,
+        "recall@5": 0.5666666666666667,
+        "hit_rate@5": 0.5666666666666667,
+        "ndcg@5": 0.45991415429183047,
+        "recall@10": 0.5666666666666667,
+        "hit_rate@10": 0.5666666666666667,
+        "ndcg@10": 0.45991415429183047,
+        "recall@20": 0.6333333333333333,
+        "hit_rate@20": 0.6333333333333333,
+        "ndcg@20": 0.477367270550809,
+        "mrr": 0.42955808080808083,
+        "map": 0.42955808080808083
+      },
+      "reranked_latency_ms_mean": 335.6809861337145,
+      "reranked_retrieval": {
+        "queries": 30.0,
+        "recall@1": 0.3,
+        "hit_rate@1": 0.3,
+        "ndcg@1": 0.3,
+        "recall@3": 0.43333333333333335,
+        "hit_rate@3": 0.43333333333333335,
+        "ndcg@3": 0.384123967142861,
+        "recall@5": 0.5666666666666667,
+        "hit_rate@5": 0.5666666666666667,
+        "ndcg@5": 0.43716513313542826,
+        "recall@10": 0.6666666666666666,
+        "hit_rate@10": 0.6666666666666666,
+        "ndcg@10": 0.467946071645935,
+        "recall@20": 0.7666666666666667,
+        "hit_rate@20": 0.7666666666666667,
+        "ndcg@20": 0.4912791062963394,
+        "mrr": 0.41221560846560845,
+        "map": 0.41221560846560845
+      },
+      "query_latency_speedup_vs_torch": 3.991,
+      "throughput_speedup_vs_torch": 0.172,
+      "size_ratio_vs_torch": 0.255,
+      "retrieval_delta_vs_torch": {
+        "recall@1": 0.0333,
+        "recall@5": -0.0333,
+        "recall@10": -0.0333,
+        "recall@20": -0.0333,
+        "mrr": 0.0039,
+        "ndcg@10": -0.0058
+      },
+      "vector_fidelity_vs_torch": {
+        "query": {
+          "mean_cosine": 0.9952985048294067,
+          "min_cosine": 0.9935599565505981
+        },
+        "passage": {
+          "mean_cosine": 0.9955114126205444,
+          "min_cosine": 0.9893942475318909
+        }
+      },
+      "identical_result_lists_vs_torch": 0,
+      "reranked_delta_vs_torch": {
+        "recall@1": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "recall@20": 0.0,
+        "mrr": 0.0,
+        "ndcg@10": 0.0
+      },
+      "identical_reranked_lists_vs_torch": 30
+    }
+  },
+  "trade_off": [
+    "torch:cpu: single-query encoding 1.30x slower, 1.00x the on-disk size, for no change in dense recall@10. Dense result lists are identical on all 30 questions. Through the served pipeline (RRF + cross-encoder) it is +0.000 recall@10 with 30 of 30 reranked lists identical.",
+    "onnx: single-query encoding 1.91x faster, 1.00x the on-disk size, for no change in dense recall@10. Dense result lists are identical on all 30 questions. Through the served pipeline (RRF + cross-encoder) it is +0.000 recall@10 with 30 of 30 reranked lists identical.",
+    "onnx-int8: single-query encoding 3.99x faster, 0.26x the on-disk size, for -0.033 dense recall@10. The dense top-20 lists differ on 30 of 30 questions. Through the served pipeline (RRF + cross-encoder) it is +0.000 recall@10 with 30 of 30 reranked lists identical."
+  ],
+  "caveats": [
+    "Latencies are machine-dependent (8 GB Mac, CPU-contention-sensitive); quote the ratios between arms, not the absolute milliseconds.",
+    "The ONNX backends run on CPU. The PyTorch baseline runs on the fastest local device, which here is MPS, so a torch:cpu arm is measured alongside it \u2014 otherwise 'ONNX is faster' and 'CPU is faster at batch 1' would be the same number.",
+    "Recall is measured with each backend as the query encoder against an index built by the PyTorch model. Re-embedding the corpus with a quantised model was not measured.",
+    "Relevance labels are a lower bound (mean 1.02 labelled chunks per question), so absolute recall understates every arm equally; the delta between arms is the figure this report is for."
+  ]
+}

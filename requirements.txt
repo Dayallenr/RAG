@@ -17,6 +17,16 @@ sentence-transformers>=3.2.0
 torch>=2.0.0
 datasets>=3.0.0
 
+# Inference optimisation: export the bi-encoder to ONNX and quantise it to
+# INT8 (duediligence/index/onnx_embed.py, #13). Deliberately not
+# `optimum[onnxruntime]`, whose dependency solve pins transformers back to
+# 4.x — the export here is torch.onnx.export plus onnxruntime's own dynamic
+# quantiser, which needs neither. The ONNX backends are opt-in
+# (DUEDILIGENCE_EMBEDDING_BACKEND); nothing imports these unless one is
+# selected.
+onnx>=1.17.0
+onnxruntime>=1.19.0
+
 # Generation + chart-image understanding — Gemini's free API tier
 # (verified free, no card required, multimodal), not a paid provider.
 google-genai>=1.0.0

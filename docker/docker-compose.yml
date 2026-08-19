@@ -87,6 +87,13 @@ services:
       # is byte-for-byte today's behaviour.
       #     DUEDILIGENCE_CONFIG_PROFILE=finetuned docker compose ... up -d api
       - DUEDILIGENCE_CONFIG_PROFILE=${DUEDILIGENCE_CONFIG_PROFILE:-}
+      # Execution backend for the same weights: "torch" (default), "onnx" or
+      # "onnx-int8". Like the profile above this needs no rebuilt image, but
+      # unlike it the ONNX graph is a derived artifact that is not in the
+      # image either — it resolves under the models mount below, so a
+      # container asking for it without one fails to load, loudly.
+      # What it buys and what it costs: results/onnx/report.json.
+      - DUEDILIGENCE_EMBEDDING_BACKEND=${DUEDILIGENCE_EMBEDDING_BACKEND:-}
     ports:
       - "8000:8000"
     volumes:

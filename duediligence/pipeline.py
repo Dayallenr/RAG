@@ -97,6 +97,21 @@ class DueDiligencePipeline:
         """The config profile applied at load time, or None for the base."""
         return self.config.profile
 
+    @property
+    def backend(self) -> str:
+        """The execution backend the embedder actually loaded.
+
+        Reported for the same reason as the model: the ONNX INT8 backend runs
+        the same weights through different arithmetic, and on the raw dense
+        path it reorders every result list (0 of 101 identical,
+        results/onnx/report.json). Through this pipeline it is a measured
+        no-op — +0.000 on every metric, 101/101 identical reranked lists —
+        but a container running different arithmetic on the same weights
+        should still be identifiable from outside rather than inferred from
+        an environment variable nobody can read.
+        """
+        return getattr(self.embedder, "backend", "torch")
+
     def retrieve(
         self, question: str, *, k: int = _CONTEXT_PASSAGES, filters: dict[str, Any] | None = None
     ) -> list[dict[str, Any]]:

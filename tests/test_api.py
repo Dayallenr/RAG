@@ -21,10 +21,12 @@ class StubPipeline:
         model_name="BAAI/bge-small-en-v1.5",
         index_name="duediligence-chunks",
         profile=None,
+        backend="torch",
     ):
         self.index_name = index_name
         self.model_name = model_name
         self.profile = profile
+        self.backend = backend
         self.calls = []
         self._raises = raises
         self.client = self  # readyz calls pipeline.client.indices.exists
@@ -111,7 +113,13 @@ class TestOps:
         app.state.pipeline = None
         response = TestClient(app).get("/healthz")
         assert response.status_code == 200
-        assert response.json() == {"status": "ok", "model": None, "index": None, "profile": None}
+        assert response.json() == {
+            "status": "ok",
+            "model": None,
+            "index": None,
+            "profile": None,
+            "backend": None,
+        }
 
     def test_readyz_reports_the_model_and_index_together(self):
         """Reported apart they are two facts; reported together they are the
@@ -127,6 +135,14 @@ class TestOps:
         assert body["model"] == "models/bge-small-duediligence"
         assert body["index"] == "duediligence-chunks-finetuned"
         assert body["profile"] == "finetuned"
+        assert body["backend"] == "torch"
+
+    def test_readyz_reports_an_optimised_backend_rather_than_the_default(self):
+        """A container quantised to INT8 answers slightly differently from one
+        that is not (#13). Which runtime is loaded is therefore part of what a
+        deployment has to be able to state about itself."""
+        client, _ = make_client(StubPipeline(backend="onnx-int8"))
+        assert client.get("/readyz").json()["backend"] == "onnx-int8"
 
     def test_no_profile_reports_null_rather_than_a_name(self):
         """Serving with no profile set must look exactly as it does today."""
