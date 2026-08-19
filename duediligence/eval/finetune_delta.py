@@ -333,7 +333,37 @@ def _training_run(
     }
 
 
+def _check_arms_scored_the_same_questions(
+    base_runs: dict, finetuned_runs: dict, split: str
+) -> None:
+    """Both arms must hold the same questions in the split being subtracted.
+
+    A row's split label lives in the eval set, so two runs of different
+    vintage can disagree about which questions are held out while both still
+    cover all 101. The BM25 check would pass — it compares the whole run —
+    and the delta would silently compare one arm's 30 questions against a
+    different 30. There is no later check that could catch that, so it raises
+    here.
+    """
+    base_ids = {row["eval_id"] for row in rows_for_split(base_runs["no_rerank"], split)}
+    candidate_ids = {
+        row["eval_id"] for row in rows_for_split(finetuned_runs["no_rerank"], split)
+    }
+    if base_ids != candidate_ids:
+        only_base = sorted(base_ids - candidate_ids)
+        only_candidate = sorted(candidate_ids - base_ids)
+        raise ValueError(
+            f"the two arms hold different questions in the {split!r} split — "
+            f"{len(only_base)} only in base ({only_base[:5]}), "
+            f"{len(only_candidate)} only in fine-tuned ({only_candidate[:5]}). "
+            "A delta across two different populations is not a delta; re-run "
+            "both arms against the same eval set."
+        )
+
+
 def _split_comparison(base_runs: dict, finetuned_runs: dict, split: str) -> dict:
+    _check_arms_scored_the_same_questions(base_runs, finetuned_runs, split)
+
     retrievers: dict[str, dict] = {}
     by_chunk_type: dict[str, dict] = {}
     by_question_type: dict[str, dict] = {}

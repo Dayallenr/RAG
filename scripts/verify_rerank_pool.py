@@ -32,13 +32,14 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 from statistics import mean
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from duediligence.config import load_config
+from duediligence.config import PROFILE_ENV_VAR, load_config
 from duediligence.eval.eval_set import SPLITS, load_eval_set
 from duediligence.index.embed import ChunkEmbedder
 from duediligence.index.hybrid_search import DEFAULT_RRF_K, hybrid_search
@@ -64,8 +65,29 @@ def dense_only_depth_threshold(dense_weight: float, rrf_k: int = DEFAULT_RRF_K) 
     return int((rrf_k + 1) / dense_weight) - rrf_k
 
 
-def collect_pools(entries: list[dict], profile: str | None, candidate_k: int) -> dict:
-    config = load_config(profile=profile)
+def arm_config(profile: str | None):
+    """Load one arm's config, ignoring whatever profile the shell has exported.
+
+    ``load_config`` falls back to ``DUEDILIGENCE_CONFIG_PROFILE`` when no
+    profile is passed, and that variable is exported in exactly the situation
+    this script runs in — while working on the fine-tuned index. An arm that
+    picked it up would compare the fine-tuned index against itself and report
+    pools identical on 30/30, which is the number this script exists to
+    produce. Both arms are named explicitly here, so the ambient value is
+    removed for the load and put back afterwards.
+    """
+    saved = os.environ.pop(PROFILE_ENV_VAR, None)
+    try:
+        return load_config(profile=profile)
+    finally:
+        if saved is not None:
+            os.environ[PROFILE_ENV_VAR] = saved
+
+
+def collect_pools(
+    entries: list[dict], profile: str | None, candidate_k: int, dense_weight: float
+) -> dict:
+    config = arm_config(profile)
     client = build_client(config.opensearch)
     index = config.opensearch.index_name
     embedder = ChunkEmbedder(config.models.embedding_model)
@@ -77,6 +99,10 @@ def collect_pools(entries: list[dict], profile: str | None, candidate_k: int) ->
             hit["chunk_id"] for hit in hybrid_search(
                 client, index, entry["question"], vector.tolist(),
                 k=candidate_k, candidate_k=candidate_k,
+                # The weight the threshold below is computed from has to be
+                # the weight the pools were actually built with, or the report
+                # contradicts itself with no error.
+                weights=[1.0, dense_weight],
             )
         ])
         bm25.append([
@@ -105,9 +131,15 @@ def main() -> None:
     arms = {}
     for name, profile in _ARMS:
         logger.info("collecting %s candidate pools", name)
-        arms[name] = collect_pools(entries, profile, args.candidate_k)
+        arms[name] = collect_pools(entries, profile, args.candidate_k, args.dense_weight)
 
     base, finetuned = arms["base"], arms["finetuned"]
+    if base["index"] == finetuned["index"]:
+        raise SystemExit(
+            f"both arms resolved to {base['index']!r}. Every count below would "
+            "be an index compared with itself, which reads as a perfect match. "
+            "Check config/profiles/finetuned.yaml."
+        )
     pool_is_bm25 = sum(
         set(pool) == set(bm25) for pool, bm25 in zip(base["pools"], base["bm25"], strict=True)
     )

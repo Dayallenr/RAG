@@ -45,15 +45,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from duediligence.config import PROFILE_ENV_VAR
-from duediligence.eval.eval_set import DEFAULT_EVAL_SET_PATH
-from duediligence.eval.finetune_delta import METRICS, build_comparison
+from duediligence.eval.eval_set import DEFAULT_EVAL_SET_PATH, SPLITS
+from duediligence.eval.finetune_delta import ALL, METRICS, build_comparison
 from duediligence.track import flatten_metrics, log_run
 
 logger = logging.getLogger("finetune-delta")
 
 DEFAULT_OUT_DIR = Path("results/finetune_delta")
 TRAINING_REPORT_PATH = "results/training/report.json"
-POOL_REPORT_PATH = "results/finetune_delta/rerank_pool.json"
+POOL_REPORT_NAME = "rerank_pool.json"
 CHECKPOINT_MANIFEST_PATH = "results/training/checkpoint.json"
 
 #: The four cells: (arm, profile, rerank). ``None`` is the base config, which
@@ -71,7 +71,10 @@ def report_path(out_dir: Path, arm: str, rerank: bool) -> Path:
     return out_dir / f"{arm}-{'rerank' if rerank else 'norerank'}.json"
 
 
-def run_eval(arm: str, profile: str | None, rerank: bool, out: Path, eval_set: str) -> None:
+def run_eval(
+    arm: str, profile: str | None, rerank: bool, out: Path, eval_set: str,
+    *, tracked: bool = True,
+) -> None:
     """One cell of the matrix, in its own process.
 
     The profile travels as an environment variable because that is the one
@@ -90,6 +93,10 @@ def run_eval(arm: str, profile: str | None, rerank: bool, out: Path, eval_set: s
         command.append("--no-rerank")
 
     env = dict(os.environ)
+    if not tracked:
+        # Same reason as the comparison run: a cell writing outside the
+        # registered directory may not claim the registered run name.
+        env["DUEDILIGENCE_TRACKING"] = "0"
     if profile:
         env[PROFILE_ENV_VAR] = profile
     else:
@@ -165,7 +172,7 @@ def main() -> None:
         action="store_true",
         help="skip the four runs and recompute the comparison from existing reports",
     )
-    parser.add_argument("--headline-split", default="test")
+    parser.add_argument("--headline-split", choices=[*SPLITS, ALL], default="test")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -173,13 +180,28 @@ def main() -> None:
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # The tracker run names below are fixed strings, and duediligence/track/
+    # verify.py maps each of them to a file under the default directory. A run
+    # writing elsewhere may not claim them: the hosted metrics would be diffed
+    # against reports this run did not write, and both would still look
+    # internally consistent — the same hazard guard_profiled_output covers in
+    # the retrieval eval. Writing elsewhere stays available; only the logging
+    # is withheld.
+    tracked = out_dir == DEFAULT_OUT_DIR
+    if not tracked:
+        logger.info(
+            "--out-dir is %s, not %s: skipping experiment tracking, because the "
+            "run names are registered against the default directory",
+            out_dir, DEFAULT_OUT_DIR,
+        )
+
     for arm, profile, rerank in CELLS:
         path = report_path(out_dir, arm, rerank)
         if args.from_reports:
             if not path.is_file():
                 parser.error(f"--from-reports but {path} does not exist")
             continue
-        run_eval(arm, profile, rerank, path, args.eval_set)
+        run_eval(arm, profile, rerank, path, args.eval_set, tracked=tracked)
 
     runs = {
         arm: {
@@ -198,14 +220,14 @@ def main() -> None:
         # Why the reranked cell moved or did not: written by
         # scripts/verify_rerank_pool.py, folded in when it exists and recorded
         # as absent when it does not, rather than explained in prose here.
-        pool_report=_optional_json(POOL_REPORT_PATH),
+        pool_report=_optional_json(str(out_dir / POOL_REPORT_NAME)),
         headline_split=args.headline_split,
     )
 
     output = out_dir / "report.json"
     output.write_text(json.dumps(report, indent=2) + "\n")
 
-    run_url = log_run(
+    run_url = None if not tracked else log_run(
         name="finetune-delta",
         tags=["retrieval", "eval", "finetune"],
         config={

@@ -128,3 +128,39 @@ class TestProfiledRunsCannotClaimTheBaselinesArtifacts:
         guard_profiled_output(
             profile=None, out="results/retrieval/report.json", run_name="retrieval-eval"
         )
+
+
+class TestPoolCheckArmsAreExplicit:
+    """The pool check's baseline arm must be the baseline.
+
+    ``load_config`` falls back to ``DUEDILIGENCE_CONFIG_PROFILE`` when no
+    profile argument is given, and that variable is exported in exactly the
+    situation this script is run in — while working on the fine-tuned index.
+    An arm that quietly picked it up would compare the fine-tuned index
+    against itself and report pools identical on 30/30, which is the very
+    number the README cites as evidence.
+    """
+
+    def test_the_baseline_arm_ignores_an_exported_profile(self, monkeypatch):
+        from duediligence.config import PROFILE_ENV_VAR
+        from scripts.verify_rerank_pool import arm_config
+
+        monkeypatch.setenv(PROFILE_ENV_VAR, "finetuned")
+        assert arm_config(None).opensearch.index_name == "duediligence-chunks"
+
+    def test_the_candidate_arm_still_gets_its_profile(self, monkeypatch):
+        from duediligence.config import PROFILE_ENV_VAR
+        from scripts.verify_rerank_pool import arm_config
+
+        monkeypatch.delenv(PROFILE_ENV_VAR, raising=False)
+        assert arm_config("finetuned").opensearch.index_name == "duediligence-chunks-finetuned"
+
+    def test_an_exported_profile_is_left_as_it_was_found(self, monkeypatch):
+        import os
+
+        from duediligence.config import PROFILE_ENV_VAR
+        from scripts.verify_rerank_pool import arm_config
+
+        monkeypatch.setenv(PROFILE_ENV_VAR, "finetuned")
+        arm_config(None)
+        assert os.environ[PROFILE_ENV_VAR] == "finetuned"

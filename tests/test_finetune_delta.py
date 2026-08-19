@@ -351,3 +351,41 @@ class TestArmsNameTheirProfile:
         finetuned = _arm(index="b", model="m2", dense_hit_at=1)
         report = build_comparison(base_runs=base, finetuned_runs=finetuned)
         assert report["arms"]["base"]["profile"] is None
+
+
+class TestArmsMustScoreTheSameQuestions:
+    """A split label can move between two runs, and nothing else would notice.
+
+    ``scripts/assign_eval_splits.py`` leaves existing rows alone, but reports
+    of different vintage combined with ``--from-reports`` can still disagree
+    about which questions are held out. Both arms would then cover all 101
+    questions, BM25 would still match across arms, and the test-split delta
+    would compare one arm's 30 questions against a different 30 — a clean
+    report over two populations.
+    """
+
+    def _arms_disagreeing_on_split(self):
+        base = _arm(index="a", model="m1", dense_hit_at=3)
+        finetuned = _arm(index="b", model="m2", dense_hit_at=1)
+        for run in finetuned.values():
+            run["per_query"] = [
+                dict(row, split="dev" if row["split"] == "test" else "test")
+                for row in run["per_query"]
+            ]
+        return base, finetuned
+
+    def test_a_split_that_moved_between_runs_is_refused(self):
+        base, finetuned = self._arms_disagreeing_on_split()
+        with pytest.raises(ValueError, match="different questions"):
+            build_comparison(base_runs=base, finetuned_runs=finetuned)
+
+    def test_the_message_names_the_split_that_disagrees(self):
+        base, finetuned = self._arms_disagreeing_on_split()
+        with pytest.raises(ValueError, match="test"):
+            build_comparison(base_runs=base, finetuned_runs=finetuned)
+
+    def test_matching_splits_are_accepted(self):
+        base = _arm(index="a", model="m1", dense_hit_at=3)
+        finetuned = _arm(index="b", model="m2", dense_hit_at=1)
+        report = build_comparison(base_runs=base, finetuned_runs=finetuned)
+        assert report["splits"]["test"]["queries"] == 1
